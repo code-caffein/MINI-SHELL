@@ -231,16 +231,8 @@ t_cmd *parse_tokens(t_token *tokens)
 				free_commands(commands);
 				return NULL;
 			}
-			else if (current->next || current->next->type == file)
-			{
-				current_cmd->next = create_new_command();
-				if (!current_cmd->next)
-				{
-					free_commands(commands);
-					return NULL;
-				}
-				current_cmd = current_cmd->next;
-			}
+			handle_redirection(current_cmd, current);
+			current = current->next;
 		}
 		else if (current->type == cmd || current->type == text || current->type == file)
 			add_argument(current_cmd, current->value);
@@ -251,3 +243,7 @@ t_cmd *parse_tokens(t_token *tokens)
 		current_cmd->syn_err = true;
 	return commands;
 }
+// 
+
+
+//////
