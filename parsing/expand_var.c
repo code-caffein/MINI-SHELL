@@ -16,7 +16,7 @@ char *get_var_value(char *var_name)
 }
 
 
-char *expand_env_vars(char *str, t_quote_state *state)
+char *expand_env_vars(char *str, t_quote_state *state, int exit_status)
 {
     if (!str)
         return NULL;
@@ -33,7 +33,7 @@ char *expand_env_vars(char *str, t_quote_state *state)
             if (str[i] == '?')
             {
                 char c;
-                if(!var_status)
+                if(!exit_status)
 					c = '0';
 				else
 					c = '1';
@@ -71,7 +71,7 @@ char *expand_env_vars(char *str, t_quote_state *state)
     return ft_strdup(result);
 }
 
-int expand_variables(t_token *tokens, t_quote_state *state)
+int expand_variables(t_token *tokens, t_quote_state *state, int exit_status)
 {
     t_token *current = tokens;
 
@@ -79,7 +79,7 @@ int expand_variables(t_token *tokens, t_quote_state *state)
     {
         if (current->type == text || current->type == file)
         {
-            char *expanded = expand_env_vars(current->value, state);
+            char *expanded = expand_env_vars(current->value, state, exit_status);
             if (!expanded)
                 return 0; 
             free(current->value);

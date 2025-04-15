@@ -17,6 +17,25 @@ char *remove_c(char *s, char c)
 	new[j] = '\0';
 	return (new);
 }
+void check_ifneed_expand(t_token **tokens, t_quote_state *state)
+{
+	t_token *current = *tokens;
+	while (current || current->next)
+		current = current->next;
+	if (current->type == text && state != SINGLE_QUOTED)
+	{
+		int i = -1;
+		while (current->value[++i])
+		{
+			if (current->value[i] == '$')
+			{
+				current->need_expand = true;
+				break ;
+			}
+		}
+	}
+}
+
 int pr_check(char *buffer, t_quote_state *state)
 {
 	if (state == UNQUOTED && (ft_strcmp(buffer, ">") == 0 || ft_strcmp(buffer, ">>") == 0))
@@ -47,7 +66,7 @@ void add_err_token(t_token *token)
     }
 }
 
-int get_type_add_token(t_token **tokens, char *buffer, t_quote_state *state)
+int get_type_add_token(t_token **tokens, char *buffer, t_quote_state *state, int exit_status)
 {
 
 	if (buffer[0] == '>' || buffer[0] == '<' || buffer[0] == '|')
@@ -75,55 +94,55 @@ int get_type_add_token(t_token **tokens, char *buffer, t_quote_state *state)
     
     new_token->value = ft_strdup(new_buff);
     new_token->next = NULL;
-	if (ft_strcmp(new_buff, "echo") == 0)
-	{
-		new_token->type = cmd;
-		new_token->value = "echo";
-		new_token->heredoc = false;
-	}
-    else if (ft_strcmp(new_buff, "-n") == 0)
-	{
-		new_token->type = cmd;
-		new_token->value = "-n";
-		new_token->heredoc = false;		
-	}
-    else if (ft_strcmp(new_buff, "cd") == 0)
-	{
-		new_token->type = cmd;
-		new_token->value = "cd";
-		new_token->heredoc = false;		
-	}
-    else if (ft_strcmp(new_buff, "pwd") == 0)
-	{
-		new_token->type = cmd;
-		new_token->value = "pwd";
-		new_token->heredoc = false;	
-	}
-    else if (ft_strcmp(new_buff, "export") == 0)
-	{
-		new_token->type = cmd;
-		new_token->value = "export";
-		new_token->heredoc = false;		
-	}
-    else if (ft_strcmp(new_buff, "unset") == 0)
-	{
-		new_token->type = cmd;
-		new_token->value = "unset";
-		new_token->heredoc = false;		
-	}
-    else if (ft_strcmp(new_buff, "env") == 0)
-	{
-		new_token->type = cmd;
-		new_token->value = "env";
-		new_token->heredoc = false;		
-	}
-    else if (ft_strcmp(new_buff, "exit") == 0)
-	{
-		new_token->type = cmd;
-		new_token->value = "exit";
-		new_token->heredoc = false;		
-	}
-    else if (ft_strcmp(new_buff, ">") == 0 && state == UNQUOTED)
+	// if (ft_strcmp(new_buff, "echo") == 0)
+	// {
+	// 	new_token->type = cmd;
+	// 	new_token->value = "echo";
+	// 	new_token->heredoc = false;
+	// }
+    // else if (ft_strcmp(new_buff, "-n") == 0)
+	// {
+	// 	new_token->type = cmd;
+	// 	new_token->value = "-n";
+	// 	new_token->heredoc = false;		
+	// }
+    // else if (ft_strcmp(new_buff, "cd") == 0)
+	// {
+	// 	new_token->type = cmd;
+	// 	new_token->value = "cd";
+	// 	new_token->heredoc = false;		
+	// }
+    // else if (ft_strcmp(new_buff, "pwd") == 0)
+	// {
+	// 	new_token->type = cmd;
+	// 	new_token->value = "pwd";
+	// 	new_token->heredoc = false;	
+	// }
+    // else if (ft_strcmp(new_buff, "export") == 0)
+	// {
+	// 	new_token->type = cmd;
+	// 	new_token->value = "export";
+	// 	new_token->heredoc = false;		
+	// }
+    // else if (ft_strcmp(new_buff, "unset") == 0)
+	// {
+	// 	new_token->type = cmd;
+	// 	new_token->value = "unset";
+	// 	new_token->heredoc = false;		
+	// }
+    // else if (ft_strcmp(new_buff, "env") == 0)
+	// {
+	// 	new_token->type = cmd;
+	// 	new_token->value = "env";
+	// 	new_token->heredoc = false;		
+	// }
+    // else if (ft_strcmp(new_buff, "exit") == 0)
+	// {
+	// 	new_token->type = cmd;
+	// 	new_token->value = "exit";
+	// 	new_token->heredoc = false;		
+	// }
+    if (ft_strcmp(new_buff, ">") == 0 && state == UNQUOTED)
 	{
 		new_token->type = red;
 		new_token->value = ">";
@@ -153,6 +172,7 @@ int get_type_add_token(t_token **tokens, char *buffer, t_quote_state *state)
 	{
 		new_token->type = text;
 		new_token->heredoc = false;
+		new_token->value = ft_strdup(new_buff);
 	}
 	free(new_buff);
 
@@ -166,13 +186,13 @@ int get_type_add_token(t_token **tokens, char *buffer, t_quote_state *state)
             current = current->next;
         current->next = new_token;
     }
-	detect_file(tokens);
-	expand_variables(tokens, state);
+	// expand_variables(*tokens, state, exit_status);
+	check_ifneed_expand(tokens, state);
 	return (1);
 }
 
 
-void detect_file(t_token *tokens)
+void detect_file(t_token **tokens)
 {
     t_token *current = tokens;
     t_token *previous = NULL;
@@ -275,7 +295,10 @@ int syntax_valid(t_token **tokens) //// check!!!!!!!!!!!!!!!!!!
 	return (1);
 }
 
-t_token	*sep(char *line)
+
+
+
+t_token *sep(char *line, int exit_status)
 {
     t_token *tokens = NULL;
     char buffer[9999];
@@ -299,7 +322,7 @@ t_token	*sep(char *line)
 		{
             buffer[i++] = c;
             buffer[i] = '\0';
-            if (!get_type_add_token(&tokens, buffer, state));
+            if (!get_type_add_token(&tokens, buffer, state, exit_status));
 				break ;
             state = UNQUOTED;
             i = 0;
@@ -316,7 +339,7 @@ t_token	*sep(char *line)
             if (i > 0 && buffer[0] != '<' && buffer[0] != '>')
 			{
                 buffer[i] = '\0';
-                if (!get_type_add_token(&tokens, buffer, state));
+                if (!get_type_add_token(&tokens, buffer, state, exit_status));
 					break ;
                 i = 0;
             }
@@ -331,14 +354,14 @@ t_token	*sep(char *line)
 			else if (i > 0 && buffer[0] == '<' && c != '<')
 			{
 				buffer[i] = '\0';
-				if (!get_type_add_token(&tokens, buffer, state));
+				if (!get_type_add_token(&tokens, buffer, state, exit_status));
 					break ;
 				i = 0;
 			}
 			else if (i > 0 && buffer[0] == '>' && c != '>')
 			{
 				buffer[i] = '\0';
-				if (!get_type_add_token(&tokens, buffer, state));
+				if (!get_type_add_token(&tokens, buffer, state, exit_status));
 					break ;
 				i = 0;
 			}
@@ -350,7 +373,7 @@ t_token	*sep(char *line)
 			{
 				buffer[i++] = c;
 				buffer[i] = '\0';
-				if (!get_type_add_token(&tokens, buffer, state));
+				if (!get_type_add_token(&tokens, buffer, state, exit_status));
 					break ;
 				i = 0;
 			}
@@ -364,7 +387,7 @@ t_token	*sep(char *line)
             if (i > 0)
 			{
                 buffer[i] = '\0';
-                if (!get_type_add_token(&tokens, buffer, state));
+                if (!get_type_add_token(&tokens, buffer, state, exit_status));
 					break ;
                 i = 0;
             }
@@ -372,8 +395,8 @@ t_token	*sep(char *line)
 		else
             buffer[i++] = c;
     }
-
-	syntax_valid(tokens);
+	detect_file(&tokens);
+	syntax_valid(&tokens);
 
 	bool here_doc;
 	t_token *curr = tokens;

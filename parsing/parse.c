@@ -17,6 +17,7 @@ t_cmd *create_new_command(void)
     cmd->arg_count = 0;
     cmd->arg_capacity = 10;
     cmd->args = malloc(sizeof(char *) * (cmd->arg_capacity + 1));
+	cmd->args_need_expand = malloc(sizeof(bool) * (cmd->arg_capacity + 1));
     
     if (!cmd->args)
 	{
@@ -36,17 +37,17 @@ t_cmd *create_new_command(void)
 }
 
 
-void add_argument(t_cmd *cmd, char *arg)
+void add_argument(t_cmd *cmd, char *arg, bool arg_need_expand) 
 {
-    if (!cmd || !arg)
-        return;
+	if (!cmd || !arg)
+		return;
 
-    if (cmd->arg_count == 0)
-        cmd->name = ft_strdup(arg);
+	if (cmd->arg_count == 0)
+		cmd->name = ft_strdup(arg);
     
-    if (cmd->arg_count >= cmd->arg_capacity)
+	if (cmd->arg_count >= cmd->arg_capacity)
 	{
-        cmd->arg_capacity *= 2;
+		cmd->arg_capacity *= 2;
         char **new_args = malloc(sizeof(char *) * (cmd->arg_capacity + 1));
         
         if (!new_args)
@@ -65,7 +66,7 @@ void add_argument(t_cmd *cmd, char *arg)
         free(cmd->args);
         cmd->args = new_args;
     }
-    
+    cmd->args_need_expand[cmd->arg_count] = arg_need_expand;
     cmd->args[cmd->arg_count] = ft_strdup(arg);
     cmd->arg_count++;
     cmd->args[cmd->arg_count] = NULL;
@@ -231,11 +232,14 @@ t_cmd *parse_tokens(t_token *tokens)
 				free_commands(commands);
 				return NULL;
 			}
-			handle_redirection(current_cmd, current);
-			current = current->next;
+			else if (current->next && current->next->type == file)
+			{
+				handle_redirection(current_cmd, current);
+				current = current->next;
+			}
 		}
-		else if (current->type == cmd || current->type == text || current->type == file)
-			add_argument(current_cmd, current->value);
+		else if (current->type == text || current->type == file)
+			add_argument(current_cmd, current->value, current->need_expand);
 		if (current)
 			current = current->next;
 	}
