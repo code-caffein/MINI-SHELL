@@ -108,11 +108,22 @@ void add_error_token(t_token *token)
  * @param tokens Double pointer to token list
  * @param buffer String content to tokenize
  * @param state Current quoting state
- * @param exit_status Last command exit status
+ * @para Last command exit status
  * @return 1 on success, 0 on failure (syntax error)
  */
-int add_token_with_type(t_token **tokens, char *buffer, t_quote_state *state, int exit_status)
+int add_token_with_type(t_token **tokens, char *buffer, t_quote_state *state, bool wait_more_args)
 {
+	// Check for empty buffer
+	if (buffer[0] == '\0')
+		return 0;
+	
+	// Check for syntax errors in heredoc delimiters
+	// if (state == UNQUOTED && (ft_strcmp(buffer, "<<") == 0 || ft_strcmp(buffer, ">>") == 0))
+	// {
+	// 	add_error_token(*tokens);
+	// 	return 0;
+	// }
+
     // Check for syntax errors in operators
     if (buffer[0] == '>' || buffer[0] == '<' || buffer[0] == '|')
     {
@@ -178,6 +189,7 @@ int add_token_with_type(t_token **tokens, char *buffer, t_quote_state *state, in
     }
     free(new_buff);
 
+	new_token->wait_more_args = wait_more_args;
     // Add token to the list
     if (*tokens == NULL) {
         *tokens = new_token;
@@ -215,6 +227,11 @@ void detect_file_tokens(t_token **tokens)
                 ft_strcmp(previous->value, "<") == 0)
             {
                 current->type = file;
+				while(current->next && current->next->type == text && current->next->wait_more_args == true)
+				{
+					current->next->type = file;
+					current = current->next;
+				}
             }
         }
         previous = current;
@@ -301,7 +318,7 @@ int validate_syntax(t_token **tokens)
         }
         
         // Redirection must be followed by a filename (file or text)
-        if (previous->type == red && current->type != file && current->type != text)
+        if (previous->type == red && current->type != file)
         {
             previous->syn_err = true;
             free_token_list(previous->next);
@@ -341,10 +358,10 @@ int validate_syntax(t_token **tokens)
  * Tokenizes an input line into a linked list of command tokens
  * 
  * @param line Input command string to tokenize
- * @param exit_status Last command exit status
+ * @para Last command exit status
  * @return Linked list of tokens or NULL on error
  */
-t_token *tokenize_input(char *line, int exit_status)
+t_token *tokenize_input(char *line)
 {
     t_token *tokens = NULL;
     char buffer[9999];
@@ -352,6 +369,7 @@ t_token *tokenize_input(char *line, int exit_status)
     int j = -1;
     t_quote_state state = UNQUOTED;
     bool has_heredoc = false;
+	bool wait_more_args = false;
 
     // Process each character in the input line
     while (line[++j])
@@ -370,7 +388,7 @@ t_token *tokenize_input(char *line, int exit_status)
         {
             buffer[i++] = c;
             buffer[i] = '\0';
-            if (!add_token_with_type(&tokens, buffer, state, exit_status))
+            if (!add_token_with_type(&tokens, buffer, state, wait_more_args))
                 break;
             state = UNQUOTED;
             i = 0;
@@ -380,7 +398,13 @@ t_token *tokenize_input(char *line, int exit_status)
                 (state == DOUBLE_QUOTED && c == '"' && line[j + 1] && (line[j + 1] == '\'' || line[j + 1] == '"' || !is_token_separator(line[j+1]))))
         {
             buffer[i++] = c;
+            buffer[i] = '\0';
+			wait_more_args = true;
+            if (!add_token_with_type(&tokens, buffer, state, wait_more_args))
+                break;
+			wait_more_args = false;
             state = UNQUOTED;
+            i = 0;
         }
         // Handle operators and special characters when unquoted
         else if (state == UNQUOTED && (ft_strchr("|<>", c) || buffer[0] == '|' || buffer[0] == '>' || buffer[0] == '<'))
@@ -389,7 +413,7 @@ t_token *tokenize_input(char *line, int exit_status)
             if (i > 0 && buffer[0] != '<' && buffer[0] != '>')
             {
                 buffer[i] = '\0';
-                if (!add_token_with_type(&tokens, buffer, state, exit_status))
+                if (!add_token_with_type(&tokens, buffer, state, wait_more_args))
                     break;
                 i = 0;
             }
@@ -406,7 +430,7 @@ t_token *tokenize_input(char *line, int exit_status)
             else if (i > 0 && buffer[0] == '<' && c != '<')
             {
                 buffer[i] = '\0';
-                if (!add_token_with_type(&tokens, buffer, state, exit_status))
+                if (!add_token_with_type(&tokens, buffer, state, wait_more_args))
                     break;
                 i = 0;
             }
@@ -414,7 +438,7 @@ t_token *tokenize_input(char *line, int exit_status)
             else if (i > 0 && buffer[0] == '>' && c != '>')
             {
                 buffer[i] = '\0';
-                if (!add_token_with_type(&tokens, buffer, state, exit_status))
+                if (!add_token_with_type(&tokens, buffer, state, wait_more_args))
                     break;
                 i = 0;
             }
@@ -427,7 +451,7 @@ t_token *tokenize_input(char *line, int exit_status)
             {
                 buffer[i++] = c;
                 buffer[i] = '\0';
-                if (!add_token_with_type(&tokens, buffer, state, exit_status))
+                if (!add_token_with_type(&tokens, buffer, state, wait_more_args))
                     break;
                 i = 0;
             }
@@ -443,7 +467,7 @@ t_token *tokenize_input(char *line, int exit_status)
             if (i > 0)
             {
                 buffer[i] = '\0';
-                if (!add_token_with_type(&tokens, buffer, state, exit_status))
+                if (!add_token_with_type(&tokens, buffer, state, wait_more_args))
                     break;
                 i = 0;
             }

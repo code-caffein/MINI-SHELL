@@ -17,26 +17,23 @@ t_cmd *create_new_command(void)
         return NULL;
     
     // Initialize command fields
-    cmd->name = NULL;
     cmd->arg_count = 0;
     cmd->arg_capacity = 10;
-    cmd->args = malloc(sizeof(char *) * (cmd->arg_capacity + 1));
-    cmd->args_need_expand = malloc(sizeof(bool) * (cmd->arg_capacity + 1));
-    
+	cmd->name = NULL;
+
+
     if (!cmd->args)
     {
         free(cmd);
         return NULL;
     }
 
-    // Initialize arguments array to NULL
+	    // Initialize arguments array to NULL
     int i = -1;
     while (++i <= cmd->arg_capacity)
         cmd->args[i] = NULL;
     
     cmd->syn_err = false;
-    cmd->in = NULL;
-    cmd->out = NULL;
     cmd->next = NULL;
     return cmd;
 }
@@ -48,14 +45,30 @@ t_cmd *create_new_command(void)
  * @param arg Argument string
  * @param arg_need_expand Flag if argument needs variable expansion
  */
-void add_argument(t_cmd *cmd, char *arg, bool arg_need_expand) 
+void add_argument(t_cmd *cmd, t_token *token, int redir_type) 
 {
-    if (!cmd || !arg)
+	t_token *curr = token;
+    if (!cmd || !curr->value)
         return;
 
     // First argument becomes command name
-    if (cmd->arg_count == 0)
-        cmd->name = ft_strdup(arg);
+	if(cmd->arg_count == 0)
+	{
+		cmd->name = ft_strdup(curr->value);
+		if (!cmd->name)
+			return;
+	}
+	else
+	{
+		cmd->args[cmd->arg_count] = malloc(sizeof(t_arg));
+		if (!cmd->args[cmd->arg_count])
+			return;
+		
+		cmd->args[cmd->arg_count]->need_expand = curr->need_expand;
+		cmd->args[cmd->arg_count]->wait_more_args = curr->wait_more_args;
+		cmd->args[cmd->arg_count]->type = curr->type;
+		cmd->args[cmd->arg_count]->value = ft_strdup(curr->value);
+	}
     
     // Resize argument array if needed
     if (cmd->arg_count >= cmd->arg_capacity)
@@ -80,9 +93,24 @@ void add_argument(t_cmd *cmd, char *arg, bool arg_need_expand)
         cmd->args = new_args;
     }
     
-    // Add the new argument
-    cmd->args_need_expand[cmd->arg_count] = arg_need_expand;
-    cmd->args[cmd->arg_count] = ft_strdup(arg);
+    // Add the new argum
+	cmd->args[cmd->arg_count] = malloc(sizeof(t_arg));
+    cmd->args[cmd->arg_count]->need_expand = curr->need_expand;
+	cmd->args[cmd->arg_count]->wait_more_args = curr->wait_more_args;
+	if (!redir_type)
+		cmd->args[cmd->arg_count]->type = text;
+	else
+	{
+		if (redir_type == REDIR_IN)
+			cmd->args[cmd->arg_count]->type = input;
+		else if (redir_type == REDIR_OUT)
+			cmd->args[cmd->arg_count]->type = output;
+		else if (redir_type == REDIR_APPEND)
+			cmd->args[cmd->arg_count]->type = append;
+		else if (redir_type == REDIR_HEREDOC)
+			cmd->args[cmd->arg_count]->type = heredoc;
+	}
+	cmd->args[cmd->arg_count]->value = ft_strdup(curr->value);
     cmd->arg_count++;
     cmd->args[cmd->arg_count] = NULL;
 }
@@ -114,12 +142,11 @@ t_redirection *create_redirection(char *file, int type)
  * @param cmd Command to add redirection to
  * @param token Redirection token
  */
-void handle_redirection(t_cmd *cmd, t_token *token)
+int get_redirection(t_token *token)
 {
-    if (!cmd || !token || !token->next)
+    if (!token)
         return;
     
-    t_token *file_token = token->next;
     int redir_type = 0;
     
     // Determine redirection type
@@ -132,37 +159,7 @@ void handle_redirection(t_cmd *cmd, t_token *token)
     else if (ft_strcmp(token->value, "<<") == 0)
         redir_type = REDIR_HEREDOC;
     
-    // Create redirection structure
-    t_redirection *redir = create_redirection(file_token->value, redir_type);
-    t_redirection *current;
-
-    // Add to appropriate list based on type
-    if (redir_type == REDIR_IN || redir_type == REDIR_HEREDOC)
-    {
-        // Input redirection
-        if (!cmd->in)
-            cmd->in = redir;
-        else
-        {
-            current = cmd->in;
-            while (current->next)
-                current = current->next;
-            current->next = redir;
-        }
-    } 
-    else if (redir_type == REDIR_OUT || redir_type == REDIR_APPEND)
-    {
-        // Output redirection
-        if (!cmd->out)
-            cmd->out = redir;
-        else
-        {
-            current = cmd->out;
-            while (current->next)
-                current = current->next;
-            current->next = redir;
-        }
-    }
+	return redir_type;
 }
 
 /**
@@ -179,36 +176,21 @@ void free_command(t_cmd *cmd)
     if (cmd->name)
         free(cmd->name);
     
-    // Free argument list
+    // Free argument list and the argument structures
     if (cmd->args)
     {
-        int i = -1;
-        while (++i < cmd->arg_count)
+        int i = 0;
+        while (i < cmd->arg_count)
         {
             if (cmd->args[i])
+            {
+                if (cmd->args[i]->value)
+                    free(cmd->args[i]->value);
                 free(cmd->args[i]);
+            }
+            i++;
         }
         free(cmd->args);
-    }
-    
-    // Free input redirections
-    t_redirection *in_current = cmd->in;
-    while (in_current) {
-        t_redirection *temp = in_current;
-        in_current = in_current->next;
-        if (temp->file)
-            free(temp->file);
-        free(temp);
-    }
-    
-    // Free output redirections
-    t_redirection *out_current = cmd->out;
-    while (out_current) {
-        t_redirection *temp = out_current;
-        out_current = out_current->next;
-        if (temp->file)
-            free(temp->file);
-        free(temp);
     }
     
     free(cmd);
@@ -219,17 +201,17 @@ void free_command(t_cmd *cmd)
  * 
  * @param commands First command in the list
  */
-void free_commands(t_cmd *commands)
+void free_commands(t_cmd *cmd)
 {
     t_cmd *current;
-    t_cmd *temp;
-
-    current = commands;
+    t_cmd *next;
+    
+    current = cmd;
     while (current)
     {
-        temp = current;
-        current = current->next;
-        free_command(temp);
+        next = current->next;
+        free_command(current);
+        current = next;
     }
 }
 
@@ -256,6 +238,7 @@ t_cmd *parse_tokens(t_token *tokens)
     current_cmd = commands;
     
     // Process all tokens
+	int red = 0;
     while (current && !current->syn_err)
     {
         if (current->type == pip)
@@ -279,15 +262,12 @@ t_cmd *parse_tokens(t_token *tokens)
                 return NULL;
             }
             else if (current->next && current->next->type == file)
-            {
-                handle_redirection(current_cmd, current);
-                current = current->next;  // Skip the file token
-            }
+                red = get_redirection(current);
         }
         else if (current->type == text || current->type == file)
         {
             // Add arguments
-            add_argument(current_cmd, current->value, current->need_expand);
+            add_argument(current_cmd, current, red);
         }
         
         if (current)

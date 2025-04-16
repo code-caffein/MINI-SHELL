@@ -41,6 +41,7 @@ typedef struct s_token {
     bool syn_err;           // Syntax error flag
     bool heredoc;           // Is heredoc delimiter
     bool need_expand;       // Needs variable expansion
+	bool wait_more_args; // Wait for more arguments
     struct s_token *next;   // Next token in the list
 } t_token;
 
@@ -61,18 +62,35 @@ typedef struct s_redirection {
     struct s_redirection *next;       // Next redirection in the list
 } t_redirection;
 
+typedef enum e_tp {
+	text,
+	input,
+	output,
+	append,
+	heredoc,
+} t_tp;
+
+
+typedef struct s_arg
+{
+	char *value;                     // Argument value
+	bool need_expand;                // Needs variable expansion
+	bool wait_more_args;
+	t_tp	type;            // Argument type (text or file)
+} t_arg;
+
+
 /**
  * Command structure
  */
 typedef struct s_cmd {
     char *name;                  // Command name
-    char **args;                 // Arguments array
-    bool *args_need_expand;      // Flags for which arguments need expansion
+    t_arg **args;                // Arguments array
+    // bool *args_need_expand;      // Flags for which arguments need expansion
+
     int arg_count;               // Number of arguments
     int arg_capacity;            // Capacity of arguments array
-    bool syn_err;                // Syntax error flag
-    t_redirection *in;           // Input redirections list
-    t_redirection *out;          // Output redirections list
+    bool syn_err;					// Syntax error flag
     struct s_cmd *next;          // Next command (after pipe)
 } t_cmd;
 
@@ -90,14 +108,14 @@ int     ft_isspace(char c);
 /*
  * Variable expansion functions
  */
-int     expand_variables(t_token *tokens, t_quote_state *state, int exit_status);
-char    *expand_env_vars(char *str, t_quote_state *state, int exit_status);
-char    *get_var_value(char *var_name);
+// int     expand_variables(t_token *tokens, t_quote_state *state, int exit_status);
+// char    *expand_env_vars(char *str, t_quote_state *state, int exit_status);
+// char    *get_var_value(char *var_name);
 
 /*
  * Token and parsing functions
  */
-t_token *tokenize_input(char *line, int exit_status);
+t_token *tokenize_input(char *line);
 void    detect_file_tokens(t_token **tokens);
 int     validate_syntax(t_token **tokens);
 t_cmd   *parse_tokens(t_token *tokens);
