@@ -158,25 +158,25 @@ int add_token_with_type(t_token **tokens, char *buffer, t_quote_state *state, bo
     if (ft_strcmp(new_buff, ">") == 0 && state == UNQUOTED)
     {
         new_token->type = red;
-        new_token->value = ">";
+        new_token->value = ft_strdup(new_buff);
         new_token->heredoc = false;
     }
     else if (ft_strcmp(new_buff, "<") == 0 && state == UNQUOTED)
     {
         new_token->type = red;
-        new_token->value = "<";
+        new_token->value = ft_strdup(new_buff);
         new_token->heredoc = false;
     }
     else if (ft_strcmp(new_buff, ">>") == 0 && state == UNQUOTED)
     {
         new_token->type = red;
-        new_token->value = ">>";
+        new_token->value = ft_strdup(new_buff);
         new_token->heredoc = false;        
     }
     else if (ft_strcmp(new_buff, "<<") == 0 && state == UNQUOTED)
     {
         new_token->type = red;
-        new_token->value = "<<";
+        new_token->value = ft_strdup(new_buff);
         new_token->heredoc = true;        
     }
     else if (ft_strcmp(new_buff, "|") == 0 && state == UNQUOTED)

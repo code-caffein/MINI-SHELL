@@ -58,23 +58,13 @@ void add_argument(t_cmd *cmd, t_token *token, int redir_type)
 		if (!cmd->name)
 			return;
 	}
-	else
-	{
-		cmd->args[cmd->arg_count] = malloc(sizeof(t_arg));
-		if (!cmd->args[cmd->arg_count])
-			return;
-		
-		cmd->args[cmd->arg_count]->need_expand = curr->need_expand;
-		cmd->args[cmd->arg_count]->wait_more_args = curr->wait_more_args;
-		cmd->args[cmd->arg_count]->type = curr->type;
-		cmd->args[cmd->arg_count]->value = ft_strdup(curr->value);
-	}
-    
+
+
     // Resize argument array if needed
     if (cmd->arg_count >= cmd->arg_capacity)
     {
         cmd->arg_capacity *= 2;
-        char **new_args = malloc(sizeof(char *) * (cmd->arg_capacity + 1));
+        char **new_args = malloc(sizeof(t_arg *) * (cmd->arg_capacity + 1));
         
         if (!new_args)
             return;
@@ -95,6 +85,8 @@ void add_argument(t_cmd *cmd, t_token *token, int redir_type)
     
     // Add the new argum
 	cmd->args[cmd->arg_count] = malloc(sizeof(t_arg));
+	if (!cmd->args[cmd->arg_count])
+		return;
     cmd->args[cmd->arg_count]->need_expand = curr->need_expand;
 	cmd->args[cmd->arg_count]->wait_more_args = curr->wait_more_args;
 	if (!redir_type)
