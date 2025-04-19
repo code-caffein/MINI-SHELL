@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 15:52:14 by aelbour           #+#    #+#             */
-/*   Updated: 2025/04/18 18:08:28 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/04/19 11:46:01 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,10 +40,12 @@ int is_custom_builtins(char *str)
 		return(3);
 	else if(!ft_strncmp("cd", str, 13))
 		return(4);
+	else if(!ft_strncmp("env", str, 13))
+		return(4);
 	return(0);
 }
 
-void execute_my_cmds(int i)
+void execute_my_cmds(int i, t_cmd *cmd)
 {
 	if(i == 1)
 		ft_export();
@@ -52,6 +54,8 @@ void execute_my_cmds(int i)
 	else if(i == 3)
 		ft_exit();
 	else if(i == 4)
+		ft_cd();
+	else if(i == 5)
 		ft_cd();
 }
 
@@ -78,15 +82,20 @@ int ft_execute(t_cmd *cmds, t_malloc **allocs)
 	char *path;
 	int i;
 	int status;
+	char **args;
 
 	i = is_custom_builtins(cmds->name);
-	if(i)
-		return(execute_my_cmds(i), 1);
+	if (i)
+		return (execute_my_cmds(i, cmds), 1);
+
+	args = extract_args(cmds->args); // <== use your arg list to array here!
+
 	pid = fork();
+	if (pid < 0)
+		return (perror("fork failed"), -1);
+
 	if (pid > 0)
-	{		
 		waitpid(pid, &status, 0);
-	}
 	else
 	{
 		i = access(cmds->name, X_OK);
@@ -94,45 +103,57 @@ int ft_execute(t_cmd *cmds, t_malloc **allocs)
 		{
 			path = get_executable_path(cmds->name);
 			if (path)
-				if (execve(path, cmds->args, NULL) == -1)
-					return (printf("execve failed\n") ,-1);
+			{
+				if (execve(path, args, NULL) == -1)
+					return (perror("execve failed"), -1);
+			}
+			else
+				return (printf("Command not found: %s\n", cmds->name), -1);
 		}
 		else
-			if(execve(cmds->name, cmds->args, NULL) == -1)
-				return(printf("execve failed\n") ,-1);
+		{
+			if (execve(cmds->name, args, NULL) == -1)
+				return (perror("execve failed"), -1);
+		}
 	}
+	return 0;
 }
+
 
 int main(void)
 {
-    t_cmd cmd;
-    t_arg *arg1;
-    t_malloc *allocs = NULL;
+	t_cmd cmd;
+	t_arg *arg1;
+	t_arg *arg2;
+	t_malloc *allocs = NULL;
 
-    // Simulate a command like: echo aymane
-    arg1 = malloc(sizeof(t_arg));
-    arg1->value = "aymane";
-    arg1->need_expand = false;
-    arg1->wait_more_args = false;
-    arg1->type = text;
+	// Build first argument node (command name: echo)
+	arg1 = malloc(sizeof(t_arg));
+	arg1->value = "echo";
+	arg1->need_expand = false;
+	arg1->wait_more_args = false;
+	arg1->type = text;
 
-    t_arg *args[3];
-    args[0] = malloc(sizeof(t_arg));
-    args[0]->value = "echo";
-    args[0]->need_expand = false;
-    args[0]->wait_more_args = false;
-    args[0]->type = text;
+	// Second argument node (e.g., aymane)
+	arg2 = malloc(sizeof(t_arg));
+	arg2->value = "aymane";
+	arg2->need_expand = false;
+	arg2->wait_more_args = false;
+	arg2->type = text;
 
-    args[1] = arg1;
-    args[2] = NULL;
+	// Link the list
+	arg1->next = arg2;
+	arg2->next = NULL;
 
-    cmd.name = "echo";
-    cmd.args = args;
-    cmd.arg_count = 2;
-    cmd.arg_capacity = 3;
-    cmd.syn_err = false;
-    cmd.next = NULL;
+	// Fill command struct
+	cmd.name = "echo";
+	cmd.args = arg1;
+	cmd.arg_count = 2;
+	cmd.arg_capacity = 2;
+	cmd.syn_err = false;
+	cmd.next = NULL;
 
-    ft_execute(&cmd, &allocs);
-    return (0);
+	ft_execute(&cmd, &allocs);
+	return (0);
 }
+

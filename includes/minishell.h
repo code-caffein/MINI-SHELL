@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 15:34:46 by aelbour           #+#    #+#             */
-/*   Updated: 2025/04/18 18:06:50 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/04/19 12:21:32 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,6 @@ typedef struct s_arg
 			  // Argument type (text or file)
 } t_arg;
 
-
 /**
  * Command structure
  */
@@ -58,6 +57,13 @@ typedef struct s_malloc {
 	void            *ptr;   // the allocated block
 	struct s_malloc  *next;
 }               t_malloc;
+
+typedef struct s_env {
+	char *key;
+	char *value;
+	struct s_env *next;
+} t_env;
+
 
 size_t  ft_strlcpy(char *dst, const char *src, size_t dstsize);
 size_t  ft_strlen(const char *s);
