@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 15:52:14 by aelbour           #+#    #+#             */
-/*   Updated: 2025/04/19 11:46:01 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/04/21 11:24:46 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ void execute_my_cmds(int i, t_cmd *cmd)
 	else if(i == 4)
 		ft_cd();
 	else if(i == 5)
-		ft_cd();
+		ft_env();
 }
 
 char **extract_args(t_arg *arg)

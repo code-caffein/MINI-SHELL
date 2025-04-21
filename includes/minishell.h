@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 15:34:46 by aelbour           #+#    #+#             */
-/*   Updated: 2025/04/19 12:21:32 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/04/21 15:14:49 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ typedef struct s_cmd {
 
 typedef struct s_malloc {
 	void            *ptr;   // the allocated block
-	struct s_malloc  *next;
+	struct s_malloc  *next;	
 }               t_malloc;
 
 typedef struct s_env {
@@ -74,6 +74,7 @@ int	ft_strncmp(const char *s1, const char *s2, size_t n);
 char	*ft_strjoin(char const *s1, char const *s2);
 char	*ft_substr(char const *s, unsigned int start, size_t len);
 int	count_list_size(void *head, size_t offset);
+int	ft_strcmp(const char *s1, const char *s2);
 
 
 #endif
