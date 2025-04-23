@@ -39,27 +39,27 @@ char *remove_character(char *s, char c)
  * @param tokens Double pointer to token list
  * @param state Current quoting state
  */
-void check_if_needs_expansion(t_token **tokens, t_quote_state state)
-{
-    t_token *current = *tokens;
-    while (current && current->next)
-        current = current->next;
+// void check_if_needs_expansion(t_token **tokens, t_quote_state state)
+// {
+//     t_token *current = *tokens;
+//     while (current && current->next)
+//         current = current->next;
         
-    // Mark text tokens that contain $ for expansion, but only outside single quotes
-    if (current->type == text && state != SINGLE_QUOTED)
-    {
-        int i = -1;
-        while (current->value[++i])
-        {
-            if (current->value[i] == '$')
-            {
-                current->need_expand = true;
-				printf("need_expand = true\n");
-                break;
-            }
-        }
-    }
-}
+//     // Mark text tokens that contain $ for expansion, but only outside single quotes
+//     if (current->type == text && state != SINGLE_QUOTED)
+//     {
+//         int i = -1;
+//         while (current->value[++i])
+//         {
+//             if (current->value[i] == '$')
+//             {
+//                 current->need_expand = true;
+// 				printf("need_expand = true\n");
+//                 break;
+//             }
+//         }
+//     }
+// }
 
 /**
  * Checks if a string is a valid redirection or pipe token in the given quote state
@@ -96,7 +96,7 @@ void add_error_token(t_token **token)
     new_token->type = text;  // Default type instead of NULL
     new_token->syn_err = true;
     new_token->heredoc = false;
-    new_token->need_expand = false;
+    // new_token->need_expand = false;
     new_token->wait_more_args = false;
     new_token->next = NULL;
 
@@ -121,8 +121,8 @@ void add_error_token(t_token **token)
  */
 int add_token_with_type(t_token **tokens, char *buffer, t_quote_state *state, bool wait_more_args)
 {
-	static char *tmp;
-	static bool wait = false;
+	static char *buff;
+	// static bool wait = false;
 	// Check for empty buffer
 	// Check for empty buffer
 	if (buffer[0] == '\0')
@@ -195,17 +195,30 @@ int add_token_with_type(t_token **tokens, char *buffer, t_quote_state *state, bo
 	
 	if (wait_more_args)
 	{
-		// wait = true;
-		tmp = ft_strjoin(new_token->value, tmp);
-		free(new_token->value);
+   		if (buff)
+    	{
+    		char *joined = ft_strjoin(new_token->value, buff);
+        	free(buff);
+        	buff = joined;
+    	}
+    	else
+        	buff = ft_strdup(new_token->value);
+    	if (!buff)
+    	{
+        	free(new_token->value);
+        	free(new_token);
+        	return 0;
+    	}
+    	free(new_token->value);
+    	free(new_token);
 	}
 	else
 	{
-		if (tmp)
+		if (buff)
 		{
-			new_token->value = ft_strjoin(tmp, new_token->value);
-			free(tmp);
-			tmp = NULL;
+			new_token->value = ft_strjoin(buff, new_token->value);
+			free(buff);
+			buff = NULL;
 		}
 		else
 			new_token->value = ft_strdup(new_buff);
