@@ -3,14 +3,36 @@
 /*                                                        :::      ::::::::   */
 /*   var_tools.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
+/*   By: shank <shank@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/21 14:28:51 by aelbour           #+#    #+#             */
-/*   Updated: 2025/04/21 15:25:00 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/04/22 17:16:44 by shank            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "execution.h"
+
+int var_action(char *s, t_env *env)
+{
+	int i = 0;
+	char *key = ft_strchr(s, '=');
+	if(!key)
+	{
+		if(is_var_exist(s, env))
+			return(0);// do nothing since var exist
+		else
+			return(1);// declare it into var envs
+	}
+	else
+	{
+		if(!ft_strlen(key))
+			return(2);//empty the variable
+		else
+			return(3);// assign it to NEW VALUE;
+	}
+	 
+}
+
 
 t_env	*get_bef_node(t_env *lst, t_env *node)
 {

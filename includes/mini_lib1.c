@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mini_lib1.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
+/*   By: shank <shank@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 15:57:56 by aelbour           #+#    #+#             */
-/*   Updated: 2025/04/21 15:14:08 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/04/22 16:37:06 by shank            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,3 +69,15 @@ int	count_list_size(void *head, size_t offset)
 	return count;
 }
 
+char	*ft_strchr(const char *s, int c)
+{
+	size_t	i;
+	size_t	j;
+
+	j = ft_strlen((char *) s);
+	i = 0;
+	while (i <= j)
+		if (s[i++] == (char)c)
+			return ((char *) &s[--i]);
+	return (NULL);
+}

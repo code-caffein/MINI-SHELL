@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   shell_builts.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
+/*   By: shank <shank@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 11:46:22 by aelbour           #+#    #+#             */
-/*   Updated: 2025/04/21 11:37:05 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/04/22 16:33:42 by shank            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,9 +32,27 @@ void	ft_cd(t_cmd *cmd, t_malloc **aloc, t_env **env)
 void	ft_export(t_cmd *cmd, t_malloc **aloc, t_env **env)
 {
 	char **arr;
+	int i = 0;
+	int check;
+	char *value;
 
 	arr = extract_args(cmd->name);
-	
+	while(arr[++i])
+	{
+		check = var_action(arr[i]);
+		if(check == 1)
+		{
+			
+		}		
+		else if(check == 2)
+		{
+			
+		}
+		else if(check == 3)
+		{
+			
+		}
+	}
 }
 
 void	ft_export(t_cmd *cmd, t_malloc **aloc, t_env **env)
