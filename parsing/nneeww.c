@@ -17,6 +17,8 @@ char *remove_character(char *s, char c)
     char *new_str;
     int i = -1;
     int j = 0;
+	if (!s)
+		return NULL;
 
     new_str = malloc(ft_strlen(s) + 1);
     if (!new_str)
@@ -37,7 +39,7 @@ char *remove_character(char *s, char c)
  * @param tokens Double pointer to token list
  * @param state Current quoting state
  */
-void check_if_needs_expansion(t_token **tokens, t_quote_state *state)
+void check_if_needs_expansion(t_token **tokens, t_quote_state state)
 {
     t_token *current = *tokens;
     while (current && current->next)
@@ -52,6 +54,7 @@ void check_if_needs_expansion(t_token **tokens, t_quote_state *state)
             if (current->value[i] == '$')
             {
                 current->need_expand = true;
+				printf("need_expand = true\n");
                 break;
             }
         }
@@ -68,11 +71,11 @@ void check_if_needs_expansion(t_token **tokens, t_quote_state *state)
 int check_operator_validity(char *buffer, t_quote_state *state)
 {
     // Only treat as operators when unquoted 
-    if (state == UNQUOTED && (ft_strcmp(buffer, ">") == 0 || ft_strcmp(buffer, ">>") == 0))
+    if (*state == UNQUOTED && buffer[0] == '>' && ft_strlen(buffer) <= 2)
         return 1;
-    if (state == UNQUOTED && (ft_strcmp(buffer, "<") == 0 || ft_strcmp(buffer, "<<") == 0))
+    if (*state == UNQUOTED && buffer[0] == '<' && ft_strlen(buffer) <= 2)
         return 1;
-    if (state == UNQUOTED && (ft_strcmp(buffer, "|") == 0))
+    if (*state == UNQUOTED && buffer[0] == '|' && ft_strlen(buffer) == 1)
         return 1;
     return 0; // Not a valid operator in this context
 }
@@ -82,23 +85,28 @@ int check_operator_validity(char *buffer, t_quote_state *state)
  * 
  * @param token Starting token in the list
  */
-void add_error_token(t_token *token)
+void add_error_token(t_token **token)
 {
     t_token *new_token = malloc(sizeof(t_token));
     if (!new_token)
         return;
-        
-    if (token == NULL) {
-        token = new_token;
-    }
-    else
-    {
-        t_token *current = token;
+
+    // Initialize all fields
+    new_token->value = NULL;
+    new_token->type = text;  // Default type instead of NULL
+    new_token->syn_err = true;
+    new_token->heredoc = false;
+    new_token->need_expand = false;
+    new_token->wait_more_args = false;
+    new_token->next = NULL;
+
+    if (*token == NULL) {
+        *token = new_token;
+    } else {
+        t_token *current = *token;  // Dereference here
         while (current->next)
             current = current->next;
         current->next = new_token;
-        new_token->syn_err = true;
-        new_token->next = NULL;
     }
 }
 
@@ -113,36 +121,32 @@ void add_error_token(t_token *token)
  */
 int add_token_with_type(t_token **tokens, char *buffer, t_quote_state *state, bool wait_more_args)
 {
+	static char *tmp;
+	static bool wait = false;
+	// Check for empty buffer
 	// Check for empty buffer
 	if (buffer[0] == '\0')
 		return 0;
 	
-	// Check for syntax errors in heredoc delimiters
-	// if (state == UNQUOTED && (ft_strcmp(buffer, "<<") == 0 || ft_strcmp(buffer, ">>") == 0))
-	// {
-	// 	add_error_token(*tokens);
-	// 	return 0;
-	// }
-
-    // Check for syntax errors in operators
     if (buffer[0] == '>' || buffer[0] == '<' || buffer[0] == '|')
     {
-        if (!check_operator_validity(buffer, state))
+        if (check_operator_validity(buffer, state) == 0)
         {
-            add_error_token(*tokens);
+            add_error_token(tokens);
             return 0;
         }
     }
     
+	char *new_buff = NULL;
     // Remove quotes from the token
-    char *tmp = remove_character(buffer, '\"');
-    if (!tmp)
-        return 0;
-    
-    char *new_buff = remove_character(tmp, '\'');
+	if(*state == DOUBLE_QUOTED)
+    	new_buff = remove_character(buffer, '\"');
+	else if (*state == SINGLE_QUOTED)
+		new_buff = remove_character(buffer, '\'');
+	else if (*state == UNQUOTED)
+		new_buff = ft_strdup(buffer);
     if (!new_buff)
         return 0;
-    free(tmp);
     
     // Create the new token
     t_token *new_token = malloc(sizeof(t_token));
@@ -150,60 +154,73 @@ int add_token_with_type(t_token **tokens, char *buffer, t_quote_state *state, bo
         free(new_buff);
         return 0;
     }
-    
-    new_token->value = ft_strdup(new_buff);
+    new_token->value = NULL;
     new_token->next = NULL;
     
     // Determine token type based on content
-    if (ft_strcmp(new_buff, ">") == 0 && state == UNQUOTED)
+    if (ft_strcmp(new_buff, ">") == 0 && *state == UNQUOTED)
     {
         new_token->type = red;
-        new_token->value = ft_strdup(new_buff);
+        new_token->value = new_buff;
         new_token->heredoc = false;
     }
-    else if (ft_strcmp(new_buff, "<") == 0 && state == UNQUOTED)
+    else if (ft_strcmp(new_buff, "<") == 0 && *state == UNQUOTED)
     {
         new_token->type = red;
-        new_token->value = ft_strdup(new_buff);
+        new_token->value = new_buff;
         new_token->heredoc = false;
     }
-    else if (ft_strcmp(new_buff, ">>") == 0 && state == UNQUOTED)
+    else if (ft_strcmp(new_buff, ">>") == 0 && *state == UNQUOTED)
     {
         new_token->type = red;
-        new_token->value = ft_strdup(new_buff);
+        new_token->value = new_buff;
         new_token->heredoc = false;        
     }
-    else if (ft_strcmp(new_buff, "<<") == 0 && state == UNQUOTED)
+    else if (ft_strcmp(new_buff, "<<") == 0 && *state == UNQUOTED)
     {
         new_token->type = red;
-        new_token->value = ft_strdup(new_buff);
+        new_token->value = new_buff;
         new_token->heredoc = true;        
     }
-    else if (ft_strcmp(new_buff, "|") == 0 && state == UNQUOTED)
+    else if (ft_strcmp(new_buff, "|") == 0 && *state == UNQUOTED)
         new_token->type = pip;
     else
     {
         new_token->type = text;
         new_token->heredoc = false;
-        new_token->value = ft_strdup(new_buff);
+        new_token->value = new_buff;
     }
-    free(new_buff);
-
-	new_token->wait_more_args = wait_more_args;
-    // Add token to the list
-    if (*tokens == NULL) {
-        *tokens = new_token;
-    }
-    else
-    {
-        t_token *current = *tokens;
-        while (current->next)
-            current = current->next;
-        current->next = new_token;
-    }
-    
-    // Check if token needs expansion
-    check_if_needs_expansion(tokens, state);
+    // free(new_buff);
+	expand_variables(new_token, state);
+	
+	if (wait_more_args)
+	{
+		// wait = true;
+		tmp = ft_strjoin(new_token->value, tmp);
+		free(new_token->value);
+	}
+	else
+	{
+		if (tmp)
+		{
+			new_token->value = ft_strjoin(tmp, new_token->value);
+			free(tmp);
+			tmp = NULL;
+		}
+		else
+			new_token->value = ft_strdup(new_buff);
+		if (*tokens == NULL)
+		{
+        	*tokens = new_token;
+    	}
+    	else
+   		{
+        	t_token *current = *tokens;
+        	while (current->next)
+        	    current = current->next;
+        	current->next = new_token;
+   		}
+	}
     return 1;
 }
 
@@ -264,8 +281,10 @@ void free_token_list(t_token *start)
     while (current)
     {
         next = current->next;
-        free(current->value);
-        free(current);
+        if (current->value)
+			free(current->value);
+		if (current)
+        	free(current);
         current = next;
     }
 }
@@ -343,7 +362,7 @@ int validate_syntax(t_token **tokens)
     }
     
     // Validate final token: can't end with pipe or redirection
-    if (previous->type == pip || previous->type == red)
+    if (previous->type == pip || previous->type == red || previous->syn_err)
     {
         previous->syn_err = true;
         free_token_list(previous->next);
@@ -366,30 +385,50 @@ t_token *tokenize_input(char *line)
     t_token *tokens = NULL;
     char buffer[9999];
     int i = 0;
-    int j = -1;
+    int j = 0;
     t_quote_state state = UNQUOTED;
     bool has_heredoc = false;
 	bool wait_more_args = false;
 
     // Process each character in the input line
-    while (line[++j])
+    while (line[j])
     {
         char c = line[j];
         
         // Handle quote state transitions
         if (state == UNQUOTED && (c == '\'' || c == '"'))
         {
-            state = (c == '\'') ? SINGLE_QUOTED : DOUBLE_QUOTED;
+			if (i > 0 )
+            {
+				if (!is_token_separator(buffer[i - 1]))
+					wait_more_args = true;
+                buffer[i] = '\0';
+                if (!add_token_with_type(&tokens, buffer, &state, wait_more_args))
+                {
+                    free_token_list(tokens);
+                    return NULL;
+                }
+				wait_more_args = false;
+                i = 0;
+            }
+            if (c == '\'')
+				state = SINGLE_QUOTED;
+			else if (c == '"')
+				state = DOUBLE_QUOTED;
             buffer[i++] = c;
         }
         // Handle end of quoted text with token separator after
-        else if ((state == SINGLE_QUOTED && c == '\'' && line[j + 1] && line[j + 1] != '\'' && line[j + 1] != '"' && is_token_separator(line[j+1])) || 
-                (state == DOUBLE_QUOTED && c == '"' && line[j + 1] && line[j + 1] != '\'' && line[j + 1] != '"' && is_token_separator(line[j+1])))
+        else if ((state == SINGLE_QUOTED && c == '\'' && (line[j + 1] != '\'' && line[j  + 1] != '"' && is_token_separator(line[j + 1]) || !line[j + 1])) || 
+                (state == DOUBLE_QUOTED && c == '"'  && (line[j + 1] != '\'' && line[j  + 1] != '"' && is_token_separator(line[j + 1]) || !line[j + 1])))
         {
             buffer[i++] = c;
             buffer[i] = '\0';
-            if (!add_token_with_type(&tokens, buffer, state, wait_more_args))
-                break;
+            if (!add_token_with_type(&tokens, buffer, &state, wait_more_args))
+            {
+				i = 0;
+				state = UNQUOTED;
+				break;
+			}
             state = UNQUOTED;
             i = 0;
         }
@@ -400,8 +439,12 @@ t_token *tokenize_input(char *line)
             buffer[i++] = c;
             buffer[i] = '\0';
 			wait_more_args = true;
-            if (!add_token_with_type(&tokens, buffer, state, wait_more_args))
-                break;
+            if (!add_token_with_type(&tokens, buffer, &state, wait_more_args))
+            {
+				i = 0;
+				state = UNQUOTED;
+				break;
+			}
 			wait_more_args = false;
             state = UNQUOTED;
             i = 0;
@@ -410,49 +453,91 @@ t_token *tokenize_input(char *line)
         else if (state == UNQUOTED && (ft_strchr("|<>", c) || buffer[0] == '|' || buffer[0] == '>' || buffer[0] == '<'))
         {
             // If we have content not starting with operators, tokenize it first
-            if (i > 0 && buffer[0] != '<' && buffer[0] != '>')
-            {
-                buffer[i] = '\0';
-                if (!add_token_with_type(&tokens, buffer, state, wait_more_args))
-                    break;
-                i = 0;
-            }
+            if (i > 0 && buffer[0] != '<' && buffer[0] != '>' && buffer[0] != '|')
+			{
+				buffer[i] = '\0';
+				if (!add_token_with_type(&tokens, buffer, &state, wait_more_args))
+				{
+					i = 0;
+					break;
+				}
+				i = 0;
+			}
             // Handle composite operators: << and >>
             else if (i > 0 && buffer[0] == '<' && c == '<')
             {
                 buffer[i++] = c;
+				if (!line[j + 1])
+				{
+					buffer[i] = '\0';
+                	if (!add_token_with_type(&tokens, buffer, &state, wait_more_args))
+                	{
+						i = 0;
+						break;
+					}
+                	i = 0;
+				}
             }
             else if (i > 0 && buffer[0] == '>' && c == '>')
             {
                 buffer[i++] = c;
+				if (!line[j + 1])
+				{
+					buffer[i] = '\0';
+                	if (!add_token_with_type(&tokens, buffer, &state, wait_more_args))
+                	{
+						i = 0;
+						break;
+					}
+                	i = 0;
+				}
             }
             // Handle < followed by non-<
             else if (i > 0 && buffer[0] == '<' && c != '<')
             {
                 buffer[i] = '\0';
-                if (!add_token_with_type(&tokens, buffer, state, wait_more_args))
-                    break;
+                if (!add_token_with_type(&tokens, buffer, &state, wait_more_args))
+                {
+					// printf("\naaaaaaaaaaaaaaa\n");
+					i = 0;
+					break;
+				}
                 i = 0;
             }
             // Handle > followed by non->
             else if (i > 0 && buffer[0] == '>' && c != '>')
             {
                 buffer[i] = '\0';
-                if (!add_token_with_type(&tokens, buffer, state, wait_more_args))
-                    break;
+                if (!add_token_with_type(&tokens, buffer, &state, wait_more_args))
+                {
+					i = 0;
+					break;
+				}
                 i = 0;
             }
             // Handle pipe operator
             else if (i > 0 && buffer[0] == '|' && c == '|')
             {
                 buffer[i++] = c;
+				if (!line[j + 1])
+				{
+					buffer[i] = '\0';
+                	if (!add_token_with_type(&tokens, buffer, &state, wait_more_args))
+                	{
+						i = 0;
+						break;
+					}
+                	i = 0;
+				}
             }
             else if (i > 0 && buffer[0] == '|' && c != '|')
             {
-                buffer[i++] = c;
                 buffer[i] = '\0';
-                if (!add_token_with_type(&tokens, buffer, state, wait_more_args))
-                    break;
+                if (!add_token_with_type(&tokens, buffer, &state, wait_more_args))
+                {
+					i = 0;
+					break;
+				}
                 i = 0;
             }
             // Start a new operator token
@@ -467,14 +552,27 @@ t_token *tokenize_input(char *line)
             if (i > 0)
             {
                 buffer[i] = '\0';
-                if (!add_token_with_type(&tokens, buffer, state, wait_more_args))
-                    break;
+                if (!add_token_with_type(&tokens, buffer, &state, wait_more_args))
+                {
+					i = 0;
+					break;
+				}
                 i = 0;
             }
         }
         // Handle regular characters
         else
             buffer[i++] = c;
+		j++;
+    }
+	if (i > 0)
+    {
+        buffer[i] = '\0';
+        if (!add_token_with_type(&tokens, buffer, &state, wait_more_args))
+        {
+            free_token_list(tokens);
+            tokens = NULL;
+        }
     }
     
     // Post-processing
@@ -490,23 +588,61 @@ t_token *tokenize_input(char *line)
     {
         if (curr->heredoc == true)
             has_heredoc = true;
+		// if (curr->syn_err == true)
+		// 	printf("sgcsgcststcts:\n");
         prev = curr;
         curr = curr->next;
     }
-    
+    if (has_syntax_error == true)
+		printf("!!!!!!!!!!!!!!!!!!!!!!!!!:\n");
     // Return tokens or NULL based on errors and heredoc status
     if (prev && prev->syn_err && has_heredoc)
         return tokens;
     if (prev && prev->syn_err && !has_heredoc)
-        return NULL; // Syntax error
+     {
+       printf("Syntax error:\n");
+	//    exit(1);
+    }// Syntax error
 
     // Check for unclosed quotes
-    if (i > 0 && state != UNQUOTED) {
-        // Exit error - unclosed quote
+    if (i > 0 && state != UNQUOTED) 
+	{
+       printf("Syntax aaaaa error:\n");
+	//    exit(1);
     }
-    
+    //open files !!!!
+	//ft that open files
     if (prev && !prev->syn_err)
         return tokens;
     
     return NULL;
+}
+
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <readline/readline.h>
+#include <readline/history.h>
+
+
+int main(void)
+{
+    char *input;
+
+    while (1)
+    {
+        input = readline("minishell> ");
+        if (!input)
+        {
+            printf("exit\n");
+            break;
+        }
+		
+        if (*input != '\0')
+            add_history(input);
+		tokenize_input(input);
+        free(input);
+    }
+
+    return 0;
 }
