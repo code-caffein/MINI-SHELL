@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 15:52:14 by aelbour           #+#    #+#             */
-/*   Updated: 2025/04/23 18:17:47 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/04/24 16:03:21 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,7 @@ int ft_execute(t_cmd *cmd, t_malloc **allocs)
 				
 			}
 		}
-		else
+		else 
 		{
 			printf("command not found");	
 		}
