@@ -52,6 +52,15 @@ typedef struct s_var
     bool has_heredoc;
 	bool wait_more_args;
 } t_var;
+
+typedef struct s_v
+{
+	t_token	*new_token;
+	t_token	*current;
+	char	*buff;
+	char	*joined;
+	char 	*new_buff
+} t_v;
 /**
  * Redirection types
  */
@@ -188,6 +197,7 @@ int fill_fill3_fourth(t_var *v);
 int fifth_condition(t_var *v);
 int sixth_condition(t_var *v);
 
+//tkenizer utils
 
 
 #endif /* HE_H */
