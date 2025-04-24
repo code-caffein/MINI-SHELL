@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 15:34:46 by aelbour           #+#    #+#             */
-/*   Updated: 2025/04/23 16:43:54 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/04/24 19:40:24 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,6 @@ typedef enum e_tp {
 	append,
 	heredoc,
 } t_tp;
-
 
 typedef struct s_arg
 {

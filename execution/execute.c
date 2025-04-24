@@ -6,11 +6,11 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 15:52:14 by aelbour           #+#    #+#             */
-/*   Updated: 2025/04/24 18:23:16 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/04/24 20:04:05 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/minishell.h"
+#include "execution.h"
 
 char *get_executable_path(char *str)
 {
@@ -49,16 +49,16 @@ int is_parent_builtins(char *str)
 	return(0);
 }
 
-void execute_parent_cmds(int i, t_cmd *cmd)
+void execute_parent_cmds(int i, t_cmd *cmd, t_malloc **allocs, t_env **env)
 {
 	if(i == 1)
-		ft_export();
+		ft_export(cmd, allocs, env);
 	else if(i == 2)
 		ft_unset();
 	else if(i == 3)
-		ft_exit();
+		ft_exit(cmd, allocs, env);
 	else if(i == 4)
-		ft_cd();
+		ft_cd(cmd, allocs);
 }
 
 void get_a_child(t_cmd *cmd, t_malloc **allocs)
@@ -76,32 +76,65 @@ void get_a_child(t_cmd *cmd, t_malloc **allocs)
 	}
 }
 
-int ft_execute(t_cmd *cmd, t_malloc **allocs)
+void file_error_handler(char *path)
+{
+	struct stat info;
+
+	if(stat(path, &info) == 0)
+	{
+		if(S_ISDIR(info.st_mode) == true)
+			printf("%s :is a Directorie\n", path);
+		else
+			printf("permission denied");
+	}
+	else
+		printf("command not found\n");
+}
+
+int ft_execute(t_cmd *cmd, t_malloc **allocs, t_env *env)
 {
 	int		i;
-
+	char	*path;
+	i = is_parent_builtins(cmd->name);
+	if(i)
+	execute_parent_cmds(i, cmd, allocs, &env);
 	if(ft_strchr(cmd->name, '/'))
 	{
 		if(access(cmd->name, X_OK))
 		{
-			i = is_parent_builtins(cmd->name);
-			if(i)
-			{
-				execute_parent_cmds(i, cmd);
-			}
-			else
-			{
-				get_a_child(cmd, allocs);
-			}
+			get_a_child(cmd, allocs);
 		}
 		else 
-		{
-			printf("command not found");	
-		}
+		file_error_handler(cmd->name);
 	}
 	else
 	{
-		if()
-		
+		path = get_executable_path(cmd->name);
+		if (path)
+			if (execve(path, cmd->args, NULL) == -1)
+				printf("cant execute it\n");
+		else
+			printf("command not found\n");
 	}
+}
+
+int main(int argc, char **argv, char **envp)
+{
+	t_cmd		cmd;
+	t_malloc	*allocs = NULL;
+	t_env *env;
+
+	(void)argc;
+	(void)envp;
+
+	// Example command: ls -l
+	cmd.name = "ls";
+	cmd.args = malloc(sizeof(char *) * 3);
+	cmd.args[0] = "ls";
+	cmd.args[1] = "-l";
+	cmd.args[2] = NULL;
+
+	ft_execute(&cmd, &allocs, env);
+
+	return (0);
 }

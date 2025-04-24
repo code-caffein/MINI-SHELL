@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   var_tools.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: shank <shank@student.42.fr>                +#+  +:+       +#+        */
+/*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/21 14:28:51 by aelbour           #+#    #+#             */
-/*   Updated: 2025/04/22 17:16:44 by shank            ###   ########.fr       */
+/*   Updated: 2025/04/24 19:56:10 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ int var_action(char *s, t_env *env)
 		if(!ft_strlen(key))
 			return(2);//empty the variable
 		else
-			return(3);// assign it to NEW VALUE;
+			return(3);// assign it to NEW VALUE
 	}
 	 
 }

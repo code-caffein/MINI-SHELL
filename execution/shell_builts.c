@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   shell_builts.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: shank <shank@student.42.fr>                +#+  +:+       +#+        */
+/*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 11:46:22 by aelbour           #+#    #+#             */
-/*   Updated: 2025/04/22 16:33:42 by shank            ###   ########.fr       */
+/*   Updated: 2025/04/24 19:55:25 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "execution.h"
 
 
-void	ft_cd(t_cmd *cmd, t_malloc **aloc, t_env **env)
+void	ft_cd(t_cmd *cmd, t_malloc **aloc)
 {
 	struct stat st;
 	char **arr;
@@ -39,7 +39,7 @@ void	ft_export(t_cmd *cmd, t_malloc **aloc, t_env **env)
 	arr = extract_args(cmd->name);
 	while(arr[++i])
 	{
-		check = var_action(arr[i]);
+		check = var_action(arr[i], env);
 		if(check == 1)
 		{
 			
@@ -53,11 +53,6 @@ void	ft_export(t_cmd *cmd, t_malloc **aloc, t_env **env)
 			
 		}
 	}
-}
-
-void	ft_export(t_cmd *cmd, t_malloc **aloc, t_env **env)
-{
-	
 }
 
 void	ft_env(t_cmd *cmd, t_malloc **aloc, t_env **env)
