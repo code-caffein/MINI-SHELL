@@ -176,4 +176,18 @@ int expand_variables(t_token *tokens, t_quote_state *state);
 // void		add_to_token_list(t_token **tokens, t_token *new_token);
 // void		check_if_needs_expansion(t_token **tokens, t_quote_state state);
 
+// tokenize fill 
+void first_condtion(t_var *v);
+int	second_condition (t_var *v);
+int third_condition(t_var *v);
+int Fourth_condition(t_var *v, char *line);
+int fill1_fourth(t_var *v, char *line);
+int fill2_fourth(t_var *v);
+int fill3_fourth(t_var *v);
+int fill_fill3_fourth(t_var *v);
+int fifth_condition(t_var *v);
+int sixth_condition(t_var *v);
+
+
+
 #endif /* HE_H */
