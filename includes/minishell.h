@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 15:34:46 by aelbour           #+#    #+#             */
-/*   Updated: 2025/04/21 15:14:49 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/04/23 16:43:54 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ typedef struct s_arg
  */
 typedef struct s_cmd {
 	char *name;                  // Command name
-	t_arg *args;                // Arguments array
+	char **args;                // Arguments array
 
 	int arg_count;               // Number of arguments
 	int arg_capacity;            // Capacity of arguments array
