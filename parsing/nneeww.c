@@ -174,7 +174,7 @@ int add_token_with_type(t_token **tokens, char *buffer, t_quote_state *state, bo
     {
         new_token->type = red;
         new_token->value = new_buff;
-        new_token->heredoc = false;        
+        new_token->heredoc = false;
     }
     else if (ft_strcmp(new_buff, "<<") == 0 && *state == UNQUOTED)
     {
@@ -254,14 +254,15 @@ void detect_file_tokens(t_token **tokens)
         {
             if (ft_strcmp(previous->value, ">") == 0 || 
                 ft_strcmp(previous->value, ">>") == 0 || 
-                ft_strcmp(previous->value, "<") == 0)
+                ft_strcmp(previous->value, "<") == 0 ||
+				ft_strcmp(previous->value, "<<") == 0)
             {
                 current->type = file;
-				while(current->next && current->next->type == text && current->next->wait_more_args == true)
-				{
-					current->next->type = file;
-					current = current->next;
-				}
+				// while(current->next && current->next->type == text && current->next->wait_more_args == true)
+				// {
+				// 	current->next->type = file;
+				// 	current = current->next;
+				// }
             }
         }
         previous = current;
@@ -466,45 +467,46 @@ t_token *tokenize_input(char *line)
         else if (state == UNQUOTED && (ft_strchr("|<>", c) || buffer[0] == '|' || buffer[0] == '>' || buffer[0] == '<'))
         {
             // If we have content not starting with operators, tokenize it first
-            if (i > 0 && buffer[0] != '<' && buffer[0] != '>' && buffer[0] != '|')
-			{
-				buffer[i] = '\0';
-				if (!add_token_with_type(&tokens, buffer, &state, wait_more_args))
-				{
-					i = 0;
-					break;
-				}
-				i = 0;
-			}
+            // if (i > 0 && buffer[0] != '<' && buffer[0] != '>' && buffer[0] != '|') 
+			// {
+			// 	buffer[i] = '\0';
+			// 	if (!add_token_with_type(&tokens, buffer, &state, wait_more_args))
+			// 	{
+			// 		i = 0;
+			// 		break;
+			// 	}
+			// 	i = 0;
+			// }
             // Handle composite operators: << and >>
-            else if (i > 0 && buffer[0] == '<' && c == '<')
-            {
-                buffer[i++] = c;
-				if (!line[j + 1])
-				{
-					buffer[i] = '\0';
-                	if (!add_token_with_type(&tokens, buffer, &state, wait_more_args))
-                	{
-						i = 0;
-						break;
-					}
-                	i = 0;
-				}
-            }
-            else if (i > 0 && buffer[0] == '>' && c == '>')
-            {
-                buffer[i++] = c;
-				if (!line[j + 1])
-				{
-					buffer[i] = '\0';
-                	if (!add_token_with_type(&tokens, buffer, &state, wait_more_args))
-                	{
-						i = 0;
-						break;
-					}
-                	i = 0;
-				}
-            }
+            // else if (i > 0 && buffer[0] == '<' && c == '<')
+            // {
+            //     buffer[i++] = c;
+			// 	if (!line[j + 1])
+			// 	{
+			// 		buffer[i] = '\0';
+            //     	if (!add_token_with_type(&tokens, buffer, &state, wait_more_args))
+            //     	{
+			// 			i = 0;
+			// 			break;
+			// 		}
+            //     	i = 0;
+			// 	}
+            // }
+			///
+            // else if (i > 0 && buffer[0] == '>' && c == '>')
+            // {
+            //     buffer[i++] = c;
+			// 	if (!line[j + 1])
+			// 	{
+			// 		buffer[i] = '\0';
+            //     	if (!add_token_with_type(&tokens, buffer, &state, wait_more_args))
+            //     	{
+			// 			i = 0;
+			// 			break;
+			// 		}
+            //     	i = 0;
+			// 	}
+            // }
             // Handle < followed by non-<
             else if (i > 0 && buffer[0] == '<' && c != '<')
             {
@@ -529,20 +531,20 @@ t_token *tokenize_input(char *line)
                 i = 0;
             }
             // Handle pipe operator
-            else if (i > 0 && buffer[0] == '|' && c == '|')
-            {
-                buffer[i++] = c;
-				if (!line[j + 1])
-				{
-					buffer[i] = '\0';
-                	if (!add_token_with_type(&tokens, buffer, &state, wait_more_args))
-                	{
-						i = 0;
-						break;
-					}
-                	i = 0;
-				}
-            }
+            // else if (i > 0 && buffer[0] == '|' && c == '|')
+            // {
+            //     buffer[i++] = c;
+			// 	if (!line[j + 1])
+			// 	{
+			// 		buffer[i] = '\0';
+            //     	if (!add_token_with_type(&tokens, buffer, &state, wait_more_args))
+            //     	{
+			// 			i = 0;
+			// 			break;
+			// 		}
+            //     	i = 0;
+			// 	}
+            // }
             else if (i > 0 && buffer[0] == '|' && c != '|')
             {
                 buffer[i] = '\0';

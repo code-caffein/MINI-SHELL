@@ -41,6 +41,17 @@ typedef struct s_token {
     struct s_token *next;   // Next token in the list
 } t_token;
 
+typedef struct s_var
+{
+	 t_token *tokens;
+    char buffer[9999];
+    int i;
+    int j;
+	char c;
+    t_quote_state state;
+    bool has_heredoc;
+	bool wait_more_args;
+} t_var;
 /**
  * Redirection types
  */
