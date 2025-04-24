@@ -8,7 +8,6 @@
 #include "../includes/minishell.h"
 
 char *get_executable_path(char *str);
-char **extract_args(t_arg *arg);
 
 
 

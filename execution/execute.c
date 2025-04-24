@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 15:52:14 by aelbour           #+#    #+#             */
-/*   Updated: 2025/04/24 16:03:21 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/04/24 18:23:16 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,15 +61,25 @@ void execute_parent_cmds(int i, t_cmd *cmd)
 		ft_cd();
 }
 
-int get_a_child()
+void get_a_child(t_cmd *cmd, t_malloc **allocs)
 {
+	pid_t pid;
+	int i;
 
+	pid = fork();
+	if(pid > 0)
+		wait(pid, &i, 0);
+	else
+	{
+		if (execve(cmd->name, cmd->args, NULL) == -1)
+			printf("cant execute it\n");
+	}
 }
 
 int ft_execute(t_cmd *cmd, t_malloc **allocs)
 {
-	pid_t pid;
-	int  i;
+	int		i;
+
 	if(ft_strchr(cmd->name, '/'))
 	{
 		if(access(cmd->name, X_OK))
@@ -81,7 +91,7 @@ int ft_execute(t_cmd *cmd, t_malloc **allocs)
 			}
 			else
 			{
-				
+				get_a_child(cmd, allocs);
 			}
 		}
 		else 
@@ -91,6 +101,7 @@ int ft_execute(t_cmd *cmd, t_malloc **allocs)
 	}
 	else
 	{
+		if()
 		
 	}
 }
