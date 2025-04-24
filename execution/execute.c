@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 15:52:14 by aelbour           #+#    #+#             */
-/*   Updated: 2025/04/24 20:04:05 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/04/24 21:08:27 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ char *get_executable_path(char *str)
 	while(paths[++i])
 	{
 		check = ft_strjoin(paths[i], ft_strjoin("/", str));
-		printf("path checked = %s\n", check);
+		// printf("path checked = %s\n", check);
 		if(!access(check, X_OK))
 			return(check);
 	}
@@ -54,9 +54,9 @@ void execute_parent_cmds(int i, t_cmd *cmd, t_malloc **allocs, t_env **env)
 	if(i == 1)
 		ft_export(cmd, allocs, env);
 	else if(i == 2)
-		ft_unset();
+		ft_unset(cmd, allocs, env);
 	else if(i == 3)
-		ft_exit(cmd, allocs, env);
+		ft_exit(cmd, allocs);
 	else if(i == 4)
 		ft_cd(cmd, allocs);
 }
@@ -68,7 +68,7 @@ void get_a_child(t_cmd *cmd, t_malloc **allocs)
 
 	pid = fork();
 	if(pid > 0)
-		wait(pid, &i, 0);
+		waitpid(pid, &i, 0);
 	else
 	{
 		if (execve(cmd->name, cmd->args, NULL) == -1)
@@ -83,9 +83,9 @@ void file_error_handler(char *path)
 	if(stat(path, &info) == 0)
 	{
 		if(S_ISDIR(info.st_mode) == true)
-			printf("%s :is a Directorie\n", path);
+			printf("%s: is a Directorie\n", path);
 		else
-			printf("permission denied");
+			printf("%s: permission denied\n", path);
 	}
 	else
 		printf("command not found\n");
@@ -100,12 +100,15 @@ int ft_execute(t_cmd *cmd, t_malloc **allocs, t_env *env)
 	execute_parent_cmds(i, cmd, allocs, &env);
 	if(ft_strchr(cmd->name, '/'))
 	{
-		if(access(cmd->name, X_OK))
+		if(access(cmd->name, X_OK) == 0)
 		{
 			get_a_child(cmd, allocs);
 		}
 		else 
-		file_error_handler(cmd->name);
+		{
+			file_error_handler(cmd->name);
+			exit(1);
+		}
 	}
 	else
 	{
@@ -128,9 +131,9 @@ int main(int argc, char **argv, char **envp)
 	(void)envp;
 
 	// Example command: ls -l
-	cmd.name = "ls";
+	cmd.name = "/usr/bin";
 	cmd.args = malloc(sizeof(char *) * 3);
-	cmd.args[0] = "ls";
+	cmd.args[0] = "/usr/bin";
 	cmd.args[1] = "-l";
 	cmd.args[2] = NULL;
 
