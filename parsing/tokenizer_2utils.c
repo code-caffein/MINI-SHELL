@@ -1,6 +1,6 @@
 #include "he.h"
 
-int ft_fill_1(t_token *tokens, char *buffer, t_quote_state *state)
+int ft_fill_1(t_token **tokens, char *buffer, t_quote_state *state)
 {
 	if (buffer[0] == '>' || buffer[0] == '<' || buffer[0] == '|')
 	{
@@ -28,11 +28,14 @@ int ft_fill_2(t_v *v, char *buffer, t_quote_state *state)
 }
 void init_variable(t_v *v)
 {
-	v->new_token = NULL;
-	v->current = NULL;
-	v->buff = NULL;
-	v->joined = NULL;
-	v->new_buff = NULL;
+    if (!v)
+        return;
+        
+    v->new_token = NULL;
+    v->current = NULL;
+    v->buff = NULL;
+    v->joined = NULL;
+    v->new_buff = NULL;
 }
 t_token *create_new_token(t_token **new_token, char *new_buff)
 {
@@ -98,20 +101,18 @@ void fill1_add_token(t_v *v)
 {
 	if (v->buff)
     	{
-    		v->joined = ft_strjoin(v->new_token->value, v->buff);
+    		char *temp_value = v->new_token->value;
+        	v->joined = ft_strjoin(temp_value, v->buff);
         	free(v->buff);
         	v->buff = v->joined;
     	}
     	else
         	v->buff = ft_strdup(v->new_token->value);
     	if (!v->buff)
-    	{
         	free(v->new_token->value);
-        	free(v->new_token);
-        	return 0;
-    	}
-    	free(v->new_token->value);
+    	// free(v->new_token->value);
     	free(v->new_token);
+		v->new_token = NULL;
 }
 
 void add_token(t_v *v, t_token **tokens, bool wait_more_args)
@@ -144,22 +145,31 @@ void add_token(t_v *v, t_token **tokens, bool wait_more_args)
 
 int add_token_with_type(t_token **tokens, char *buffer, t_quote_state *state, bool wait_more_args)
 {
-	t_v *v;
 
-	if (buffer[0] == '\0')
+	t_v *v = malloc(sizeof(t_v));
+	if (!v)
 		return 0;
-	if (ft_fill_1(*tokens, buffer, state) == 0)
-		return 0;//syntax error
+	// printf("buffer = %s\n", buffer);/////
+	init_variable(v);
+	if (buffer[0] == '\0')
+		return (free(v),0);
+	
+	if (!ft_fill_1(tokens, buffer, state))
+		return (free(v),0);//syntax error
 	if (!ft_fill_2(v, buffer, state))
-		return 0;//malloc failed
+		return (free(v),0);//malloc failed
 	v->new_token = create_new_token(&v->new_token, v->new_buff);
 	if (!v->new_token)
 	{
 		free(v->new_buff);
-		return 0;//malloc failed
+		return (free(v),0);//malloc failed
 	}
 	red_pip_txt(v, state);
-	expand_variables(v->new_token, state);
+	char *expanded_value = expand_env_vars(v->new_buff, state);
+	v->new_buff = expanded_value;
+
+	// expand_variables(v->new_token, state);
 	add_token(v, tokens, wait_more_args);
+	free(v);	
 	return 1;
 }

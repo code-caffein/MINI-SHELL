@@ -7,7 +7,10 @@ int fill1_fourth(t_var *v, char *line)
 	{
 		v->buffer[v->i] = '\0';
 		if (!add_token_with_type(&v->tokens, v->buffer, &v->state, v->wait_more_args))
+		{
+			v->i = 0;
 			return (0);
+		}
 		v->i = 0;
 		return (1);
 	}
@@ -18,12 +21,15 @@ int fill1_fourth(t_var *v, char *line)
 		{
 			v->buffer[v->i] = '\0';
 			if (!add_token_with_type(&v->tokens, v->buffer, &v->state, v->wait_more_args))
+			{
+				v->i = 0;
 				return (0);
+			}
 			v->i = 0;
 			return (1);
 		}
-	}else
-		return (2);
+	}
+	return (2);
 }
 int fill2_fourth(t_var *v, char *line)
 {
@@ -34,7 +40,10 @@ int fill2_fourth(t_var *v, char *line)
 		{
 			v->buffer[v->i] = '\0';
 			if (!add_token_with_type(&v->tokens, v->buffer, &v->state, v->wait_more_args))
+			{
+				v->i = 0;
 				return (0);
+			}
 			v->i = 0;
 			return (1);
 		}
@@ -46,19 +55,24 @@ int fill2_fourth(t_var *v, char *line)
 		{
 			v->buffer[v->i] = '\0';
 			if (!add_token_with_type(&v->tokens, v->buffer, &v->state, v->wait_more_args))
+			{
+				v->i = 0;
 				return (0);
+			}
 			v->i = 0;
 			return (1);
 		}
 	}
-	else
-		return (2);
+	return (2);
 }
 int	fill_fill3_fourth(t_var *v)
 {
 	v->buffer[v->i] = '\0';
 	if (!add_token_with_type(&v->tokens, v->buffer, &v->state, v->wait_more_args))
+	{
+		v->i = 0;
 		return (0);
+	}
 	v->i = 0;
 	return (1);
 }
@@ -69,7 +83,10 @@ int fill3_fourth(t_var *v)
 	{
 		v->buffer[v->i] = '\0';
 		if (!add_token_with_type(&v->tokens, v->buffer, &v->state, v->wait_more_args))
+		{
+			v->i = 0;
 			return (0);
+		}
 		v->i = 0;
 		return (1);
 	}
@@ -77,7 +94,10 @@ int fill3_fourth(t_var *v)
 	{
 		v->buffer[v->i] = '\0';
 		if (!add_token_with_type(&v->tokens, v->buffer, &v->state, v->wait_more_args))
+		{
+			v->i = 0;
 			return (0);
+		}
 		v->i = 0;
 		return (1);
 	}

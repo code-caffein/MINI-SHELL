@@ -297,8 +297,7 @@ void free_token_list(t_token *start)
         next = current->next;
         if (current->value)
 			free(current->value);
-		if (current)
-        	free(current);
+        free(current);
         current = next;
     }
 }
@@ -324,7 +323,8 @@ int validate_syntax(t_token **tokens)
     if (previous->type == pip || previous->type == red)
     {
         previous->syn_err = true;
-        free_token_list(previous->next);
+		if (previous->next)
+        	free_token_list(previous->next);
         previous->next = NULL;
         return 0;
     }
@@ -336,7 +336,8 @@ int validate_syntax(t_token **tokens)
         if (current->type == pip && (previous->type == pip || previous->type == red))
         {
             previous->syn_err = true;
-            free_token_list(previous->next);
+			// if (previous->next)
+			free_token_list(previous->next);
             previous->next = NULL;
             return 0;
         }
@@ -345,6 +346,7 @@ int validate_syntax(t_token **tokens)
         if (current->type == red && previous->type == red)
         {
             previous->syn_err = true;
+			// if (previous->next)
             free_token_list(previous->next);
             previous->next = NULL;
             return 0;
@@ -379,8 +381,10 @@ int validate_syntax(t_token **tokens)
     if (previous->type == pip || previous->type == red || previous->syn_err)
     {
         previous->syn_err = true;
-        free_token_list(previous->next);
-        previous->next = NULL;
+		// if (previous->next)
+		// 	free_token_list(previous->next);
+        // // free_token_list(previous->next);
+        // previous->next = NULL;
         return 0;
     }
     
