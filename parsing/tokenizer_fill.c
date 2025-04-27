@@ -10,8 +10,8 @@ void first_condtion(t_var *v)
 		v->buffer[v->i] = '\0';
 		if (!add_token_with_type(&v->tokens, v->buffer, &v->state, v->wait_more_args))
 		{
-			free_token_list(v->tokens);
-			return NULL;
+			free_token_list(&v->tokens);
+			return ;
 		}
 		v->wait_more_args = false;
 		v->i = 0;

@@ -43,8 +43,8 @@ typedef struct s_token {
 
 typedef struct s_var
 {
-	 t_token *tokens;
-    char buffer[9999];
+	t_token *tokens;
+    char *buffer;
     int i;
     int j;
 	char c;
@@ -59,7 +59,7 @@ typedef struct s_v
 	t_token	*current;
 	char	*buff;
 	char	*joined;
-	char 	*new_buff
+	char 	*new_buff;
 } t_v;
 /**
  * Redirection types
@@ -136,8 +136,9 @@ size_t  ft_strlen(const char *s);
 char    **ft_split(char const *s, char c);
 char    *ft_strdup(const char *s);
 char    *ft_strchr(const char *s, int c);
-int     ft_isspace(char c);
+int		ft_isspace(int c);
 char	*ft_strjoin(const char *s1, const char *s2);
+// int		ft_isspace(int c);
 // void		ft_bzero(void *s, size_t n);
 
 /*
@@ -163,7 +164,7 @@ int     validate_syntax(t_token **tokens);
 t_cmd   *parse_tokens(t_token *tokens);
 
 
-void free_token_list(t_token *start);
+// void free_token_list(t_token *start);
 int is_token_separator(char c);
 int add_token_with_type(t_token **tokens, char *buffer, t_quote_state *state, bool wait_more_args);
 int check_operator_validity(char *buffer, t_quote_state *state);
@@ -173,12 +174,13 @@ void check_if_needs_expansion(t_token **tokens, t_quote_state state);
 /*
  * Memory management functions
  */
-void    free_token_list(t_token *start);
+void    free_token_list(t_token **start);
 void    free_command(t_cmd *cmd);
 void    free_commands(t_cmd *commands);
 
 
-int expand_variables(t_token *tokens, t_quote_state *state);
+// int expand_variables(t_token *tokens, t_quote_state *state);
+char *expand_env_vars(char *str, t_quote_state *state);
 
 // char		*handle_quotes(char *buffer, t_quote_state *state);
 // int			create_new_token(t_token **new_token, char *new_buff);
@@ -191,7 +193,7 @@ int	second_condition (t_var *v);
 int third_condition(t_var *v);
 int Fourth_condition(t_var *v, char *line);
 int fill1_fourth(t_var *v, char *line);
-int fill2_fourth(t_var *v);
+int fill2_fourth(t_var *v, char *line);
 int fill3_fourth(t_var *v);
 int fill_fill3_fourth(t_var *v);
 int fifth_condition(t_var *v);

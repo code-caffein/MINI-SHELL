@@ -8,55 +8,64 @@ static void init_var(t_var *v)
 	v->state = UNQUOTED;
 	v->has_heredoc = false;
 	v->wait_more_args = false;
+	v->buffer = malloc(sizeof(char) * 2000);
+	if (!v->buffer)
+		return ;
 	v->buffer[0] = '\0';
 	v->tokens = NULL;
 }
 
 t_token *fill_tokenize(t_var *v)
 {
-	bool has_syntax_error;
+	bool has_syntax_error = false;
 	t_token *curr;
-	t_token *prev;
+	// t_token *prev;
 
 	detect_file_tokens(&v->tokens);
 	validate_syntax(&v->tokens);
 	curr = v->tokens;
-	prev = NULL;
+	// prev = NULL;
 	while (curr)
 	{
-		if (curr->heredoc)
-		{
-			v->has_heredoc = true;
-			break;
-		}
 		if (curr->syn_err)
 		{
 			has_syntax_error = true;
 			break;
 		}
-		prev = curr;
+		if (curr->heredoc)
+		{
+			v->has_heredoc = true;
+			// break;
+		}
+		// prev = curr;
 		curr = curr->next;
 	}
-	if (prev && prev->syn_err && v->has_heredoc)
+	if (has_syntax_error && v->has_heredoc)
 		return (v->tokens);
-	if (prev && prev->syn_err && !v->has_heredoc)
+	
+
+	if (has_syntax_error && !v->has_heredoc)
 	{
-		free_token_list(v->tokens);
+		free_token_list(&v->tokens);
+		printf("Syntax error:\n");
 		return (NULL);//exit !!!!!! 
 	}
-	if (v->i > 0 && v->state != UNQUOTED)
+	if (v->state != UNQUOTED)
 	{
-		free_token_list(v->tokens);
+		free_token_list(&v->tokens);
+		printf("syntax error quot:\n");
 		return (NULL);
 	}
-	if (prev && !prev->syn_err)
+	if (has_syntax_error)
 		return (v->tokens);
 	return (NULL);
 }
-
+//v->state == UNQUOTED && !is_token_separator(v->c) && (line[v->j + 1] == '\'' || line[v->j + 1] == '"' || !is_token_separator(line[v->j+1])))
 t_token *tokenize_input(char *line)
 {
-	t_var *v;
+	t_var *v = malloc(sizeof(t_var));
+	if (!v)
+		return (NULL);
 
 	init_var(v);
 	while (line[++v->j])
@@ -64,8 +73,8 @@ t_token *tokenize_input(char *line)
 		v->c = line[v->j];
 		if (v->state == UNQUOTED && (v->c == '\'' || v->c == '"'))
 			first_condtion(v);
-		else if ((v->state == SINGLE_QUOTED && v->c == '\'' && (line[v->j + 1] != '\'' && line[v->j  + 1] != '"' && is_token_separator(line[v->j + 1]) || !line[v->j + 1])) || 
-                (v->state == DOUBLE_QUOTED && v->c == '"'  && (line[v->j + 1] != '\'' && line[v->j  + 1] != '"' && is_token_separator(line[v->j + 1]) || !line[v->j + 1])))
+		else if ((v->state == SINGLE_QUOTED && v->c == '\'' && (line[v->j + 1] != '\'' && line[v->j  + 1] != '"' && (is_token_separator(line[v->j + 1]) || !line[v->j + 1]))) || 
+                (v->state == DOUBLE_QUOTED && v->c == '"'  && (line[v->j + 1] != '\'' && line[v->j  + 1] != '"' && (is_token_separator(line[v->j + 1]) || !line[v->j + 1]))))
 		{
 			if (!second_condition(v))
 				break;
@@ -77,18 +86,45 @@ t_token *tokenize_input(char *line)
 				break;
 		}
 		else if (v->state == UNQUOTED && (ft_strchr("|<>", v->c) || v->buffer[0] == '|' || v->buffer[0] == '>' || v->buffer[0] == '<'))
+		{
 			if (!Fourth_condition(v, line))
 				break;
+		}
 		else if (v->state == UNQUOTED && ft_isspace(v->c))
+		{
 			if (!fifth_condition(v))
 				break;
+		}
 		else
 			v->buffer[v->i++] = v->c;
 	}
 	if (!sixth_condition(v))
 	{
-		free_token_list(v->tokens);
-		return NULL;
+		free_token_list(&v->tokens);
+		return(free(v),NULL);
 	}
-	return (fill_tokenize(v));
+	t_token *result = fill_tokenize(v);
+	free(v);
+	return (result);
+}
+int main(void)
+{
+    char *input;
+
+    while (1)
+    {
+        input = readline("minishell> ");
+        if (!input)
+        {
+            printf("exit\n");
+            break;
+        }
+		
+        if (*input != '\0')
+            add_history(input);
+		tokenize_input(input);
+        free(input);
+    }
+
+    return 0;
 }

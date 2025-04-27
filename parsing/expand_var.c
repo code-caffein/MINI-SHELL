@@ -27,13 +27,14 @@ char *expand_env_vars(char *str, t_quote_state *state)
     
     while (str[i])
     {
-        if (str[i] == '$' && str[i+1] && state != SINGLE_QUOTED)
+        if (str[i] == '$' && str[i+1] && *state != SINGLE_QUOTED)
         {
             i++;
             if (str[i] == '?')
             {
                 char c;
-                if(!exit_status)
+				int a = 0;
+                if(!a)// exit status not a (a just for test)!!!!!!!
 					c = '0';
 				else
 					c = '1';
@@ -71,22 +72,22 @@ char *expand_env_vars(char *str, t_quote_state *state)
     return ft_strdup(result);
 }
 
-int expand_variables(t_token *tokens, t_quote_state *state)
-{
-	t_token *current = tokens;
+// int expand_variables(t_token *tokens, t_quote_state *state)
+// {
+// 	t_token *current = tokens;
 
-	while (current)
-	{
-        if (current->type == text)
-        {
-            char *expanded = expand_env_vars(current->value, state);
-            if (!expanded)
-                return 0; 
-            free(current->value);
-            current->value = expanded;
-        }
-        current = current->next;
-    }
-    return (1);
-}
+// 	while (current)
+// 	{
+//         if (current->type == text)
+//         {
+//             char *expanded = expand_env_vars(current->value, state);
+//             if (!expanded)
+//                 return 0; 
+//             free(current->value);
+//             current->value = expanded;
+//         }
+//         current = current->next;
+//     }
+//     return (1);
+// }
 
