@@ -113,7 +113,7 @@ void handle_redirection(t_cmd *cmd, t_token *token)
 	{
 		if (redir_type == REDIR_HEREDOC)
 		{
-    		int fd = open("tmp_f_i_l_e", O_WRONLY | O_CREAT | O_TRUNC, 0644);
+    		int fd = open("t_m_p_f_i_l_e", O_WRONLY | O_CREAT | O_TRUNC, 0644);
    			if (fd < 0)
     		{
        			perror("open");
@@ -139,7 +139,7 @@ void handle_redirection(t_cmd *cmd, t_token *token)
     		}
     		close(fd);
     
-    		redir->fd = open("tmp_f_i_l_e", O_RDONLY);
+    		redir->fd = open("t_m_p_f_i_l_e", O_RDONLY);
     		if (redir->fd < 0)
     		{
         		perror("open heredoc tmp");
