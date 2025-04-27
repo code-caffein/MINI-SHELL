@@ -6,33 +6,32 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/21 14:28:51 by aelbour           #+#    #+#             */
-/*   Updated: 2025/04/24 19:56:10 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/04/26 20:13:21 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "execution.h"
 
-int var_action(char *s, t_env *env)
+int var_action(char *key ,char *value, t_env *env)
 {
-	int i = 0;
-	char *key = ft_strchr(s, '=');
-	if(!key)
+	
+	if(is_key_valid(key))
+		return(3);
+	if(!value)
 	{
-		if(is_var_exist(s, env))
+		if(is_var_exist(key , env))
 			return(0);// do nothing since var exist
 		else
-			return(1);// declare it into var envs
+			return(1);// declare it into export var
 	}
 	else
 	{
-		if(!ft_strlen(key))
-			return(2);//empty the variable
+		if(is_var_exist(key , env))
+			return(2);// update its value
 		else
-			return(3);// assign it to NEW VALUE
+			return(1);// declare it into export with value 
 	}
-	 
 }
-
 
 t_env	*get_bef_node(t_env *lst, t_env *node)
 {
@@ -48,22 +47,35 @@ t_env	*get_bef_node(t_env *lst, t_env *node)
 	return (ptr);
 }
 
-int is_var_exist(char *key, t_env *vars)
+int is_var_exist(char *key, t_env *env)
 {
-	while (vars)
+	while (env)
 	{
-		if(!ft_strcmp(key, vars->key))
+		if(!ft_strcmp(key, env->key))
 			return(1);
-		vars = vars->next;
+		env = env->next;
 	}
 	return(0);
+}
+
+void update_var(t_env *env, char *new_value ,char *key)
+{
+	while(env)
+	{
+		if(!ft_strcmp(env->key, key))
+		{
+			env->value = new_value;
+			break;
+		}
+		env = env->next;
+	}
 }
 
 void remove_variable(char *key, t_env **vars)
 {
 	t_env *p;
 	t_env *helper;
-	
+
 	p = (*vars);
 	while (p)
 	{
@@ -85,15 +97,36 @@ void remove_variable(char *key, t_env **vars)
 
 void *push_to_env(t_env **head, char *key, char *value)
 {
-	void *pointer;
+	t_env *pointer;
 	t_env *new;
 
-	new = malloc(sizeof(t_malloc));
+	new = malloc(sizeof(t_env));
 	if(!new)
 		return(printf("var allocation error !"), NULL);
-	new->next = (*head);
+	new->next = NULL;
 	new->key = key;
 	new->value = value;
-	(*head) = new;
+	if(!(*head))
+		(*head) = new;
+	else
+	{
+		pointer = (*head);
+		while(pointer ->next)			
+			pointer = pointer->next;
+		pointer->next = new;
+	}
 	return(pointer);
+}
+
+int is_key_valid(char *key)
+{
+	int i = 0;
+	if(!ft_isalpha(key[0]) && key[0] != '_')
+		return(0);
+	while(key[++i])
+	{
+		if(!ft_isalnum(key[i]) && key[0] != '_')
+			return(0);
+	}
+	return(1);
 }

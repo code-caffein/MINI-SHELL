@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 15:33:05 by aelbour           #+#    #+#             */
-/*   Updated: 2025/04/17 15:33:22 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/04/26 12:35:04 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,4 +41,9 @@ void clean_up(t_malloc **head)
 		(*head) = nxt;
 	}
 	(*head) = NULL;
+}
+
+void free_ptr()
+{
+	
 }

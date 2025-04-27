@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 15:52:14 by aelbour           #+#    #+#             */
-/*   Updated: 2025/04/24 21:08:27 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/04/26 19:42:40 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,95 +49,127 @@ int is_parent_builtins(char *str)
 	return(0);
 }
 
-void execute_parent_cmds(int i, t_cmd *cmd, t_malloc **allocs, t_env **env)
+int execute_parent_cmds(int i, t_cmd *cmd, t_malloc **allocs, t_env **env, int *g_exit_status)
 {
+
 	if(i == 1)
-		ft_export(cmd, allocs, env);
+		*g_exit_status=ft_export(cmd, allocs, env);
 	else if(i == 2)
-		ft_unset(cmd, allocs, env);
+		*g_exit_status=ft_unset(cmd, allocs, env);
 	else if(i == 3)
-		ft_exit(cmd, allocs);
+		ft_exit(allocs, *g_exit_status);
 	else if(i == 4)
-		ft_cd(cmd, allocs);
+		*g_exit_status=ft_cd(cmd, allocs);
 }
 
-void get_a_child(t_cmd *cmd, t_malloc **allocs)
+void get_a_child(int *g_exit_status, t_cmd *cmd, t_malloc **allocs, t_env **env)
 {
 	pid_t pid;
-	int i;
+	int status;
 
 	pid = fork();
 	if(pid > 0)
-		waitpid(pid, &i, 0);
+	{
+		waitpid(pid, &status, 0);
+		if (WIFEXITED(status))
+			*g_exit_status = WEXITSTATUS(status);
+		else if (WIFSIGNALED(status))
+			*g_exit_status = 128 + WTERMSIG(status);
+	}
 	else
 	{
-		if (execve(cmd->name, cmd->args, NULL) == -1)
-			printf("cant execute it\n");
+		if(ft_strcmp("env", cmd->name))
+		{
+			ft_env(allocs, env);
+			exit(0);
+		}
+		else if (execve(cmd->name, cmd->args, NULL) == -1)
+			printf("%s: permission denied\n", cmd->name);
 	}
 }
 
-void file_error_handler(char *path)
+int file_error_handler(char *path)
 {
 	struct stat info;
 
 	if(stat(path, &info) == 0)
-	{
+	{ 
 		if(S_ISDIR(info.st_mode) == true)
 			printf("%s: is a Directorie\n", path);
+		else if(access(path, X_OK) == 0)
+			return(1);
 		else
 			printf("%s: permission denied\n", path);
 	}
 	else
-		printf("command not found\n");
+		printf("%s: No such file or directory\n", path);
+	return(0);
 }
 
 int ft_execute(t_cmd *cmd, t_malloc **allocs, t_env *env)
 {
 	int		i;
 	char	*path;
+	int g_exit_status;
+
 	i = is_parent_builtins(cmd->name);
 	if(i)
-	execute_parent_cmds(i, cmd, allocs, &env);
-	if(ft_strchr(cmd->name, '/'))
+		g_exit_status = execute_parent_cmds(i, cmd, allocs, &env, g_exit_status);
+	else if(ft_strchr(cmd->name, '/'))
 	{
-		if(access(cmd->name, X_OK) == 0)
-		{
-			get_a_child(cmd, allocs);
-		}
-		else 
-		{
-			file_error_handler(cmd->name);
-			exit(1);
-		}
+		if(file_error_handler(cmd->name))
+			get_a_child(&g_exit_status ,cmd, allocs, &env);
 	}
 	else
 	{
 		path = get_executable_path(cmd->name);
 		if (path)
-			if (execve(path, cmd->args, NULL) == -1)
-				printf("cant execute it\n");
+		{
+			cmd->name = path;
+			cmd->args[0] = path;
+			get_a_child(&g_exit_status, cmd, allocs, &env);
+		}
 		else
-			printf("command not found\n");
+		{
+			printf("%s: command not found\n", cmd->name);
+		}
 	}
+	return(1);
 }
 
-int main(int argc, char **argv, char **envp)
+int main(void)
 {
-	t_cmd		cmd;
-	t_malloc	*allocs = NULL;
-	t_env *env;
+	t_env *env = NULL;      // your environment linked list
+	t_malloc *allocs = NULL; // your malloc tracker
+	t_cmd cmd;               // fake command struct
+	char *args1[] = {"export", "a=hello", "b=world", NULL};
+	char *args2[] = {"export", "a", NULL};
+	char *args3[] = {"export", NULL};
+	char *args4[] = {"export", "aymane=", NULL};
+	char *args5[] = {"export", "elbour", NULL};
 
-	(void)argc;
-	(void)envp;
+	// First command: export a=hello b=world
+	cmd.args = args1;
+	ft_export(&cmd, &allocs, &env);
+	printf("\n");
 
-	// Example command: ls -l
-	cmd.name = "/usr/bin";
-	cmd.args = malloc(sizeof(char *) * 3);
-	cmd.args[0] = "/usr/bin";
-	cmd.args[1] = "-l";
-	cmd.args[2] = NULL;
+	// Second command: export a (no assignment)
+	cmd.args = args2;
+	ft_export(&cmd, &allocs, &env);
+	printf("\n");
 
-	ft_execute(&cmd, &allocs, env);
+	cmd.args = args4;
+	ft_export(&cmd, &allocs, &env);
+	printf("\n");
 
-	return (0);
+	cmd.args = args5;
+	ft_export(&cmd, &allocs, &env);
+	printf("\n");
+	
+	// Third command: export (no args, should print all)
+	cmd.args = args3;
+	ft_export(&cmd, &allocs, &env);
+	printf("\n");
+
+	// Bonus: you can add more tests here if you want
 }
