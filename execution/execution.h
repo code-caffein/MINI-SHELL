@@ -4,6 +4,7 @@
 
 #include<stdio.h> 
 #include<unistd.h> 
+#include<string.h> 
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/wait.h>
@@ -24,7 +25,11 @@ int		is_var_exist(char *key, t_env *vars);
 void	remove_variable(char *key, t_env **vars);
 void	*push_to_env(t_env **head, char *key, char *value);
 void	update_var(t_env *var, char *new_value ,char *key);
-int is_key_valid(char *key);
+int		is_key_valid(char *key);
+void	ft_putstr_fd(char *s, int fd);
+void	cd_error(char *path);
+void	cmd_file_error(char *path, char *msg);
+void execve_error(char *cmd);
 
 
 

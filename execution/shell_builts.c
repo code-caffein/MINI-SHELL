@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 11:46:22 by aelbour           #+#    #+#             */
-/*   Updated: 2025/04/26 21:02:34 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/04/27 14:30:00 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,22 +20,14 @@ int	ft_cd(t_cmd *cmd, t_malloc **aloc)
 		return(1);
 	else if(stat(cmd->args[1], &st) != 0)
 	{
-		if(errno == ENOENT)
-			printf("cd: no such file or directory: %s\n", cmd->args[1]);
-		if(errno == EACCES)
-			printf("cd: permission denied: %s\n", cmd->args[1]);
+		cd_error(cmd->args[1]);
 		return(1);
 	}
 	else
 	{
-		if(S_ISDIR(st.st_mode))
+		if(chdir(cmd->args[1]) == -1)
 		{
-			if(chdir(cmd->args[1]) == -1);
-				
-		}
-		else
-		{
-			printf("cd: not a directory: %s\n", cmd->args[1]);
+			cd_error(cmd->args[1]);
 			return(1);
 		}
 	}
@@ -59,6 +51,7 @@ int	ft_export(t_cmd *cmd, t_malloc **aloc, t_env **env)
 		if(value)
 			value++;
 		check = var_action(key, value, *env);
+		// printf("arg=%i key=|%s| value=|%s| check=%i\n", i, key, value, check);
 		if(check == 1)
 			push_to_env(env, key, value);
 		else if(check == 2)
@@ -66,7 +59,9 @@ int	ft_export(t_cmd *cmd, t_malloc **aloc, t_env **env)
 		else if(check == 3)
 		{
 			status = 1;
-	 		printf("minishell: export: `%s': not a valid identifier\n", key);
+			ft_putstr_fd("minishell: export: `", 2);
+			ft_putstr_fd(key, 2);
+			ft_putstr_fd("': not a valid identifier\n", 2);
 		}
 	}
 	if(i == 1)
@@ -107,7 +102,9 @@ int	ft_unset(t_cmd *cmd, t_malloc **aloc, t_env **env)
 			remove_variable(cmd->args[i], env);
 		if(!is_key_valid(cmd->args[i]))
 		{
-			printf("minishell: unset: `%s': not a valid identifier\n", cmd->name[i]);
+			ft_putstr_fd("minishell: unset: `", 2);
+			ft_putstr_fd(cmd->args[i], 2);
+			ft_putstr_fd("': not a valid identifier\n", 2);
 			status = 1;
 		}
 	}
@@ -116,7 +113,7 @@ int	ft_unset(t_cmd *cmd, t_malloc **aloc, t_env **env)
 
 void	ft_exit(t_malloc **aloc, int status)
 {
-	clean_up(malloc);
+	clean_up(aloc);
 	exit(status);
 }
 

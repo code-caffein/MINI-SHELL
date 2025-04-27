@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/21 14:28:51 by aelbour           #+#    #+#             */
-/*   Updated: 2025/04/26 20:13:21 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/04/27 11:54:08 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,7 @@
 
 int var_action(char *key ,char *value, t_env *env)
 {
-	
-	if(is_key_valid(key))
+	if(!is_key_valid(key))
 		return(3);
 	if(!value)
 	{

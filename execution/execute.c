@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 15:52:14 by aelbour           #+#    #+#             */
-/*   Updated: 2025/04/26 19:42:40 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/04/27 14:35:45 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,17 +49,16 @@ int is_parent_builtins(char *str)
 	return(0);
 }
 
-int execute_parent_cmds(int i, t_cmd *cmd, t_malloc **allocs, t_env **env, int *g_exit_status)
+void	execute_parent_cmds(int i, t_cmd *cmd, t_malloc **allocs, t_env **env, int *g_exit_status)
 {
-
 	if(i == 1)
-		*g_exit_status=ft_export(cmd, allocs, env);
+		*g_exit_status = ft_export(cmd, allocs, env);
 	else if(i == 2)
-		*g_exit_status=ft_unset(cmd, allocs, env);
+		*g_exit_status = ft_unset(cmd, allocs, env);
 	else if(i == 3)
 		ft_exit(allocs, *g_exit_status);
 	else if(i == 4)
-		*g_exit_status=ft_cd(cmd, allocs);
+		*g_exit_status = ft_cd(cmd, allocs);
 }
 
 void get_a_child(int *g_exit_status, t_cmd *cmd, t_malloc **allocs, t_env **env)
@@ -78,98 +77,110 @@ void get_a_child(int *g_exit_status, t_cmd *cmd, t_malloc **allocs, t_env **env)
 	}
 	else
 	{
-		if(ft_strcmp("env", cmd->name))
+		if(!ft_strcmp("env", cmd->name))
 		{
 			ft_env(allocs, env);
 			exit(0);
 		}
 		else if (execve(cmd->name, cmd->args, NULL) == -1)
-			printf("%s: permission denied\n", cmd->name);
+			execve_error(cmd->name);
 	}
 }
 
 int file_error_handler(char *path)
 {
-	struct stat info;
+	struct stat	info;
 
-	if(stat(path, &info) == 0)
+	if (stat(path, &info) == 0)
 	{ 
-		if(S_ISDIR(info.st_mode) == true)
-			printf("%s: is a Directorie\n", path);
-		else if(access(path, X_OK) == 0)
-			return(1);
+		if (S_ISDIR(info.st_mode) == true)
+			cmd_file_error(path,"is a Directorie");
+		else if (access(path, X_OK) == 0)
+			return (1);
 		else
-			printf("%s: permission denied\n", path);
+			cmd_file_error(path,"permission denied");
 	}
 	else
-		printf("%s: No such file or directory\n", path);
-	return(0);
+		cmd_file_error(path,"No such file or directory");
+	return (0);
 }
 
-int ft_execute(t_cmd *cmd, t_malloc **allocs, t_env *env)
+void ft_execute(t_cmd *cmd, t_malloc **allocs, t_env **env, int *g_exit_status)
 {
 	int		i;
 	char	*path;
-	int g_exit_status;
 
 	i = is_parent_builtins(cmd->name);
-	if(i)
-		g_exit_status = execute_parent_cmds(i, cmd, allocs, &env, g_exit_status);
-	else if(ft_strchr(cmd->name, '/'))
+	if (i)
+		execute_parent_cmds(i, cmd, allocs, env, g_exit_status);
+	else if (ft_strchr(cmd->name, '/'))
 	{
-		if(file_error_handler(cmd->name))
-			get_a_child(&g_exit_status ,cmd, allocs, &env);
+		if (file_error_handler(cmd->name))
+			get_a_child(g_exit_status ,cmd, allocs, env);
 	}
 	else
 	{
 		path = get_executable_path(cmd->name);
+		// printf("executable path = %s\n", path);
 		if (path)
 		{
-			cmd->name = path;
+			if (ft_strcmp("env", cmd->name))
+				cmd->name = path;
 			cmd->args[0] = path;
-			get_a_child(&g_exit_status, cmd, allocs, &env);
+			get_a_child(g_exit_status, cmd, allocs, env);
 		}
 		else
-		{
-			printf("%s: command not found\n", cmd->name);
-		}
+			printf("minishell: %s: command not found\n", cmd->name);
 	}
-	return(1);
 }
 
 int main(void)
 {
-	t_env *env = NULL;      // your environment linked list
-	t_malloc *allocs = NULL; // your malloc tracker
-	t_cmd cmd;               // fake command struct
-	char *args1[] = {"export", "a=hello", "b=world", NULL};
-	char *args2[] = {"export", "a", NULL};
-	char *args3[] = {"export", NULL};
-	char *args4[] = {"export", "aymane=", NULL};
-	char *args5[] = {"export", "elbour", NULL};
-
-	// First command: export a=hello b=world
-	cmd.args = args1;
-	ft_export(&cmd, &allocs, &env);
-	printf("\n");
-
-	// Second command: export a (no assignment)
-	cmd.args = args2;
-	ft_export(&cmd, &allocs, &env);
-	printf("\n");
-
-	cmd.args = args4;
-	ft_export(&cmd, &allocs, &env);
-	printf("\n");
-
-	cmd.args = args5;
-	ft_export(&cmd, &allocs, &env);
-	printf("\n");
+	t_cmd cmd;
+	t_env *env;
+	int status;
 	
-	// Third command: export (no args, should print all)
-	cmd.args = args3;
-	ft_export(&cmd, &allocs, &env);
-	printf("\n");
+	status = 0;
+	// env = NULL;
+	// cmd.name = "cd";
+	// cmd.args = ft_split("cd testing", ' ');
+	// ft_execute(&cmd, NULL, &env, &status);
 
-	// Bonus: you can add more tests here if you want
+	// cmd.name = "pwd";
+	// cmd.args = ft_split("pwd", ' ');
+	// ft_execute(&cmd, NULL, &env, &status);
+
+	// cmd.name = "t/bin/ls";
+	// cmd.args = ft_split("t/bin/ls -la", ' ');
+	// ft_execute(&cmd, NULL, &env, &status);
+
+	cmd.name = "./includes/";
+	cmd.args = ft_split("./includes/", ' ');
+	ft_execute(&cmd, NULL, &env, &status);
+
+	// cmd.name = "export";
+	// cmd.args = ft_split("export aymane test=hh", ' ');
+	// ft_execute(&cmd, NULL, &env, &status);
+
+	// cmd.name = "export";
+	// cmd.args = ft_split("export", ' ');
+	// ft_execute(&cmd, NULL, &env, &status);
+
+	// cmd.name = "unset";
+	// cmd.args = ft_split("unset elbour@@", ' ');
+	// ft_execute(&cmd, NULL, &env, &status);
+
+	// // printf("exit status %i\n", status);
+	// cmd.name = "exit";
+	// cmd.args = ft_split("exit", ' ');
+	// ft_execute(&cmd, NULL, &env, &status);
+
+	// cmd.name = "export";
+	// cmd.args = ft_split("export", ' ');
+	// ft_execute(&cmd, NULL, &env, &status);
+
+	// cmd.name = "env";
+	// cmd.args = ft_split("env", ' ');
+	// ft_execute(&cmd, NULL, &env, &status);
+	return(status);
 }
