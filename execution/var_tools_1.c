@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 10:55:49 by aelbour           #+#    #+#             */
-/*   Updated: 2025/04/28 12:28:39 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/04/28 16:39:32 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,4 +55,17 @@ char	**keys_to_2darray(t_env * env, int  type)
 	}
 	arr[i] = NULL;
 	return (arr);
+}
+
+	
+void append_value(t_env **env, char *key, char *value)
+{
+	key[ft_strlen(key) -1] = 0;
+	
+	if(!is_var_exist(key, *env))
+		push_to_env(env, key, value, 1);
+	else
+	{
+		update_var(*env, ft_strjoin(get_key_value(key, *env), value), key);
+	}
 }

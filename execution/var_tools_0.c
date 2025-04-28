@@ -6,30 +6,34 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/21 14:28:51 by aelbour           #+#    #+#             */
-/*   Updated: 2025/04/28 12:38:00 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/04/28 16:33:07 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "execution.h"
 
+int is_append_export(char *key)
+{
+	char *s = ft_strchr(key, '+');
+	if(s)
+	{
+		if(s[1] = '\0')
+			return(4);//appent opr requieed
+		else
+			return(3);// var identifier error
+	}
+}
+
 int var_action(char *key ,char *value, t_env *env)
 {
 	if(!is_key_valid(key))
-		return(3);
-	if(!value)
-	{
-		if(is_var_exist(key , env))
-			return(0);// do nothing since var exist
-		else
-			return(1);// declare it into export var
-	}
-	else
-	{
-		if(is_var_exist(key , env))
-			return(2);// update its value
-		else
-			return(1);// declare it into export with value 
-	}
+		return(3);//DISPAY SYNTAX ERROR
+	if(is_key_valid(key) == 2)
+		return(4);//APPEND THE NEW VALUE
+	if(is_var_exist(key , env) && value)
+		return(2);// update its value
+	else if (!is_var_exist(key , env))
+		return(1);// declare it into export with value 
 }
 
 t_env	*get_bef_node(t_env *lst, t_env *node)
@@ -101,8 +105,13 @@ int is_key_valid(char *key)
 		return(0);
 	while(key[++i])
 	{
-		if(!ft_isalnum(key[i]) && key[0] != '_')
-			return(0);
+		if(!ft_isalnum(key[i]) && key[i] != '_')
+		{
+			if(key[i] == '+' &&  key[i+1] == '\0')
+				return(2);
+			else
+				return(0);
+		}
 	}
 	return(1);
 }

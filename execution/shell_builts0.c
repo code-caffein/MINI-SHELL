@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 11:46:22 by aelbour           #+#    #+#             */
-/*   Updated: 2025/04/28 15:06:02 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/04/28 16:26:30 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,8 @@ int	ft_export(t_cmd *cmd, t_malloc **aloc, t_env **env)
 		if(check == 1)
 			push_to_env(env, key, value, 1);
 		if(check == 2)
+			update_var(*env, value, key);
+		if(check == 4)
 			update_var(*env, value, key);
 		if(check == 3)
 		{
