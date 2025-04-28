@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 15:33:05 by aelbour           #+#    #+#             */
-/*   Updated: 2025/04/27 11:46:31 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/04/28 10:53:42 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,25 @@ void clean_up(t_malloc **head)
 	(*head) = NULL;
 }
 
-void free_ptr()
+void free_ptr(t_malloc **head, void *addr)
 {
-	
+    t_malloc *ptr = *head;
+    t_malloc *previous = NULL;
+
+    while (ptr)
+    {
+        if (ptr->ptr == addr)
+        {
+            if (previous)
+                previous->next = ptr->next;
+            else
+                *head = ptr->next;
+            free(ptr->ptr);
+            free(ptr);
+            return;
+        }
+        previous = ptr;
+        ptr = ptr->next;
+    }
 }
+

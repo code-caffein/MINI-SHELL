@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 15:55:09 by aelbour           #+#    #+#             */
-/*   Updated: 2025/04/17 15:56:42 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/04/28 14:59:14 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,9 @@ char	*ft_strdup(const char *s1)
 	char	*c;
 	size_t	i;
 	size_t	l;
-
+	
+	if(!s1)
+		return(NULL);
 	l = ft_strlen((char *) s1);
 	i = 0;
 	c = (char *) malloc(l + 1);

@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 15:34:46 by aelbour           #+#    #+#             */
-/*   Updated: 2025/04/26 20:00:55 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/04/28 12:42:00 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,7 @@ typedef struct s_malloc {
 typedef struct s_env {
 	char *key;
 	char *value;
+	int type;				// 0 for envp // 1 for my vars
 	struct s_env *next;
 } t_env;
 
@@ -79,5 +80,10 @@ void *mmallocc(size_t size, t_malloc **head);
 int	ft_isalnum(unsigned char c);
 int	ft_isalpha(int c);
 int	ft_isdigit(int c);
+void	ft_putstr_fd(char *s, int fd);
+void swap_string(char **s1, char **s2);
+void	*push_to_env(t_env **head, char *key, char *value, int type);
+int count_env_nodes(t_env *env, int type);
+void push_envp(t_env **head ,char **envp);
 
 #endif

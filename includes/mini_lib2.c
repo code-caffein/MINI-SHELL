@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/26 19:55:09 by aelbour           #+#    #+#             */
-/*   Updated: 2025/04/27 12:13:37 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/04/28 11:34:31 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,4 +37,13 @@ void	ft_putstr_fd(char *s, int fd)
 {
 	if (s)
 		write(fd, s, ft_strlen(s));
+}
+
+void swap_string(char **s1, char **s2)
+{
+	char *s;
+
+	s = (*s2);
+	*s2 = *s1;	
+	*s1 = s;
 }
