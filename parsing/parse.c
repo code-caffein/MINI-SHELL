@@ -43,6 +43,17 @@ void add_argument(t_cmd *cmd, char *arg)
 
     if (cmd->arg_count == 0)
         cmd->name = ft_strdup(arg);
+	if (!cmd->name)
+	{
+		perror("malloc");
+		return;
+	}
+	// printf("name: %s\n", cmd->name);
+	// printf("arg_count: %d\n", cmd->arg_count);
+	// printf("arg_capacity: %d\n", cmd->arg_capacity);
+	//
+	// printf("arg: %s\n", arg);
+
     
     if (cmd->arg_count >= cmd->arg_capacity)
 	{
@@ -150,6 +161,8 @@ void handle_redirection(t_cmd *cmd, t_token *token)
 		}
 		else//input!!!
 			redir->fd = open(redir->file, O_RDONLY);
+		if (redir->fd < 0)
+		    perror("open");
         if (!cmd->in)
             cmd->in = redir;
 		else
@@ -164,7 +177,9 @@ void handle_redirection(t_cmd *cmd, t_token *token)
 		if (redir_type == REDIR_APPEND)
 			redir->fd = open(redir->file, O_WRONLY | O_CREAT | O_APPEND, 0644);
 		else//output!!!
-			redir->fd = open(redir->file, O_WRONLY | O_CREAT | O_TRUNC, 0644);;
+			redir->fd = open(redir->file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+		if (redir->fd < 0)
+		    perror("open");
         if (!cmd->out)
             cmd->out = redir;
         else
@@ -253,13 +268,13 @@ t_cmd *parse_tokens(t_token *tokens)
 	t_cmd *commands = NULL;
 	t_cmd *current_cmd = NULL;
 	t_token *current = tokens;
-    
 	commands = create_new_command();
 	if (!commands)
 	{
 		free_commands(commands);
 		return NULL;
 	}
+	
 	current_cmd = commands;
 	while (current && !current->syn_err)
 	{
@@ -288,7 +303,10 @@ t_cmd *parse_tokens(t_token *tokens)
        		}
         }
         else if (current->type == text)
-            add_argument(current_cmd, current->value);
+        {
+			add_argument(current_cmd, current->value);
+			// printf("arg: %s\n", current->value);
+		}
         if (current)
             current = current->next;
     }

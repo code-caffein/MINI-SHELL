@@ -56,9 +56,9 @@ t_token *fill_tokenize(t_var *v)
 		printf("syntax error quot:\n");
 		return (NULL);
 	}
-	if (has_syntax_error)
-		return (v->tokens);
-	return (NULL);
+	// if (has_syntax_error)
+	// 	return (v->tokens);
+	return (v->tokens);
 }
 //v->state == UNQUOTED && !is_token_separator(v->c) && (line[v->j + 1] == '\'' || line[v->j + 1] == '"' || !is_token_separator(line[v->j+1])))
 t_token *tokenize_input(char *line)
@@ -76,6 +76,7 @@ t_token *tokenize_input(char *line)
 		else if ((v->state == SINGLE_QUOTED && v->c == '\'' && (line[v->j + 1] != '\'' && line[v->j  + 1] != '"' && (is_token_separator(line[v->j + 1]) || !line[v->j + 1]))) || 
                 (v->state == DOUBLE_QUOTED && v->c == '"'  && (line[v->j + 1] != '\'' && line[v->j  + 1] != '"' && (is_token_separator(line[v->j + 1]) || !line[v->j + 1]))))
 		{
+			v->wait_more_args = false;
 			if (!second_condition(v))
 				break;
 		}
@@ -107,24 +108,24 @@ t_token *tokenize_input(char *line)
 	free(v);
 	return (result);
 }
-int main(void)
-{
-    char *input;
+// int main(void)
+// {
+//     char *input;
 
-    while (1)
-    {
-        input = readline("minishell> ");
-        if (!input)
-        {
-            printf("exit\n");
-            break;
-        }
+//     while (1)
+//     {
+//         input = readline("minishell> ");
+//         if (!input)
+//         {
+//             printf("exit\n");
+//             break;
+//         }
 		
-        if (*input != '\0')
-            add_history(input);
-		tokenize_input(input);
-        free(input);
-    }
+//         if (*input != '\0')
+//             add_history(input);
+// 		tokenize_input(input);
+//         free(input);
+//     }
 
-    return 0;
-}
+//     return 0;
+// }
