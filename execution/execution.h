@@ -34,6 +34,7 @@ char	**keys_to_2darray(t_env * env, int type);
 int		ft_echo(t_cmd *cmd);
 int		ft_pwd();
 void	export_display(t_env **env);
+void append_value(t_env **env, char *key, char *value);
 
 
 

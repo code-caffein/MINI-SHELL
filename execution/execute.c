@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 15:52:14 by aelbour           #+#    #+#             */
-/*   Updated: 2025/04/28 15:12:46 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/04/29 10:04:14 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -152,9 +152,13 @@ int main(int ac, char **av, char **envp)
 	t_malloc	*alloc;
 	int			status;
 
-	ft_pwd();
-	cmd.args = ft_split("cd testing/../execution", ' ');
-	ft_cd(&cmd, NULL);
-	ft_pwd();
-	return(status);
+	env = NULL;
+	cmd.args=ft_split("export elbour", ' ');
+	ft_export(&cmd, NULL, &env);
+
+	cmd.args=ft_split("export elbour+=hello ", ' ');
+	ft_export(&cmd, NULL, &env);
+	
+	cmd.args=ft_split("export", ' ');
+	ft_export(&cmd, NULL, &env);
 }

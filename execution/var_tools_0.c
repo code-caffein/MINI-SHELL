@@ -6,23 +6,12 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/21 14:28:51 by aelbour           #+#    #+#             */
-/*   Updated: 2025/04/28 16:33:07 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/04/29 09:55:15 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "execution.h"
 
-int is_append_export(char *key)
-{
-	char *s = ft_strchr(key, '+');
-	if(s)
-	{
-		if(s[1] = '\0')
-			return(4);//appent opr requieed
-		else
-			return(3);// var identifier error
-	}
-}
 
 int var_action(char *key ,char *value, t_env *env)
 {
@@ -34,6 +23,7 @@ int var_action(char *key ,char *value, t_env *env)
 		return(2);// update its value
 	else if (!is_var_exist(key , env))
 		return(1);// declare it into export with value 
+	return(0);// declare it into export with value 
 }
 
 t_env	*get_bef_node(t_env *lst, t_env *node)

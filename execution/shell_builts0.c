@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 11:46:22 by aelbour           #+#    #+#             */
-/*   Updated: 2025/04/28 16:26:30 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/04/29 10:19:42 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ int	ft_export(t_cmd *cmd, t_malloc **aloc, t_env **env)
 	char *key;
 	t_env *ptr = *env; 
 	status = 0;
-	
+
  	while(cmd->args[++i])
 	{
 		key = ft_split(cmd->args[i], '=')[0];
@@ -57,7 +57,7 @@ int	ft_export(t_cmd *cmd, t_malloc **aloc, t_env **env)
 		if(check == 2)
 			update_var(*env, value, key);
 		if(check == 4)
-			update_var(*env, value, key);
+			append_value(env, key, value);
 		if(check == 3)
 		{
 			status = 1;

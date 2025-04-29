@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 15:55:09 by aelbour           #+#    #+#             */
-/*   Updated: 2025/04/28 14:59:14 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/04/29 10:25:16 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,8 +92,10 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	size_t	siz;
 	char	*c;
 
-	if (!s1 || !s2)
-		return (NULL);
+	if (!s1)
+		s1 = "";
+	if (!s2)
+		s2 = "";
 	else
 	{
 		siz = ft_strlen((char *) s1) + ft_strlen((char *) s2) + 1;
