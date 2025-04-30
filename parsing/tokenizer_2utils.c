@@ -155,7 +155,7 @@ int add_token_with_type(t_token **tokens, char *buffer, t_quote_state *state, bo
 	t_v *v = malloc(sizeof(t_v));
 	if (!v)
 		return 0;
-	printf("buffer = %s\n", buffer);
+	printf("buffer = [%s]\n", buffer);
 	init_variable(v);
 	if (buffer[0] == '\0')
 		return (free(v),0);

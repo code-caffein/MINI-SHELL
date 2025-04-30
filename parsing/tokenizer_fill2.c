@@ -131,7 +131,7 @@ int Fourth_condition(t_var *v, char *line)
 		if (c == 0)
 			return (0);
 	}
-	if (v->i == 0)
+	else if (v->i == 0)
 		v->buffer[v->i++] = v->c;
 	return (1);
 }
