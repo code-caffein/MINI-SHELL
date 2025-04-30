@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 15:34:46 by aelbour           #+#    #+#             */
-/*   Updated: 2025/04/28 12:42:00 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/04/30 17:45:41 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ typedef struct s_env {
 	struct s_env *next;
 } t_env;
 
-
+char	*ft_isnum(char *s);
 size_t  ft_strlcpy(char *dst, const char *src, size_t dstsize);
 size_t  ft_strlen(const char *s);
 char    **ft_split(char const *s, char c);
@@ -85,5 +85,6 @@ void swap_string(char **s1, char **s2);
 void	*push_to_env(t_env **head, char *key, char *value, int type);
 int count_env_nodes(t_env *env, int type);
 void push_envp(t_env **head ,char **envp);
+int	ft_atoi(const char *str);
 
 #endif
