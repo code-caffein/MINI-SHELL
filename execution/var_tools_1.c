@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 10:55:49 by aelbour           #+#    #+#             */
-/*   Updated: 2025/04/29 10:21:48 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/04/30 16:42:50 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,17 +64,12 @@ char	**keys_to_2darray(t_env * env, int  type)
 void append_value(t_env **env, char *key, char *value)
 {
 	key[ft_strlen(key) -1] = 0;
-	// printf(value);
-	// printf("\n");
 	if(!is_var_exist(key, *env))
 	{
-
-		printf("1\n");
 		push_to_env(env, key, value, 1);
 	}
 	else
 	{
-		printf("2\n");
 		update_var(*env, ft_strjoin(get_key_value(key, *env), value), key);
 	}
 }

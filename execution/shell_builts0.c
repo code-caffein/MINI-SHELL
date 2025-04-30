@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 11:46:22 by aelbour           #+#    #+#             */
-/*   Updated: 2025/04/29 11:58:37 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/04/30 16:33:47 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,14 @@ int	ft_cd(t_cmd *cmd, t_malloc **aloc)
 {
 	struct stat st;
 
-	if(cmd->args[1] == NULL)
-		return(1);
+	if(cmd->args[1] == NULL || !ft_strcmp("~", cmd->args[1]))
+	{
+		if(chdir(getenv("HOME")) == -1)
+		{
+			cd_error(cmd->args[1]);
+			return(1);
+		}
+	}
 	else if(stat(cmd->args[1], &st) != 0)
 	{
 		cd_error(cmd->args[1]);
@@ -112,22 +118,46 @@ int	ft_unset(t_cmd *cmd, t_malloc **aloc, t_env **env)
 	return(status);
 }
 
-void	ft_exit(t_malloc **aloc, t_cmd *cmd,int status)
+void	ft_exit(t_malloc **aloc, t_cmd *cmd, int *status)
 {
+	char *s;
+	int i;
 	if(cmd->args[1])
 	{
 		if(cmd->args[2])
 		{
 			printf("exit\n");
-			ft_putstr_fd("bash: exit: too many arguments", 2);
-			exite(1);
+			ft_putstr_fd("minishell: exit: too many arguments", 2);
+			*status = 1;
 		}
 		else
 		{
-			if()
+			s = ft_isnum(cmd->args[1]);
+			if(s)
+			{
+				i = ft_atoi(s);
+				printf("exit\n");
+				if(aloc)
+					clean_up(aloc);
+				exit(i % 256);
+			}
+			else
+			{
+				printf("exit\n");
+				ft_putstr_fd("minishell: exit: ", 2);
+				ft_putstr_fd(cmd->args[1], 2);
+				ft_putstr_fd(": numeric argument required\n", 2);
+				if(aloc)
+					clean_up(aloc);
+				exit(255);
+			}
 		}
 	}
-	clean_up(aloc);
-	exit(status);
+	else
+	{
+		if(aloc)
+			clean_up(aloc);
+		exit(*status);
+	}
 }
 
