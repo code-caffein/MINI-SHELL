@@ -113,7 +113,7 @@ int Fourth_condition(t_var *v, char *line)
 	int	a;
 	int	b;
 	int c;
-
+	v->wait_more_args = false;
 	a = fill1_fourth(v, line);
 	b = fill2_fourth(v, line);
 	c = fill3_fourth(v);
@@ -121,12 +121,12 @@ int Fourth_condition(t_var *v, char *line)
 	{
 		if (a == 0)
 			return (0);
-	}else if (b != 2)
+	}if (b != 2)
 	{
 		if (b == 0)
 			return (0);
 	}
-	else if (c != 2)
+	if (c != 2)
 	{
 		if (c == 0)
 			return (0);

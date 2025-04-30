@@ -67,20 +67,7 @@ void detect_file_tokens(t_token **tokens)
     {
         // A file token is a text token that follows a redirection operator
         if (current->type == text && previous != NULL && previous->type == red)
-        {
-            if (ft_strcmp(previous->value, ">") == 0 || 
-                ft_strcmp(previous->value, ">>") == 0 || 
-                ft_strcmp(previous->value, "<") == 0 ||
-				ft_strcmp(previous->value, "<<") == 0)
-            {
                 current->type = file;
-				// while(current->next && current->next->type == text && current->next->wait_more_args == true)
-				// {
-				// 	current->next->type = file;
-				// 	current = current->next;
-				// }
-            }
-        }
         previous = current;
         current = current->next;
     }

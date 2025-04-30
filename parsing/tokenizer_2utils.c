@@ -99,40 +99,45 @@ void red_pip_txt(t_v *v , t_quote_state *state)
 
 void fill1_add_token(t_v *v)
 {
-	if (v->buff)
-    	{
-    		char *temp_value = v->new_token->value;
-        	v->joined = ft_strjoin(temp_value, v->buff);
-        	free(v->buff);
-        	v->buff = v->joined;
-    	}
-    	else
-        	v->buff = ft_strdup(v->new_token->value);
-    	if (!v->buff)
-        	free(v->new_token->value);
-    	// free(v->new_token->value);
-    	free(v->new_token);
-		v->new_token = NULL;
+	if (v->buff) {
+            char *joined = ft_strjoin(v->buff, v->new_buff);
+            free(v->buff);
+            free(v->new_buff);
+            v->buff = joined;
+    } else{
+            v->buff = ft_strdup(v->new_buff);
+        }
+		// printf("buff = %s\n", v->buff);
+        free(v->new_token->value);
+        free(v->new_token);
 }
 
-void add_token(t_v *v, t_token **tokens, bool wait_more_args)
+void add_token(t_v *v, t_token **tokens)
 {
-	if (wait_more_args)
-		fill1_add_token(v);
-	else
-	{
-		if (v->buff)
-		{
-			v->new_token->value = ft_strjoin(v->buff, v->new_token->value);
-			free(v->buff);
-			v->buff = NULL;
-		}
-		else
-			v->new_token->value = ft_strdup(v->new_buff);
+	// (void)wait_more_args;
+	// if (wait_more_args)
+	// 	fill1_add_token(v);
+	// else
+	// {
+	// 	//  printf("Finalizing token - v->buff: %s, v->new_buff: %s\n", 
+    //     //        v->buff ? v->buff : "NULL", 
+    //     //        v->new_buff ? v->new_buff : "NULL");
+    //     // Finalize token
+    //     if (v->buff != NULL)
+	// 	{
+	// 		// printf("\n11111\n");
+    //         char *final_value = ft_strjoin(v->buff, v->new_buff);
+    //         free(v->buff);
+    //         free(v->new_buff);
+    //         v->new_token->value = final_value;
+    //         v->buff = NULL;
+    //     } else
+    //         v->new_token->value = v->new_buff;
+	// 	// printf("buff = %s\n", v->new_token->value);
+	// printf("%s\n", v->buff);
+		v->new_token->value = v->buff;
 		if (*tokens == NULL)
-		{
         	*tokens = v->new_token;
-    	}
     	else
    		{
         	v->current = *tokens;
@@ -140,19 +145,26 @@ void add_token(t_v *v, t_token **tokens, bool wait_more_args)
         	    v->current = v->current->next;
         	v->current->next = v->new_token;
    		}
-	}
 }
+	
 
 int add_token_with_type(t_token **tokens, char *buffer, t_quote_state *state, bool wait_more_args)
 {
 
+	static char *static_buffer = NULL;
 	t_v *v = malloc(sizeof(t_v));
 	if (!v)
 		return 0;
-	// printf("buffer = %s\n", buffer);/////
+	printf("buffer = [%s]\n", buffer);
 	init_variable(v);
 	if (buffer[0] == '\0')
 		return (free(v),0);
+	
+	if (wait_more_args && static_buffer)
+	{
+		v->buff = static_buffer;
+		static_buffer = NULL;
+	}
 	
 	if (!ft_fill_1(tokens, buffer, state))
 		return (free(v),0);//syntax error
@@ -166,10 +178,36 @@ int add_token_with_type(t_token **tokens, char *buffer, t_quote_state *state, bo
 	}
 	red_pip_txt(v, state);
 	char *expanded_value = expand_env_vars(v->new_buff, state);
+	// printf("expanded_value = %s\n", expanded_value);
 	v->new_buff = expanded_value;
 
 	// expand_variables(v->new_token, state);
-	add_token(v, tokens, wait_more_args);
+	// add_token(v, tokens, wait_more_args);
+	if (wait_more_args) {
+        if (v->buff) {
+			// char *tmp = static_buffer;
+            static_buffer = ft_strjoin(v->buff, v->new_buff);
+            free(v->buff);
+        } else {
+            static_buffer = ft_strdup(v->new_buff);
+        }
+        free(v->new_token);
+    } else
+	{
+		if (!static_buffer)
+		{
+			// printf("\n[%s]\n\n",static_buffer);
+			v->buff = v->new_buff;
+        	add_token(v, tokens);
+		}else
+		{
+			char *joined = ft_strjoin(static_buffer, v->new_buff);
+			v->buff = joined;
+			free(v->new_buff);
+			add_token(v, tokens);
+			static_buffer = NULL;
+		}
+    }
 	free(v);	
 	return 1;
 }

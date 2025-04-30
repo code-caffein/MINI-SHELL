@@ -13,7 +13,6 @@ void first_condtion(t_var *v)
 			free_token_list(&v->tokens);
 			return ;
 		}
-		v->wait_more_args = false;
 		v->i = 0;
 	}
 	if (v->c == '\'')
@@ -21,6 +20,7 @@ void first_condtion(t_var *v)
 	else if (v->c == '"')
 		v->state = DOUBLE_QUOTED;
 	v->buffer[v->i++] = v->c;
+	v->wait_more_args = true;
 }
 
 int	second_condition (t_var *v)
@@ -59,6 +59,7 @@ int fifth_condition(t_var *v)
 {
 	if (v->i > 0)
 	{
+		v->wait_more_args = false;
 		v->buffer[v->i] = '\0';
 		if (!add_token_with_type(&v->tokens, v->buffer, &v->state, v->wait_more_args))
 			return (0);
