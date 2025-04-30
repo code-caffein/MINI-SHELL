@@ -16,7 +16,7 @@
 char	*get_executable_path(char *str);
 int		ft_export(t_cmd *cmd, t_malloc **aloc, t_env **env);
 int		ft_cd(t_cmd *cmd, t_malloc **aloc);
-void	ft_env(t_malloc **aloc, t_env **env);
+int		ft_env(t_malloc **aloc, t_env **env, t_cmd *cmd);
 void	ft_exit(t_malloc **aloc, int status);
 int		ft_unset(t_cmd *cmd, t_malloc **aloc, t_env **env);
 int		var_action(char *key ,char *value, t_env *env);

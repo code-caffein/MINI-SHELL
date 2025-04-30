@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 11:46:22 by aelbour           #+#    #+#             */
-/*   Updated: 2025/04/29 10:19:42 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/04/29 11:58:37 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ int	ft_export(t_cmd *cmd, t_malloc **aloc, t_env **env)
 	char *key;
 	t_env *ptr = *env; 
 	status = 0;
-
+ 
  	while(cmd->args[++i])
 	{
 		key = ft_split(cmd->args[i], '=')[0];
@@ -71,16 +71,24 @@ int	ft_export(t_cmd *cmd, t_malloc **aloc, t_env **env)
 	return(status);
 }
 
-void	ft_env(t_malloc **aloc, t_env **env)
+int	ft_env(t_malloc **aloc, t_env **env, t_cmd *cmd)
 {
 	t_env *ptr = *env; 
 
+	if(cmd->args[1])
+	{
+		ft_putstr_fd("env:", 2);
+		ft_putstr_fd(cmd->args[1], 2);
+		ft_putstr_fd("too many arguments\n", 2);
+		return(1);
+	}
 	while (ptr)
 	{
 		if (ptr->value)
 			printf("%s=%s\n", ptr->key, ptr->value);
 		ptr = ptr->next;
 	}
+	return(0);
 }
 
 int	ft_unset(t_cmd *cmd, t_malloc **aloc, t_env **env)
@@ -104,8 +112,21 @@ int	ft_unset(t_cmd *cmd, t_malloc **aloc, t_env **env)
 	return(status);
 }
 
-void	ft_exit(t_malloc **aloc, int status)
+void	ft_exit(t_malloc **aloc, t_cmd *cmd,int status)
 {
+	if(cmd->args[1])
+	{
+		if(cmd->args[2])
+		{
+			printf("exit\n");
+			ft_putstr_fd("bash: exit: too many arguments", 2);
+			exite(1);
+		}
+		else
+		{
+			if()
+		}
+	}
 	clean_up(aloc);
 	exit(status);
 }

@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 15:52:14 by aelbour           #+#    #+#             */
-/*   Updated: 2025/04/29 10:04:14 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/04/29 11:49:53 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,21 +33,20 @@ char *get_executable_path(char *str)
 int is_builtins(char *str)
 {
 	int i = 0;
-	char **arr;
 
-	if(!ft_strcmp(arr[i], "echo"))
+	if(!ft_strcmp(str, "echo"))
 		return(1);
-	else if(!ft_strcmp(arr[i], "cd"))
+	else if(!ft_strcmp(str, "cd"))
 		return(2);
-	else if(!ft_strcmp(arr[i], "pwd"))
+	else if(!ft_strcmp(str, "pwd"))
 		return(3);
-	else if(!ft_strcmp(arr[i], "export"))
+	else if(!ft_strcmp(str, "export"))
 		return(4);
-	else if(!ft_strcmp(arr[i], "unset"))
+	else if(!ft_strcmp(str, "unset"))
 		return(5);
-	else if(!ft_strcmp(arr[i], "env"))
+	else if(!ft_strcmp(str, "env"))
 		return(6);
-	else if(!ft_strcmp(arr[i], "exit"))
+	else if(!ft_strcmp(str, "exit"))
 		return(7);
 	return(0);
 }
@@ -65,7 +64,7 @@ void	execute_parent_cmds(int i, t_cmd *cmd, t_malloc **allocs, t_env **env, int 
 	else if(i == 5)
 		*g_exit_status = ft_unset(cmd, allocs, env);
 	else if(i == 6)
-		ft_env(allocs, env);
+		*g_exit_status = ft_env(allocs, env);
 	else if(i == 7)
 		ft_exit(allocs, *g_exit_status);
 }
@@ -132,9 +131,7 @@ void ft_execute(t_cmd *cmd, t_malloc **allocs, t_env **env, int *g_exit_status)
 		// printf("executable path = %s\n", path);
 		if (path)
 		{
-			if (ft_strcmp("env", cmd->name))
-				cmd->name = path;
-			cmd->args[0] = path;
+			cmd->name = path;
 			get_a_child(g_exit_status, cmd, allocs, env);
 		}
 		else

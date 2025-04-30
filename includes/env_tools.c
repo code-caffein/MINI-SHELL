@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 09:39:29 by aelbour           #+#    #+#             */
-/*   Updated: 2025/04/28 12:34:49 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/04/29 11:00:40 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,12 +20,10 @@ void *push_to_env(t_env **head, char *key, char *value, int type)
     new = malloc(sizeof(t_env));
     if (!new)
         return (ft_putstr_fd("var allocation error!", 2), exit(1), NULL);
-
     new->next = NULL;
     new->key = ft_strdup(key);
     new->type = type;
     new->value = ft_strdup(value); 
-
     if (!(*head))
         (*head) = new;
     else
