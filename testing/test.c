@@ -268,3 +268,19 @@ int main(void)
 	}
 }
 
+// int main(void)
+// {
+// 	int p[2];
+// 	char buff[1000];
+// 	int n;
+
+// 	pipe(p);
+
+// 	write(p[1], "hello aymane\n", 13);
+// 	n = read(p[0], buff, 1000);
+// 	if(n >= 0)
+// 	{
+// 		buff[n] = 0;
+// 		printf("read %i bytes from p[0], text : %s\n", n, buff);
+// 	}
+// }
