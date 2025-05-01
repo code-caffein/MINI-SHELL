@@ -37,7 +37,7 @@ typedef struct s_token {
     t_types type;           // Token type
     bool syn_err;           // Syntax error flag
     bool heredoc;           // Is heredoc delimiter
-    // bool need_expand;       // Needs variable expansion
+    bool need_expand;       // heredoc expansion
 	bool wait_more_args; // Wait for more arguments
     struct s_token *next;   // Next token in the list
 } t_token;
@@ -49,6 +49,7 @@ typedef struct s_var
     int i;
     int j;
 	char c;
+	
     t_quote_state state;
     bool has_heredoc;
 	bool wait_more_args;
@@ -60,6 +61,7 @@ typedef struct s_v
 	t_token	*current;
 	char	*buff;
 	char	*joined;
+	// bool	quote;
 	char 	*new_buff;
 } t_v;
 /**
