@@ -100,11 +100,13 @@ t_redirection	*create_redirection(char *file, int type)
 
 void handle_redirection(t_cmd *cmd, t_token *token)
 {
+	int i = 0;
     if (!cmd || !token || !token->next)
         return;
     
     t_token *file_token = token->next;
-    
+    if (file_token->need_expand == true)
+		i = 1;
     
     int redir_type = 0;
     
@@ -144,6 +146,14 @@ void handle_redirection(t_cmd *cmd, t_token *token)
             		free(line);
             		break;
         		}
+				if (i == 1)
+				{
+					char *tmp;
+					t_quote_state state = UNQUOTED;
+					tmp = expand_env_vars(line, &state);
+					free(line);
+					line = tmp;
+				}
         		write(fd, line, ft_strlen(line));
         		write(fd, "\n", 1);
         		free(line);
