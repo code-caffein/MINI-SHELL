@@ -126,7 +126,65 @@ void handle_redirection(t_cmd *cmd, t_token *token)
 	{
 		if (redir_type == REDIR_HEREDOC)
 		{
-    		int fd = open("t_m_p_f_i_l_e", O_WRONLY | O_CREAT | O_TRUNC, 0644);
+    		// int fd = open("t_m_p_f_i_l_e", O_WRONLY | O_CREAT | O_TRUNC, 0644);
+   			// if (fd < 0)
+    		// {
+       		// 	perror("open");
+        	// 	free(redir->file);
+        	// 	free(redir);
+        	// 	return;
+			// }
+			int in = 0;
+			int capacity = 10;
+			char **bib = malloc(sizeof(char *) * capacity); // Allocate initial memory
+			if (!bib)
+			{
+    			perror("malloc");
+    			free(redir->file);
+    			free(redir);
+    			return;
+			}
+
+			char *line;
+			while (1)
+			{
+    			line = readline("> ");
+    			if (!line)
+        			break;
+    			if (ft_strcmp(line, file_token->value) == 0)
+				{
+        			free(line);
+       				break;
+    			}
+    			if (i == 1)
+				{
+       				char *tmp;
+        			t_quote_state state = UNQUOTED;
+        			tmp = expand_env_vars(line, &state);
+        			free(line);
+        			line = tmp;
+    			}
+    // Check if we need to resize bib
+    			if (in >= capacity - 1)
+				{
+        			capacity *= 2;
+        			char **new_bib = malloc(sizeof(char *) * capacity);
+        			if (!new_bib)
+					{
+            			perror("realloc");
+            			break;
+        			}
+					int j = -1;
+					while (++j < in)
+						new_bib[j] = bib[j];
+					free(bib);
+        			bib = new_bib;
+    			}
+    			bib[in++] = line;
+			}
+			bib[in] = NULL; // Null-terminate the array
+
+			int fd = open("t_m_p_f_i_l_e", O_WRONLY | O_CREAT | O_TRUNC, 0644);
    			if (fd < 0)
     		{
        			perror("open");
@@ -134,33 +192,17 @@ void handle_redirection(t_cmd *cmd, t_token *token)
         		free(redir);
         		return;
 			}
-    
-    		char *line;
-    		while (1)
-    		{
-        		line = readline("> ");
-        		if (!line)
-            		break;
-        		if (ft_strcmp(line, file_token->value) == 0)
-        		{
-            		free(line);
-            		break;
-        		}
-				if (i == 1)
-				{
-					char *tmp;
-					t_quote_state state = UNQUOTED;
-					tmp = expand_env_vars(line, &state);
-					free(line);
-					line = tmp;
-				}
-        		write(fd, line, ft_strlen(line));
-        		write(fd, "\n", 1);
-        		free(line);
-    		}
+			int j = -1;
+			while (++j < in)
+			{
+				write(fd, bib[j], ft_strlen(bib[j]));
+				write(fd, "\n", 1);
+				free(bib[j]);
+			}
+			free (bib);
     		close(fd);
     
-    		redir->fd = open("t_m_p_f_i_l_e", O_RDONLY);
+    		redir->fd = open("t_m_p_f_i_l_e", O_RDONLY | O_CREAT);
     		if (redir->fd < 0)
     		{
         		perror("open heredoc tmp");
