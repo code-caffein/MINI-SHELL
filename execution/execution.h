@@ -35,6 +35,7 @@ int		ft_echo(t_cmd *cmd);
 int		ft_pwd();
 void	export_display(t_env **env);
 void append_value(t_env **env, char *key, char *value);
+// void execute_piped_cmd(t_cmd *cmd, t_malloc **allocs, t_env **env, int *g_exit_status);
 
 
 

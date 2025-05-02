@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 15:52:14 by aelbour           #+#    #+#             */
-/*   Updated: 2025/04/30 17:41:09 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/02 10:33:38 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,7 +112,7 @@ int file_error_handler(char *path, int *status)
 	return (0);
 }
 
-void ft_execute(t_cmd *cmd, t_malloc **allocs, t_env **env, int *g_exit_status)
+void ft_execute_simple_cmd(t_cmd *cmd, t_malloc **allocs, t_env **env, int *g_exit_status)
 {
 	int		i;
 	char	*path;
@@ -142,12 +142,45 @@ void ft_execute(t_cmd *cmd, t_malloc **allocs, t_env **env, int *g_exit_status)
 	}
 }
 
+
+void execute_piped_cmd(t_cmd *cmd, t_malloc **allocs, t_env **env, int *g_exit_status)
+{
+	int		i;
+	char	*path;
+
+	i = is_builtins(cmd->name);
+	if (i)
+		execute_parent_cmds(i, cmd, allocs, env, g_exit_status);
+	else if (ft_strchr(cmd->name, '/'))
+	{
+		if (file_error_handler(cmd->name, g_exit_status))
+			if (execve(cmd->name, cmd->args, NULL) == -1)
+				execve_error(cmd->name);
+	}
+	else
+	{
+		path = get_executable_path(cmd->name);
+		// printf("executable path = %s\n", path);
+		if (path)
+		{
+			cmd->name = path;
+			if (execve(cmd->name, cmd->args, NULL) == -1)
+				execve_error(cmd->name);
+		}
+		else
+		{
+			printf("minishell: %s: command not found\n", cmd->name);
+			*g_exit_status = 127;
+		}
+	}
+}
+
 //main function for some cmd and builtins tests
 // static void run_test(const char *description, t_cmd *cmd,
 //                      t_malloc **alloc_list, t_env **env_list, int *status)
 // {
 //     printf("[TEST] %s\n", description);
-//     ft_execute(cmd, alloc_list, env_list, status);
+//     ft_execute_simple_cmd(cmd, alloc_list, env_list, status);
 //     printf("--> status = %d\n\n", *status);
 // }
 
