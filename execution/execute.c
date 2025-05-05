@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 15:52:14 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/02 10:33:38 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/05 11:27:43 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,45 +28,6 @@ char *get_executable_path(char *str)
 			return(check);
 	}
 	return(NULL);
-}
-
-int is_builtins(char *str)
-{
-	int i = 0;
-
-	if(!ft_strcmp(str, "echo"))
-		return(1);
-	else if(!ft_strcmp(str, "cd"))
-		return(2);
-	else if(!ft_strcmp(str, "pwd"))
-		return(3);
-	else if(!ft_strcmp(str, "export"))
-		return(4);
-	else if(!ft_strcmp(str, "unset"))
-		return(5);
-	else if(!ft_strcmp(str, "env"))
-		return(6);
-	else if(!ft_strcmp(str, "exit"))
-		return(7);
-	return(0);
-}
-
-void	execute_parent_cmds(int i, t_cmd *cmd, t_malloc **allocs, t_env **env, int *g_exit_status)
-{
-	if(i == 1)
-		*g_exit_status = ft_echo(cmd);
-	else if(i == 2)
-		*g_exit_status = ft_cd(cmd, allocs);
-	else if(i == 3)
-		*g_exit_status = ft_pwd(cmd, allocs);
-	else if(i == 4)
-		*g_exit_status = ft_export(cmd, allocs, env);
-	else if(i == 5)
-		*g_exit_status = ft_unset(cmd, allocs, env);
-	else if(i == 6)
-		*g_exit_status = ft_env(allocs, env, cmd);
-	else if(i == 7)
-		ft_exit(allocs, cmd, g_exit_status);
 }
 
 void get_a_child(int *g_exit_status, t_cmd *cmd, t_malloc **allocs, t_env **env)
@@ -119,7 +80,7 @@ void ft_execute_simple_cmd(t_cmd *cmd, t_malloc **allocs, t_env **env, int *g_ex
 
 	i = is_builtins(cmd->name);
 	if (i)
-		execute_parent_cmds(i, cmd, allocs, env, g_exit_status);
+		execute_builtin(i, cmd, allocs, env, g_exit_status);
 	else if (ft_strchr(cmd->name, '/'))
 	{
 		if (file_error_handler(cmd->name, g_exit_status))
@@ -142,7 +103,6 @@ void ft_execute_simple_cmd(t_cmd *cmd, t_malloc **allocs, t_env **env, int *g_ex
 	}
 }
 
-
 void execute_piped_cmd(t_cmd *cmd, t_malloc **allocs, t_env **env, int *g_exit_status)
 {
 	int		i;
@@ -150,7 +110,7 @@ void execute_piped_cmd(t_cmd *cmd, t_malloc **allocs, t_env **env, int *g_exit_s
 
 	i = is_builtins(cmd->name);
 	if (i)
-		execute_parent_cmds(i, cmd, allocs, env, g_exit_status);
+		execute_builtin(i, cmd, allocs, env, g_exit_status);
 	else if (ft_strchr(cmd->name, '/'))
 	{
 		if (file_error_handler(cmd->name, g_exit_status))
@@ -174,6 +134,15 @@ void execute_piped_cmd(t_cmd *cmd, t_malloc **allocs, t_env **env, int *g_exit_s
 		}
 	}
 }
+
+void ft_execute(t_cmd *cmd, int *status, t_malloc **a, t_env **env)
+{
+	if(cmd->next)
+		execute_pipeline(cmd, a, env , status);
+	else
+		ft_execute_simple_cmd(cmd, a, env , status);
+}
+
 
 //main function for some cmd and builtins tests
 // static void run_test(const char *description, t_cmd *cmd,
