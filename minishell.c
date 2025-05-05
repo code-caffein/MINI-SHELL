@@ -16,7 +16,11 @@ int	main(int argc, char **argv, char **env)
 
 		if (input != '\0')
 			add_history(input);
-		cmds = parse(input);
+		cmds = parse(input); 
+		//-----------
+		//hna ktb li bghayti :(
+
+		//----------
 		free(input);
     }
 
