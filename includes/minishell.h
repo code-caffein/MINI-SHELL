@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 15:34:46 by aelbour           #+#    #+#             */
-/*   Updated: 2025/04/30 17:47:22 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/05 16:57:24 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -148,5 +148,6 @@ void	*push_to_env(t_env **head, char *key, char *value, int type);
 int count_env_nodes(t_env *env, int type);
 void push_envp(t_env **head ,char **envp);
 int	ft_atoi(const char *str);
+char	*get_key_value(char *key, t_env *env);
 
 #endif

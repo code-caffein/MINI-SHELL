@@ -6,16 +6,30 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 15:11:23 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/05 12:29:17 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/05 17:00:10 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "execution.h"
 
+
+int count_cmd_list(t_cmd *cmd)
+{
+	int i;
+
+	i = 0;
+	while(cmd)
+	{
+		i++;
+		cmd = cmd->next;
+	}
+	return (i);
+}
 int **get_pipe_buff(t_cmd *cmd)
 {
 	int n;
 	int **arr;
+
 	n = 0;
 	while(cmd)
 	{
@@ -36,28 +50,19 @@ int **get_pipe_buff(t_cmd *cmd)
 	return(arr);
 }
 
-void close_fds(int is_last, int num, int **arr, int is_parent)
+void close_fds(int pipe_count, int **arr)
 {
 	int i;
 
 	i = 0;
-	if(is_parent)
+	if(pipe_count)
 	{
-		while(i < is_parent - 1)
+		while(i < pipe_count - 1)
 		{
 			close(arr[i][0]);
 			close(arr[i][1]);
 			i++;
 		}
-	}
-	else if (!num)
-		close(arr[num][0]); // close read end of pipe to next
-	else if (is_last)
-		close(arr[num - 1][1]); // close write end of previous
-	else
-	{
-		close(arr[num - 1][1]); // write to previous
-		close(arr[num][0]);     // read from next
 	}
 }
 
@@ -68,37 +73,40 @@ void execute_pipeline(t_cmd *cmd, t_malloc **a, t_env **env, int *last_status)
 	int status;
 	pid_t right_most;
 	int **arr;
+	int cmd_count;
 
+	cmd_count = count_cmd_list(cmd);
 	num = 0;
 	right_most  = -1;
 	arr = get_pipe_buff(cmd);
 	if(!arr)
-		return(*last_status = EXIT_FAILURE);
+	{
+		*last_status = EXIT_FAILURE;
+		return;
+	}
 	while(cmd)
 	{
 		pid = fork();
 		if (pid == 0)
 		{
-			close_fds(cmd->next == NULL, num, arr, 0);
 			if (cmd->next)
 			{
-				if(dup2(arr[num][1], STDOUT_FILENO) == -1)
-					return(perror("dup2"), exit(EXIT_FAILURE));
-				close(arr[num][1]);
+				if (dup2(arr[num][1], STDOUT_FILENO) == -1)
+					return (perror("dup2"), exit(EXIT_FAILURE));
 			}
 			if (num)
 			{
 				if (dup2(arr[num - 1][0], STDIN_FILENO) == -1)
-					return(perror("dup2"), exit(EXIT_FAILURE));
-				close(arr[num - 1][0]);
+					return (perror("dup2"), exit(EXIT_FAILURE));
 			}
+			close_fds(cmd_count - 1, arr);
 			execute_piped_cmd(cmd, a, env , last_status);
 		}
 		right_most = pid;
 		cmd = cmd->next;
 		num++;
 	}
-	close_fds(0, 0, arr, num);
+	close_fds(cmd_count - 1, arr);
 	if(waitpid(right_most, &status, 0) == right_most)
 	{
 		if (WIFEXITED(status))

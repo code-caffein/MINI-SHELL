@@ -33,7 +33,6 @@ int		is_var_exist(char *key, t_env *vars);
 void	update_var(t_env *var, char *new_value ,char *key);
 int		is_key_valid(char *key);
 void	remove_variable(char *key, t_env **vars);
-char	*get_key_value(char *key, t_env *env);
 void	append_value(t_env **env, char *key, char *value);
 char	**keys_to_2darray(t_env * env, int type);
 char	**sort_2d_array(char **arr);
@@ -48,7 +47,10 @@ void execute_pipeline(t_cmd *cmd, t_malloc **a, t_env **env, int *last_status);
 void execute_piped_cmd(t_cmd *cmd, t_malloc **allocs, t_env **env, int *g_exit_status);
 
 // void execute_piped_cmd(t_cmd *cmd, t_malloc **allocs, t_env **env, int *g_exit_status);
+void ft_execute(t_cmd *cmd, int *status, t_malloc **a, t_env **env);
 
 
 
 #endif
+
+

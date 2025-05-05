@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 15:52:14 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/05 11:27:43 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/05 16:51:33 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,6 +143,28 @@ void ft_execute(t_cmd *cmd, int *status, t_malloc **a, t_env **env)
 		ft_execute_simple_cmd(cmd, a, env , status);
 }
 
+int main(void)
+{
+	t_cmd *cmd1 = malloc(sizeof(t_cmd));
+	t_cmd *cmd2 = malloc(sizeof(t_cmd));
+	t_cmd *cmd3 = malloc(sizeof(t_cmd));
+	t_env *env = NULL;
+	t_malloc *alloc = NULL;
+	int status = 0;
+
+	cmd1->name = "wc";
+	cmd1->args = ft_split("wc -l", ' ');
+	cmd1->next = cmd2;
+
+	cmd2->name = "wc";
+	cmd2->args = ft_split("wc -l", ' ');
+	cmd2->next = NULL;
+
+	cmd3->name = "wc";
+	cmd3->args = ft_split("wc -l", ' ');
+	cmd3->next = NULL;
+	ft_execute(cmd1, &status, &alloc, &env);
+}
 
 //main function for some cmd and builtins tests
 // static void run_test(const char *description, t_cmd *cmd,

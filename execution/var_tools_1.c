@@ -6,26 +6,12 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 10:55:49 by aelbour           #+#    #+#             */
-/*   Updated: 2025/04/30 16:42:50 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/05 16:57:49 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "execution.h"
 
-
-char *get_key_value(char *key, t_env *env)
-{
-	while(env)
-	{
-		if(!ft_strcmp(key, env->key))
-		{
-			// printf("%s returned\n", env->value);
-			return(env->value);
-		}
-		env = env->next;
-	}
-	return(NULL);
-}
 
 char	**sort_2d_array(char **arr)
 {

@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 09:39:29 by aelbour           #+#    #+#             */
-/*   Updated: 2025/04/29 11:00:40 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/05 16:58:07 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,4 +64,18 @@ int count_env_nodes(t_env *env, int type)
 		env = env->next;
 	}
 	return(count);
+}
+
+char *get_key_value(char *key, t_env *env)
+{
+	while(env)
+	{
+		if(!ft_strcmp(key, env->key))
+		{
+			// printf("%s returned\n", env->value);
+			return(env->value);
+		}
+		env = env->next;
+	}
+	return(NULL);
 }
