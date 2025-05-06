@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_tools.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
+/*   By: abel-had <abel-had@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 09:39:29 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/05 16:58:07 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/06 18:45:05 by abel-had         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 void *push_to_env(t_env **head, char *key, char *value, int type)
 {
-    t_env *pointer;
+    t_env *pointer = NULL;
     t_env *new;
 
     new = malloc(sizeof(t_env));

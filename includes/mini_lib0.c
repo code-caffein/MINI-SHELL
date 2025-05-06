@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mini_lib0.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
+/*   By: abel-had <abel-had@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 15:55:09 by aelbour           #+#    #+#             */
-/*   Updated: 2025/04/29 10:25:16 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/06 18:48:53 by abel-had         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,7 @@ char	*ft_substr(char const *s, unsigned int start, size_t len)
 char	*ft_strjoin(char const *s1, char const *s2)
 {
 	size_t	siz;
-	char	*c;
+	char	*c = NULL;
 
 	if (!s1)
 		s1 = "";

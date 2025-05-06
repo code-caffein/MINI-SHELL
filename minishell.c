@@ -1,6 +1,6 @@
 #include "./includes/minishell.h"
 #include "./execution/execution.h"
-#
+
 int	main(int argc, char **argv, char **envp)
 {
 	char input;

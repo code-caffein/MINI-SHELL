@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
+/*   By: abel-had <abel-had@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 15:52:14 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/06 11:03:31 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/06 18:08:46 by abel-had         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,25 +143,25 @@ void ft_execute(t_cmd *cmd, int *status, t_malloc **a, t_env **env)
 		ft_execute_simple_cmd(cmd, a, env , status);
 }
 
-int main(void)
-{
-	t_cmd *cmd1 = malloc(sizeof(t_cmd));
-	t_cmd *cmd2 = malloc(sizeof(t_cmd));
-	t_cmd *cmd3 = malloc(sizeof(t_cmd));
-	t_env *env = NULL;
-	t_malloc *alloc = NULL;
-	int status = 0;
+// int main(void)
+// {
+// 	t_cmd *cmd1 = malloc(sizeof(t_cmd));
+// 	t_cmd *cmd2 = malloc(sizeof(t_cmd));
+// 	t_cmd *cmd3 = malloc(sizeof(t_cmd));
+// 	t_env *env = NULL;
+// 	t_malloc *alloc = NULL;
+// 	int status = 0;
 
-	cmd1->name = "wc";
-	cmd1->args = ft_split("wc -l", ' ');
-	cmd1->next = cmd2;
+// 	cmd1->name = "wc";
+// 	cmd1->args = ft_split("wc -l", ' ');
+// 	cmd1->next = cmd2;
 
-	cmd2->name = "cat";
-	cmd2->args = ft_split("cat", ' ');
-	cmd2->next = cmd3;
+// 	cmd2->name = "cat";
+// 	cmd2->args = ft_split("cat", ' ');
+// 	cmd2->next = cmd3;
 
-	cmd3->name = "wc";
-	cmd3->args = ft_split("wc -l", ' ');
-	cmd3->next = NULL;
-	ft_execute(cmd1, &status, &alloc, &env);
-}
+// 	cmd3->name = "wc";
+// 	cmd3->args = ft_split("wc -l", ' ');
+// 	cmd3->next = NULL;
+// 	ft_execute(cmd1, &status, &alloc, &env);
+// }

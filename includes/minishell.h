@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
+/*   By: abel-had <abel-had@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 15:34:46 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/05 16:57:24 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/06 18:34:45 by abel-had         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,97 +22,97 @@
 #include <readline/history.h>
 #include <stddef.h>
 
-typedef enum e_types {
-    pip,    // Pipe operator (|)
-    red,    // Redirection operator (<, >, >>, <<)
-    file,   // File operand for redirection
-    text    // Regular text/command/argument
-} t_types;
+// typedef enum e_types {
+//     pip,    // Pipe operator (|)
+//     red,    // Redirection operator (<, >, >>, <<)
+//     file,   // File operand for redirection
+//     text    // Regular text/command/argument
+// } t_types;
 
-/**
- * Quote state enumeration for parsing
- */
-typedef enum e_quote_state {
-    UNQUOTED,       // Not in quotes
-    SINGLE_QUOTED,  // Inside single quotes
-    DOUBLE_QUOTED   // Inside double quotes
-} t_quote_state;
+// /**
+//  * Quote state enumeration for parsing
+//  */
+// typedef enum e_quote_state {
+//     UNQUOTED,       // Not in quotes
+//     SINGLE_QUOTED,  // Inside single quotes
+//     DOUBLE_QUOTED   // Inside double quotes
+// } t_quote_state;
 
-/**
- * Token structure for lexical analysis
- */
-typedef struct s_token {
-    char *value;            // Token content
-    t_types type;           // Token type
-    bool syn_err;           // Syntax error flag
-    bool heredoc;           // Is heredoc delimiter
-    // bool need_expand;       // Needs variable expansion
-	bool wait_more_args; // Wait for more arguments
-    struct s_token *next;   // Next token in the list
-} t_token;
+// /**
+//  * Token structure for lexical analysis
+//  */
+// typedef struct s_token {
+//     char *value;            // Token content
+//     t_types type;           // Token type
+//     bool syn_err;           // Syntax error flag
+//     bool heredoc;           // Is heredoc delimiter
+//     // bool need_expand;       // Needs variable expansion
+// 	bool wait_more_args; // Wait for more arguments
+//     struct s_token *next;   // Next token in the list
+// } t_token;
 
-typedef struct s_var
-{
-	t_token *tokens;
-    char *buffer;
-    int i;
-    int j;
-	char c;
-    t_quote_state state;
-    bool has_heredoc;
-	bool wait_more_args;
-} t_var;
+// typedef struct s_var
+// {
+// 	t_token *tokens;
+//     char *buffer;
+//     int i;
+//     int j;
+// 	char c;
+//     t_quote_state state;
+//     bool has_heredoc;
+// 	bool wait_more_args;
+// } t_var;
 
-typedef struct s_v
-{
-	t_token	*new_token;
-	t_token	*current;
-	char	*buff;
-	char	*joined;
-	char 	*new_buff;
-} t_v;
-/**
- * Redirection types
- */
-#define REDIR_IN 1      // <  (input redirection)
-#define REDIR_OUT 2     // >  (output redirection)
-#define REDIR_APPEND 3  // >> (append output redirection)
-#define REDIR_HEREDOC 4 // << (heredoc input)
+// typedef struct s_v
+// {
+// 	t_token	*new_token;
+// 	t_token	*current;
+// 	char	*buff;
+// 	char	*joined;
+// 	char 	*new_buff;
+// } t_v;
+// /**
+//  * Redirection types
+//  */
+// #define REDIR_IN 1      // <  (input redirection)
+// #define REDIR_OUT 2     // >  (output redirection)
+// #define REDIR_APPEND 3  // >> (append output redirection)
+// #define REDIR_HEREDOC 4 // << (heredoc input)
 
-/**
- * Redirection structure
- */
-
-
-// typedef enum e_tp {
-// 	txt,
-// 	input,
-// 	output,
-// 	append,
-// 	heredoc,
-// } t_tp;
+// /**
+//  * Redirection structure
+//  */
 
 
+// // typedef enum e_tp {
+// // 	txt,
+// // 	input,
+// // 	output,
+// // 	append,
+// // 	heredoc,
+// // } t_tp;
 
-typedef struct s_redirection
-{
-	char					*file;
-	int						type;
-	int						fd;
-	struct s_redirection	*next;
-} t_redirection;
 
-// Command before pipeline!!!!!
-typedef struct s_cmd {
-	char *name;
-	char **args;
-	int arg_count;
-	int arg_capacity;
-	bool	syn_err;
-	t_redirection *in;
-	t_redirection *out;
-	struct s_cmd *next; // Next command in pipeline
-} t_cmd;
+
+// typedef struct s_redirection
+// {
+// 	char					*file;
+// 	int						type;
+// 	int						fd;
+// 	struct s_redirection	*next;
+// } t_redirection;
+
+// // Command before pipeline!!!!!
+// typedef struct s_cmd {
+// 	char *name;
+// 	char **args;
+// 	int arg_count;
+// 	int arg_capacity;
+// 	bool	syn_err;
+// 	t_redirection *in;
+// 	t_redirection *out;
+// 	struct s_cmd *next; // Next command in pipeline
+// } t_cmd;
 
 
 typedef struct s_malloc {
