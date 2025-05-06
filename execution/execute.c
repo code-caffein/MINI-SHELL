@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 15:52:14 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/05 16:51:33 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/06 11:03:31 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -156,126 +156,12 @@ int main(void)
 	cmd1->args = ft_split("wc -l", ' ');
 	cmd1->next = cmd2;
 
-	cmd2->name = "wc";
-	cmd2->args = ft_split("wc -l", ' ');
-	cmd2->next = NULL;
+	cmd2->name = "cat";
+	cmd2->args = ft_split("cat", ' ');
+	cmd2->next = cmd3;
 
 	cmd3->name = "wc";
 	cmd3->args = ft_split("wc -l", ' ');
 	cmd3->next = NULL;
 	ft_execute(cmd1, &status, &alloc, &env);
 }
-
-//main function for some cmd and builtins tests
-// static void run_test(const char *description, t_cmd *cmd,
-//                      t_malloc **alloc_list, t_env **env_list, int *status)
-// {
-//     printf("[TEST] %s\n", description);
-//     ft_execute_simple_cmd(cmd, alloc_list, env_list, status);
-//     printf("--> status = %d\n\n", *status);
-// }
-
-// int main(int argc, char **argv, char **envp)
-// {
-//     t_cmd      cmd;
-//     t_env     *env_list;
-//     t_malloc  *alloc_list;
-//     int        status;
-
-//     // Initialize environment and allocations
-//     env_list = NULL;
-//     alloc_list = NULL;
-//     status = 0;
-//     push_envp(&env_list, envp);
-
-//     // 1. Builtin tests
-//     // echo
-//     cmd.name = "echo";
-//     cmd.args = ft_split("echo Hello World", ' ');
-//     run_test("echo Hello World (builtin)", &cmd, &alloc_list, &env_list, &status);
-
-//     // cd with no args
-//     cmd.name = "cd";
-//     cmd.args = ft_split("cd", ' ');
-//     run_test("cd (no args, builtin)", &cmd, &alloc_list, &env_list, &status);
-
-//     // cd to non-existent
-//     cmd.name = "cd";
-//     cmd.args = ft_split("cd /no/such/path", ' ');
-//     run_test("cd /no/such/path (error)", &cmd, &alloc_list, &env_list, &status);
-
-//     // pwd
-//     cmd.name = "pwd";
-//     cmd.args = ft_split("pwd extra", ' ');
-//     run_test("pwd extra (too many args)", &cmd, &alloc_list, &env_list, &status);
-//     cmd.args = ft_split("pwd", ' ');
-//     run_test("pwd (builtin)", &cmd, &alloc_list, &env_list, &status);
-
-//     // export set
-//     cmd.name = "export";
-//     cmd.args = ft_split("export NEWVAR=foo", ' ');
-//     run_test("export NEWVAR=foo (builtin)", &cmd, &alloc_list, &env_list, &status);
-
-//     // export append
-//     cmd.name = "export";
-//     cmd.args = ft_split("export NEWVAR+=bar", ' ');
-//     run_test("export NEWVAR+=bar (append)", &cmd, &alloc_list, &env_list, &status);
-
-//     // export invalid
-//     cmd.name = "export";
-//     cmd.args = ft_split("export 1BAD=val", ' ');
-//     run_test("export 1BAD=val (invalid)", &cmd, &alloc_list, &env_list, &status);
-
-    // // export display
-    // cmd.name = "export";
-    // cmd.args = ft_split("export", ' ');
-    // run_test("export (display)", &cmd, &alloc_list, &env_list, &status);
-
-    // // unset existing
-    // cmd.name = "unset";
-    // cmd.args = ft_split("unset NEWVAR", ' ');
-    // run_test("unset NEWVAR (builtin)", &cmd, &alloc_list, &env_list, &status);
-
-    // // unset invalid
-    // cmd.name = "unset";
-    // cmd.args = ft_split("unset 1BAD", ' ');
-    // run_test("unset 1BAD (invalid)", &cmd, &alloc_list, &env_list, &status);
-
-    // // env display
-    // cmd.name = "env";
-    // cmd.args = ft_split("env", ' ');
-    // run_test("env (builtin)", &cmd, &alloc_list, &env_list, &status);
-
-    // // env with args
-    // cmd.name = "env";
-    // cmd.args = ft_split("env arg1", ' ');
-    // run_test("env arg1 (too many args)", &cmd, &alloc_list, &env_list, &status);
-
-    // // exit with too many args (builtin, does not exit)
-    // cmd.name = "exit";
-    // cmd.args = ft_split("exit 1 2", ' ');
-    // run_test("exit 1 2 (too many args)", &cmd, &alloc_list, &env_list, &status);
-
-    // // exit with non-numeric
-    // cmd.args = ft_split("exit abc", ' ');
-    // // Note: this will exit the shell; comment out if you want to continue tests
-    // // run_test("exit abc (numeric required)", &cmd, &alloc_list, &env_list, &status);
-
-    // // 2. External commands
-    // // PATH resolution
-    // cmd.name = "ls";
-    // cmd.args = ft_split("ls -la", ' ');
-    // run_test("ls -la (external)", &cmd, &alloc_list, &env_list, &status);
-
-    // // absolute path
-    // cmd.name = "/bin/echo";
-    // cmd.args = ft_split("/bin/echo hello absolute", ' ');
-    // run_test("/bin/echo hello absolute (external)", &cmd, &alloc_list, &env_list, &status);
-
-    // relative path (helper binary must exist)
-    // cmd.name = "./helper";
-    // cmd.args = ft_split("./helper test", ' ');
-    // run_test("./helper test (relative external)", &cmd, &alloc_list, &env_list, &status);
-
-//     return (0);
-// }

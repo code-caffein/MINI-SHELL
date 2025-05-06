@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 15:11:23 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/05 17:00:10 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/06 10:43:55 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,19 +52,17 @@ int **get_pipe_buff(t_cmd *cmd)
 
 void close_fds(int pipe_count, int **arr)
 {
-	int i;
-
-	i = 0;
-	if(pipe_count)
-	{
-		while(i < pipe_count - 1)
-		{
-			close(arr[i][0]);
-			close(arr[i][1]);
-			i++;
-		}
-	}
+    int i = 0;
+    while (i < pipe_count)
+    {
+        // if (arr[i][0] != -1)
+            close(arr[i][0]);
+        // if (arr[i][1] != -1)
+            close(arr[i][1]);
+        i++;
+    }
 }
+
 
 void execute_pipeline(t_cmd *cmd, t_malloc **a, t_env **env, int *last_status)
 {
