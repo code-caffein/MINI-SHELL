@@ -3,12 +3,12 @@
 
 
 
-char *get_var_value(char *var_name)
+char *get_var_value(char *var_name, t_env *env)
 {
     if (!var_name)
         return NULL;
 
-    char *env_value = getenv(var_name);
+    char *env_value = get_key_value(var_name, env);
     if (env_value)
         return ft_strdup(env_value);
     
@@ -16,7 +16,7 @@ char *get_var_value(char *var_name)
 }
 
 
-char *expand_env_vars(char *str, t_quote_state *state)
+char *expand_env_vars(char *str, t_quote_state *state, t_env *env)
 {
     if (!str)
         return NULL;
@@ -55,7 +55,7 @@ char *expand_env_vars(char *str, t_quote_state *state)
             
             var_name[k] = '\0';
             
-            char *value = get_var_value(var_name);
+            char *value = get_var_value(var_name, env);
             if (value)
             {
                 int m = 0;

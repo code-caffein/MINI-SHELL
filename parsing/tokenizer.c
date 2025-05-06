@@ -25,11 +25,13 @@ t_token *fill_tokenize(t_var *v)
 	validate_syntax(&v->tokens);
 	curr = v->tokens;
 	// prev = NULL;
+	char *tmp_err;
 	while (curr)
 	{
 		if (curr->syn_err)
 		{
 			has_syntax_error = true;
+			tmp_err = curr->value;
 			break;
 		}
 		if (curr->heredoc)
@@ -41,13 +43,17 @@ t_token *fill_tokenize(t_var *v)
 		curr = curr->next;
 	}
 	if (has_syntax_error && v->has_heredoc)
+	{
+		printf("syntax error near unexpected token \"%s\"\n", tmp_err);
+		// free (tmp_err);
 		return (v->tokens);
-	
+	}
 
 	if (has_syntax_error && !v->has_heredoc)
 	{
 		free_token_list(&v->tokens);
-		printf("Syntax error:\n");
+		printf("syntax error near unexpected token \"%s\"\n", tmp_err);
+		// free (tmp_err);
 		return (NULL);//exit !!!!!! 
 	}
 	if (v->state != UNQUOTED)
@@ -61,7 +67,7 @@ t_token *fill_tokenize(t_var *v)
 	return (v->tokens);
 }
 //v->state == UNQUOTED && !is_token_separator(v->c) && (line[v->j + 1] == '\'' || line[v->j + 1] == '"' || !is_token_separator(line[v->j+1])))
-t_token *tokenize_input(char *line)
+t_token *tokenize_input(char *line, t_env *env)
 {
 	t_var *v = malloc(sizeof(t_var));
 	if (!v)
@@ -72,34 +78,34 @@ t_token *tokenize_input(char *line)
 	{
 		v->c = line[v->j];
 		if (v->state == UNQUOTED && (v->c == '\'' || v->c == '"'))
-			first_condtion(v);
+			first_condtion(v, env);
 		else if ((v->state == SINGLE_QUOTED && v->c == '\'' && (line[v->j + 1] != '\'' && line[v->j  + 1] != '"' && (is_token_separator(line[v->j + 1]) || !line[v->j + 1]))) || 
                 (v->state == DOUBLE_QUOTED && v->c == '"'  && (line[v->j + 1] != '\'' && line[v->j  + 1] != '"' && (is_token_separator(line[v->j + 1]) || !line[v->j + 1]))))
 		{
 			v->wait_more_args = false;
-			if (!second_condition(v))
+			if (!second_condition(v, env))
 				break;
 		}
 		else if ((v->state == SINGLE_QUOTED && v->c == '\'' && line[v->j + 1] && (line[v->j + 1] == '\'' || line[v->j + 1] == '"' || !is_token_separator(line[v->j+1]))) || 
 				(v->state == DOUBLE_QUOTED && v->c == '"' && line[v->j + 1] && (line[v->j + 1] == '\'' || line[v->j + 1] == '"' || !is_token_separator(line[v->j+1]))))
 		{
-			if (!third_condition(v))
+			if (!third_condition(v, env))
 				break;
 		}
 		else if (v->state == UNQUOTED && (ft_strchr("|<>", v->c) || v->buffer[0] == '|' || v->buffer[0] == '>' || v->buffer[0] == '<'))
 		{
-			if (!Fourth_condition(v, line))
+			if (!Fourth_condition(v, line, env))
 				break;
 		}
 		else if (v->state == UNQUOTED && ft_isspace(v->c))
 		{
-			if (!fifth_condition(v))
+			if (!fifth_condition(v, env))
 				break;
 		}
 		else
 			v->buffer[v->i++] = v->c;
 	}
-	if (!sixth_condition(v))
+	if (!sixth_condition(v, env))
 	{
 		free_token_list(&v->tokens);
 		return(free(v),NULL);

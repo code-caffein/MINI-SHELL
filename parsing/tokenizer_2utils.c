@@ -6,7 +6,7 @@ int ft_fill_1(t_token **tokens, char *buffer, t_quote_state *state)
 	{
 		if (!check_operator_validity(buffer, state))
 		{
-			add_error_token(tokens);
+			add_error_token(tokens, buffer);
 			return 0;
 		}
 	}
@@ -149,7 +149,7 @@ void add_token(t_v *v, t_token **tokens)
 }
 	
 
-int add_token_with_type(t_token **tokens, char *buffer, t_quote_state *state, bool wait_more_args)
+int add_token_with_type(t_var *va, t_env *env)
 {
 
 	static char *static_buffer = NULL;
@@ -165,21 +165,21 @@ int add_token_with_type(t_token **tokens, char *buffer, t_quote_state *state, bo
 	// else
 	// 	(*tokens)->need_expand = false;
 	init_variable(v);
-	if (buffer[0] == '\0')
+	if (va->buffer[0] == '\0')
 		return (free(v),0);
-	if (*state == UNQUOTED && !QUOTE)
+	if (va->state == UNQUOTED && !QUOTE)
 		QUOTE = false; 
 	else
 		QUOTE = true;
-	if (wait_more_args && static_buffer)
+	if (va->wait_more_args && static_buffer)
 	{
 		v->buff = static_buffer;
 		static_buffer = NULL;
 	}
 	
-	if (!ft_fill_1(tokens, buffer, state))
+	if (!ft_fill_1(&va->tokens, va->buffer, &va->state))
 		return (free(v),0);//syntax error
-	if (!ft_fill_2(v, buffer, state))
+	if (!ft_fill_2(v, va->buffer, &va->state))
 		return (free(v),0);//malloc failed
 	v->new_token = create_new_token(&v->new_token, v->new_buff);
 	
@@ -195,25 +195,25 @@ int add_token_with_type(t_token **tokens, char *buffer, t_quote_state *state, bo
 		free(v->new_buff);
 		return (free(v),0);//malloc failed
 	}
-	red_pip_txt(v, state);
+	red_pip_txt(v, &va->state);
 	t_token *prev_token = NULL;
 
 // Safely find the last token in the existing list
-	if (*tokens) {
-    	prev_token = *tokens;
+	if (va->tokens) {
+    	prev_token = va->tokens;
     	while (prev_token->next)
        		prev_token = prev_token->next;
 	}
 
 // Only expand if the previous token is NOT "<<"
 	if (!(prev_token && ft_strcmp(prev_token->value, "<<") == 0)) {
-    	char *expanded_value = expand_env_vars(v->new_buff, state);
+    	char *expanded_value = expand_env_vars(v->new_buff, &va->state, env);
     	v->new_buff = expanded_value;
 	}
 
 	// expand_variables(v->new_token, state);
 	// add_token(v, tokens, wait_more_args);
-	if (wait_more_args) {
+	if (va->wait_more_args) {
 		// if (*state != UNQUOTED)
 		// 	v->quote = true;
         if (v->buff) {
@@ -234,7 +234,7 @@ int add_token_with_type(t_token **tokens, char *buffer, t_quote_state *state, bo
 		{
 			// printf("\n[%s]\n\n",static_buffer);
 			v->buff = v->new_buff;
-        	add_token(v, tokens);
+        	add_token(v, &va->tokens);
 			QUOTE = false;
 		}else
 		{
@@ -242,7 +242,7 @@ int add_token_with_type(t_token **tokens, char *buffer, t_quote_state *state, bo
 			v->buff = joined;
 			free(v->new_buff);
 			
-			add_token(v, tokens);
+			add_token(v, &va->tokens);
 			static_buffer = NULL;
 			QUOTE = false;
 		}

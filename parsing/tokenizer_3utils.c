@@ -33,14 +33,14 @@ int check_operator_validity(char *buffer, t_quote_state *state)
     return 0; // Not a valid operator in this context
 }
 
-void add_error_token(t_token **token)
+void add_error_token(t_token **token, char *buffer)
 {
     t_token *new_token = malloc(sizeof(t_token));
     if (!new_token)
         return;
 
     // Initialize all fields
-    new_token->value = NULL;
+    new_token->value = ft_strdup(buffer);
     new_token->type = text;  // Default type instead of NULL
     new_token->syn_err = true;
     new_token->heredoc = false;

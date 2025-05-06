@@ -98,7 +98,7 @@ t_redirection	*create_redirection(char *file, int type)
 }
 
 
-void handle_redirection(t_cmd *cmd, t_token *token)
+void handle_redirection(t_cmd *cmd, t_token *token, t_env *env)
 {
 	int i = 0;
     if (!cmd || !token || !token->next)
@@ -160,7 +160,7 @@ void handle_redirection(t_cmd *cmd, t_token *token)
 				{
        				char *tmp;
         			t_quote_state state = UNQUOTED;
-        			tmp = expand_env_vars(line, &state);
+        			tmp = expand_env_vars(line, &state, env);
         			free(line);
         			line = tmp;
     			}
@@ -315,7 +315,7 @@ void	free_commands(t_cmd *commands)
 
 
 
-t_cmd *parse_tokens(t_token *tokens)
+t_cmd *parse_tokens(t_token *tokens, t_env *env)
 {
 	t_cmd *commands = NULL;
 	t_cmd *current_cmd = NULL;
@@ -350,7 +350,7 @@ t_cmd *parse_tokens(t_token *tokens)
 			}
 			else if (current->next && current->next->type == file)
 			{
-				handle_redirection(current_cmd, current);
+				handle_redirection(current_cmd, current, env);
 				current = current->next; // skipp file token!!1
        		}
         }

@@ -3,15 +3,15 @@
 
 
 
-t_cmd *parse(char *line)
+t_cmd *parse(char *line, t_env *env)
 {
 	t_token *tokens;
 	t_cmd *commands;
 
-	tokens = tokenize_input(line);
+	tokens = tokenize_input(line, env);
 	if (!tokens)
 		return (NULL);
-	commands = parse_tokens(tokens);
+	commands = parse_tokens(tokens, env);
 	// if (commands)
 	    // printf("zzz2yfs2t1ssytzdftftwdowuwu.\n");
 	free_token_list(&tokens);
@@ -74,7 +74,7 @@ int main(void) {
         }
         if (*input != '\0') {
             add_history(input);
-            t_cmd *commands = parse(input);
+            t_cmd *commands = parse(input, NULL);
             if (commands) {
                 print_commands(commands);
                 free_commands(commands);
