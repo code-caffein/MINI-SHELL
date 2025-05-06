@@ -46,6 +46,8 @@ void ft_execute_simple_cmd(t_cmd *cmd, t_malloc **allocs, t_env **env, int *g_ex
 void execute_pipeline(t_cmd *cmd, t_malloc **a, t_env **env, int *last_status);
 void execute_piped_cmd(t_cmd *cmd, t_malloc **allocs, t_env **env, int *g_exit_status);
 
+void redirect_command(t_cmd *cmd);
+
 // void execute_piped_cmd(t_cmd *cmd, t_malloc **allocs, t_env **env, int *g_exit_status);
 void ft_execute(t_cmd *cmd, int *status, t_malloc **a, t_env **env);
 

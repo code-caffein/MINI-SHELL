@@ -6,7 +6,11 @@
 /*   By: abel-had <abel-had@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 15:52:14 by aelbour           #+#    #+#             */
+<<<<<<< HEAD
 /*   Updated: 2025/05/06 18:08:46 by abel-had         ###   ########.fr       */
+=======
+/*   Updated: 2025/05/06 16:43:23 by aelbour          ###   ########.fr       */
+>>>>>>> c0bc1bf330e2b89cfab549ac935f1edb64bde236
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,10 +141,28 @@ void execute_piped_cmd(t_cmd *cmd, t_malloc **allocs, t_env **env, int *g_exit_s
 
 void ft_execute(t_cmd *cmd, int *status, t_malloc **a, t_env **env)
 {
+	int in_backup;
+	int out_backup;
+
+	
 	if(cmd->next)
 		execute_pipeline(cmd, a, env , status);
 	else
-		ft_execute_simple_cmd(cmd, a, env , status);
+	{
+		if(cmd->in || cmd->out)
+		{
+			in_backup = dup(STDIN_FILENO);
+			out_backup = dup(STDOUT_FILENO);
+			redirect_command(cmd);
+			ft_execute_simple_cmd(cmd, a, env , status);
+			dup2(in_backup, STDIN_FILENO);
+			dup2(out_backup, STDOUT_FILENO);
+			close(in_backup);
+			close(out_backup);
+		}
+		else
+			ft_execute_simple_cmd(cmd, a, env , status);
+	}
 }
 
 // int main(void)
@@ -160,8 +182,16 @@ void ft_execute(t_cmd *cmd, int *status, t_malloc **a, t_env **env)
 // 	cmd2->args = ft_split("cat", ' ');
 // 	cmd2->next = cmd3;
 
+<<<<<<< HEAD
 // 	cmd3->name = "wc";
 // 	cmd3->args = ft_split("wc -l", ' ');
 // 	cmd3->next = NULL;
 // 	ft_execute(cmd1, &status, &alloc, &env);
+=======
+// 	cmd3->name = "cd";
+// 	cmd3->args = ft_split("cd hhh", ' ');
+// 	cmd3->next = NULL;
+// 	ft_execute(cmd1, &status, &alloc, &env);
+// 	return(status);
+>>>>>>> c0bc1bf330e2b89cfab549ac935f1edb64bde236
 // }
