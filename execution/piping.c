@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 15:11:23 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/06 10:43:55 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/06 16:04:41 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,16 +88,13 @@ void execute_pipeline(t_cmd *cmd, t_malloc **a, t_env **env, int *last_status)
 		if (pid == 0)
 		{
 			if (cmd->next)
-			{
 				if (dup2(arr[num][1], STDOUT_FILENO) == -1)
 					return (perror("dup2"), exit(EXIT_FAILURE));
-			}
 			if (num)
-			{
 				if (dup2(arr[num - 1][0], STDIN_FILENO) == -1)
 					return (perror("dup2"), exit(EXIT_FAILURE));
-			}
 			close_fds(cmd_count - 1, arr);
+			redirect_command(cmd);
 			execute_piped_cmd(cmd, a, env , last_status);
 		}
 		right_most = pid;
