@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/27 16:23:42 by aelbour           #+#    #+#             */
-/*   Updated: 2025/04/28 15:01:55 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/07 11:14:33 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ int ft_echo(t_cmd *cmd)
 	int i;
 	i = 1;
 	nl = 1;
-	if(!ft_strcmp("-n", cmd->args[1]))
+	if(cmd->args[1] && !ft_strcmp("-n", cmd->args[1]))
 	{
 		i = 2;
 		nl = 0;		
