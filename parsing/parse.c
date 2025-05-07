@@ -28,7 +28,7 @@ t_cmd *create_new_command(void)
     while (++i <= cmd->arg_capacity)
         cmd->args[i] = NULL;
     
-	cmd->syn_err = false;
+	// cmd->syn_err = false;
     cmd->in = NULL;
     cmd->out = NULL;
     cmd->next = NULL;
@@ -320,6 +320,21 @@ t_cmd *parse_tokens(t_token *tokens, t_env *env)
 	t_cmd *commands = NULL;
 	t_cmd *current_cmd = NULL;
 	t_token *current = tokens;
+	t_token *prev = NULL;
+	bool syn_err;
+
+	syn_err = false;
+	while(current)
+	{
+		if(current->syn_err)
+			syn_err = true;
+		
+		prev = current;
+		current = current->next;
+	}
+	if (syn_err)
+		printf("syntax error near unexpected token \"%s\"\n", prev->value);
+	current = tokens;
 	commands = create_new_command();
 	if (!commands)
 	{
@@ -362,7 +377,12 @@ t_cmd *parse_tokens(t_token *tokens, t_env *env)
         if (current)
             current = current->next;
     }
-	if (current && current->syn_err)
-		current_cmd->syn_err = true;
+	if (syn_err)
+	{
+		//free cmds
+		return (NULL);
+	}
+	// if (current && current->syn_err)
+	// 	current_cmd->syn_err = true;
     return commands;
 }

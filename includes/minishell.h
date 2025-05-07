@@ -6,7 +6,7 @@
 /*   By: abel-had <abel-had@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 15:34:46 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/06 18:34:45 by abel-had         ###   ########.fr       */
+/*   Updated: 2025/05/07 10:26:43 by abel-had         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,8 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 #include <stddef.h>
-
+#include "../execution/execution.h"
+#include "../parsing/he.h"
 // typedef enum e_types {
 //     pip,    // Pipe operator (|)
 //     red,    // Redirection operator (<, >, >>, <<)
@@ -29,18 +30,18 @@
 //     text    // Regular text/command/argument
 // } t_types;
 
-// /**
-//  * Quote state enumeration for parsing
-//  */
+/**
+ * Quote state enumeration for parsing
+ */
 // typedef enum e_quote_state {
 //     UNQUOTED,       // Not in quotes
 //     SINGLE_QUOTED,  // Inside single quotes
 //     DOUBLE_QUOTED   // Inside double quotes
 // } t_quote_state;
 
-// /**
-//  * Token structure for lexical analysis
-//  */
+/**
+ * Token structure for lexical analysis
+ */
 // typedef struct s_token {
 //     char *value;            // Token content
 //     t_types type;           // Token type
@@ -79,18 +80,18 @@
 // #define REDIR_APPEND 3  // >> (append output redirection)
 // #define REDIR_HEREDOC 4 // << (heredoc input)
 
-// /**
-//  * Redirection structure
-//  */
+/**
+ * Redirection structure
+ */
 
 
-// // typedef enum e_tp {
-// // 	txt,
-// // 	input,
-// // 	output,
-// // 	append,
-// // 	heredoc,
-// // } t_tp;
+// typedef enum e_tp {
+// 	txt,
+// 	input,
+// 	output,
+// 	append,
+// 	heredoc,
+// } t_tp;
 
 
 
@@ -102,7 +103,7 @@
 // 	struct s_redirection	*next;
 // } t_redirection;
 
-// // Command before pipeline!!!!!
+// Command before pipeline!!!!!
 // typedef struct s_cmd {
 // 	char *name;
 // 	char **args;
@@ -149,5 +150,8 @@ int count_env_nodes(t_env *env, int type);
 void push_envp(t_env **head ,char **envp);
 int	ft_atoi(const char *str);
 char	*get_key_value(char *key, t_env *env);
+
+
+int		ft_isspace(int c);
 
 #endif

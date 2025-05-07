@@ -10,6 +10,9 @@
 #include <sys/wait.h>
 #include <errno.h>
 
+typedef struct s_env t_env;
+typedef struct s_cmd t_cmd;
+typedef struct s_malloc t_malloc;
 
 #include "../includes/minishell.h"
 

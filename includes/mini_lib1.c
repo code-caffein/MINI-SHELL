@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mini_lib1.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
+/*   By: abel-had <abel-had@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 15:57:56 by aelbour           #+#    #+#             */
-/*   Updated: 2025/04/26 20:00:38 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/07 10:13:49 by abel-had         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,4 +62,13 @@ char	*ft_strchr(const char *s, int c)
 		if (s[i++] == (char)c)
 			return ((char *) &s[--i]);
 	return (NULL);
+}
+
+int		ft_isspace(int c)
+{
+	c = (unsigned char)c;
+	if (c == '\t' || c == '\n' || c == '\v' || c == '\f' || c == '\r'
+		|| c == ' ')
+		return (1);
+	return (0);
 }

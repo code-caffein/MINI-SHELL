@@ -5,14 +5,11 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: abel-had <abel-had@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/17 15:52:14 by aelbour           #+#    #+#             */
-<<<<<<< HEAD
-/*   Updated: 2025/05/06 18:08:46 by abel-had         ###   ########.fr       */
-=======
-/*   Updated: 2025/05/06 16:43:23 by aelbour          ###   ########.fr       */
->>>>>>> c0bc1bf330e2b89cfab549ac935f1edb64bde236
+/*   Created: 2025/05/07 10:36:58 by abel-had          #+#    #+#             */
+/*   Updated: 2025/05/07 10:37:18 by abel-had         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 #include "execution.h"
 
@@ -164,34 +161,3 @@ void ft_execute(t_cmd *cmd, int *status, t_malloc **a, t_env **env)
 			ft_execute_simple_cmd(cmd, a, env , status);
 	}
 }
-
-// int main(void)
-// {
-// 	t_cmd *cmd1 = malloc(sizeof(t_cmd));
-// 	t_cmd *cmd2 = malloc(sizeof(t_cmd));
-// 	t_cmd *cmd3 = malloc(sizeof(t_cmd));
-// 	t_env *env = NULL;
-// 	t_malloc *alloc = NULL;
-// 	int status = 0;
-
-// 	cmd1->name = "wc";
-// 	cmd1->args = ft_split("wc -l", ' ');
-// 	cmd1->next = cmd2;
-
-// 	cmd2->name = "cat";
-// 	cmd2->args = ft_split("cat", ' ');
-// 	cmd2->next = cmd3;
-
-<<<<<<< HEAD
-// 	cmd3->name = "wc";
-// 	cmd3->args = ft_split("wc -l", ' ');
-// 	cmd3->next = NULL;
-// 	ft_execute(cmd1, &status, &alloc, &env);
-=======
-// 	cmd3->name = "cd";
-// 	cmd3->args = ft_split("cd hhh", ' ');
-// 	cmd3->next = NULL;
-// 	ft_execute(cmd1, &status, &alloc, &env);
-// 	return(status);
->>>>>>> c0bc1bf330e2b89cfab549ac935f1edb64bde236
-// }

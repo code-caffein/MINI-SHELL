@@ -12,6 +12,8 @@ t_cmd *parse(char *line, t_env *env)
 	if (!tokens)
 		return (NULL);
 	commands = parse_tokens(tokens, env);
+	if(!commands)
+		return (NULL);
 	// if (commands)
 	    // printf("zzz2yfs2t1ssytzdftftwdowuwu.\n");
 	free_token_list(&tokens);
@@ -63,26 +65,26 @@ void print_commands(t_cmd *cmds) {
     }
 }
 
-int main(void) {
-    char *input;
+// int main(void) {
+//     char *input;
 
-    while (1) {
-        input = readline("demo_parser> ");
-        if (!input) {
-            printf("exit\n");
-            break;
-        }
-        if (*input != '\0') {
-            add_history(input);
-            t_cmd *commands = parse(input, NULL);
-            if (commands) {
-                print_commands(commands);
-                free_commands(commands);
-            } else {
-                printf("Failed to parse or syntax error.\n");
-            }
-        }
-        free(input);
-    }
-    return 0;
-}
+//     while (1) {
+//         input = readline("demo_parser> ");
+//         if (!input) {
+//             printf("exit\n");
+//             break;
+//         }
+//         if (*input != '\0') {
+//             add_history(input);
+//             t_cmd *commands = parse(input, NULL);
+//             if (commands) {
+//                 print_commands(commands);
+//                 free_commands(commands);
+//             } else {
+//                 printf("Failed to parse or syntax error.\n");
+//             }
+//         }
+//         free(input);
+//     }
+//     return 0;
+// }

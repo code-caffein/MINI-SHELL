@@ -22,7 +22,9 @@ int	main(int argc, char **argv, char **envp)
 
 		if (input != '\0')
 			add_history(input);
-		cmds = parse(input); 
+		cmds = parse(input);
+		if (!cmds)
+			printf("parse failed\n");
 		//-----------
 		//hna ktb li bghayti :(
 		ft_execute(cmds, &status, &allocs, &env);

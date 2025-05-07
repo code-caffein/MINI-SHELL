@@ -12,6 +12,9 @@
 #include "../includes/minishell.h"
 
 
+typedef struct s_env t_env;
+typedef struct s_cmd t_cmd;
+
 /**
  * Token types enumeration
  */
@@ -95,25 +98,31 @@ typedef struct s_cmd {
 	char **args;
 	int arg_count;
 	int arg_capacity;
-	bool	syn_err;
+	// bool	syn_err;
 	t_redirection *in;
 	t_redirection *out;
 	struct s_cmd *next; // Next command in pipeline
 } t_cmd;
 
+// typedef struct s_env {
+// 	char *key;
+// 	char *value;
+// 	int type;				// 0 for envp // 1 for my vars
+// 	struct s_env *next;
+// } t_env;
 
 
 /*
  * String manipulation functions
  */
-int	ft_strcmp(const char *s1, const char *s2);
-size_t  ft_strlcpy(char *dst, const char *src, size_t dstsize);
-size_t  ft_strlen(const char *s);
-char    **ft_split(char const *s, char c);
-char    *ft_strdup(const char *s);
-char    *ft_strchr(const char *s, int c);
-int		ft_isspace(int c);
-char	*ft_strjoin(const char *s1, const char *s2);
+// int	ft_strcmp(const char *s1, const char *s2);//
+// size_t  ft_strlcpy(char *dst, const char *src, size_t dstsize);
+// size_t  ft_strlen(const char *s);//
+// char    **ft_split(char const *s, char c);
+// char    *ft_strdup(const char *s);
+// char    *ft_strchr(const char *s, int c);
+// int		ft_isspace(int c);
+// char	*ft_strjoin(const char *s1, const char *s2);//
 // int		ft_isspace(int c);
 // void		ft_bzero(void *s, size_t n);
 
