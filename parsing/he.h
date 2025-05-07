@@ -143,17 +143,17 @@ typedef struct s_cmd {
 //     struct s_arr *next;
 // } t_arr;
 
-t_token *tokenize_input(char *line, t_env *env);
+t_token *tokenize_input(char *line, t_env *env, int status);
 void    detect_file_tokens(t_token **tokens);
 int     validate_syntax(t_token **tokens);
-t_cmd   *parse_tokens(t_token *tokens, t_env *env);
-t_cmd *parse(char *line, t_env *env);
+t_cmd   *parse_tokens(t_token *tokens, t_env *env, int status);
+t_cmd *parse(char *line, t_env *env, int status);
 
 
 // void free_token_list(t_token *start);
 int is_token_separator(char c);
 // int add_token_with_type(t_token **tokens, char *buffer, t_quote_state *state, bool wait_more_args);
-int add_token_with_type(t_var *v, t_env *env);
+int add_token_with_type(t_var *va, t_env *env, int status);
 int check_operator_validity(char *buffer, t_quote_state *state);
 char *remove_character(char *str, char c);
 void add_error_token(t_token **token, char *buffer);
@@ -167,7 +167,7 @@ void    free_commands(t_cmd *commands);
 
 
 // int expand_variables(t_token *tokens, t_quote_state *state);
-char *expand_env_vars(char *str, t_quote_state *state, t_env *env);
+char *expand_env_vars(char *str, t_quote_state *state, t_env *env, int status);
 
 // char		*handle_quotes(char *buffer, t_quote_state *state);
 // int			create_new_token(t_token **new_token, char *new_buff);
@@ -175,16 +175,16 @@ char *expand_env_vars(char *str, t_quote_state *state, t_env *env);
 // void		check_if_needs_expansion(t_token **tokens, t_quote_state state);
 
 // tokenize fill 
-void first_condtion(t_var *v, t_env *env);
-int	second_condition (t_var *v, t_env *env);
-int third_condition(t_var *v, t_env *env);
-int Fourth_condition(t_var *v, char *line, t_env *env);
-int fill1_fourth(t_var *v, char *line, t_env *env);
-int fill2_fourth(t_var *v, char *line, t_env *env);
-int fill3_fourth(t_var *v,t_env *env);
-int fill_fill3_fourth(t_var *v,t_env *env);
-int fifth_condition(t_var *v, t_env *env);
-int sixth_condition(t_var *v, t_env *env);
+void first_condtion(t_var *v, t_env *env, int status);
+int	second_condition (t_var *v, t_env *env, int status);
+int third_condition(t_var *v, t_env *env, int status);
+int Fourth_condition(t_var *v, char *line, t_env *env, int status);
+int fill1_fourth(t_var *v, char *line, t_env *env, int status);
+int fill2_fourth(t_var *v, char *line, t_env *env, int status);
+int fill3_fourth(t_var *v,t_env *env, int status);
+int fill_fill3_fourth(t_var *v,t_env *env, int status);
+int fifth_condition(t_var *v, t_env *env, int status);
+int sixth_condition(t_var *v, t_env *env, int status);
 
 //tkenizer utils
 

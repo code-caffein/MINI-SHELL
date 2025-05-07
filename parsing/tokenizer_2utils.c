@@ -149,7 +149,7 @@ void add_token(t_v *v, t_token **tokens)
 }
 	
 
-int add_token_with_type(t_var *va, t_env *env)
+int add_token_with_type(t_var *va, t_env *env, int status)
 {
 
 	static char *static_buffer = NULL;
@@ -207,7 +207,7 @@ int add_token_with_type(t_var *va, t_env *env)
 
 // Only expand if the previous token is NOT "<<"
 	if (!(prev_token && ft_strcmp(prev_token->value, "<<") == 0)) {
-    	char *expanded_value = expand_env_vars(v->new_buff, &va->state, env);
+    	char *expanded_value = expand_env_vars(v->new_buff, &va->state, env, status);
     	v->new_buff = expanded_value;
 	}
 

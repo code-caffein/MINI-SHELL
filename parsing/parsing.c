@@ -3,15 +3,15 @@
 
 
 
-t_cmd *parse(char *line, t_env *env)
+t_cmd *parse(char *line, t_env *env, int status)
 {
 	t_token *tokens;
 	t_cmd *commands;
 
-	tokens = tokenize_input(line, env);
+	tokens = tokenize_input(line, env, status);
 	if (!tokens)
 		return (NULL);
-	commands = parse_tokens(tokens, env);
+	commands = parse_tokens(tokens, env, status);
 	if(!commands)
 		return (NULL);
 	// if (commands)

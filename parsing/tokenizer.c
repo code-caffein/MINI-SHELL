@@ -67,7 +67,7 @@ t_token *fill_tokenize(t_var *v)
 	return (v->tokens);
 }
 //v->state == UNQUOTED && !is_token_separator(v->c) && (line[v->j + 1] == '\'' || line[v->j + 1] == '"' || !is_token_separator(line[v->j+1])))
-t_token *tokenize_input(char *line, t_env *env)
+t_token *tokenize_input(char *line, t_env *env, int status)
 {
 	t_var *v = malloc(sizeof(t_var));
 	if (!v)
@@ -78,34 +78,34 @@ t_token *tokenize_input(char *line, t_env *env)
 	{
 		v->c = line[v->j];
 		if (v->state == UNQUOTED && (v->c == '\'' || v->c == '"'))
-			first_condtion(v, env);
+			first_condtion(v, env, status);
 		else if ((v->state == SINGLE_QUOTED && v->c == '\'' && (line[v->j + 1] != '\'' && line[v->j  + 1] != '"' && (is_token_separator(line[v->j + 1]) || !line[v->j + 1]))) || 
                 (v->state == DOUBLE_QUOTED && v->c == '"'  && (line[v->j + 1] != '\'' && line[v->j  + 1] != '"' && (is_token_separator(line[v->j + 1]) || !line[v->j + 1]))))
 		{
 			v->wait_more_args = false;
-			if (!second_condition(v, env))
+			if (!second_condition(v, env, status))
 				break;
 		}
 		else if ((v->state == SINGLE_QUOTED && v->c == '\'' && line[v->j + 1] && (line[v->j + 1] == '\'' || line[v->j + 1] == '"' || !is_token_separator(line[v->j+1]))) || 
 				(v->state == DOUBLE_QUOTED && v->c == '"' && line[v->j + 1] && (line[v->j + 1] == '\'' || line[v->j + 1] == '"' || !is_token_separator(line[v->j+1]))))
 		{
-			if (!third_condition(v, env))
+			if (!third_condition(v, env, status))
 				break;
 		}
 		else if (v->state == UNQUOTED && (ft_strchr("|<>", v->c) || v->buffer[0] == '|' || v->buffer[0] == '>' || v->buffer[0] == '<'))
 		{
-			if (!Fourth_condition(v, line, env))
+			if (!Fourth_condition(v, line, env, status))
 				break;
 		}
 		else if (v->state == UNQUOTED && ft_isspace(v->c))
 		{
-			if (!fifth_condition(v, env))
+			if (!fifth_condition(v, env, status))
 				break;
 		}
 		else
 			v->buffer[v->i++] = v->c;
 	}
-	if (!sixth_condition(v, env))
+	if (!sixth_condition(v, env, status))
 	{
 		free_token_list(&v->tokens);
 		return(free(v),NULL);

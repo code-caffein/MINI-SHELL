@@ -65,17 +65,20 @@ int	main(int argc, char **argv, char **envp)
 			// printf("exit\n");
 			//generate a function that print exit\n and exit (ctrl + d)
 		}
-
+		printf("[%d]\n",status);
 		if (input[0] != '\0')
 			add_history(input);
-		cmds = parse(input, env);
+		if (input[0] != '\n')
+		{
+			cmds = parse(input, env, status);
 		// print_commands(cmds);
         // free_commands(cmds);
-		if (cmds)
-		{
-			// print_commands(cmds);
-        	// free_commands(cmds);
-			ft_execute(cmds, &status, &allocs, &env);
+			if (cmds)
+			{
+				// print_commands(cmds);
+        		// free_commands(cmds);
+				ft_execute(cmds, &status, &allocs, &env);
+			}
 		}
 		//-----------
 		//hna ktb li bghayti :(

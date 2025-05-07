@@ -1,12 +1,12 @@
 
 #include "he.h"
 
-int fill1_fourth(t_var *v, char *line, t_env *env)
+int fill1_fourth(t_var *v, char *line, t_env *env, int status)
 {
 	if (v->i > 0 && v->buffer[0] != '<' && v->buffer[0] != '>' && v->buffer[0] != '|')
 	{
 		v->buffer[v->i] = '\0';
-		if (!add_token_with_type(v, env))
+		if (!add_token_with_type(v, env, status))
 		{
 			v->i = 0;
 			return (0);
@@ -20,7 +20,7 @@ int fill1_fourth(t_var *v, char *line, t_env *env)
 		if (!line[v->j + 1])
 		{
 			v->buffer[v->i] = '\0';
-			if (!add_token_with_type(v, env))
+			if (!add_token_with_type(v, env, status))
 			{
 				v->i = 0;
 				return (0);
@@ -31,7 +31,7 @@ int fill1_fourth(t_var *v, char *line, t_env *env)
 	}
 	return (2);
 }
-int fill2_fourth(t_var *v, char *line, t_env *env)
+int fill2_fourth(t_var *v, char *line, t_env *env, int status)
 {
 	if (v->i > 0 && v->buffer[0] == '>' && v->c == '>')
 	{
@@ -39,7 +39,7 @@ int fill2_fourth(t_var *v, char *line, t_env *env)
 		if (!line[v->j + 1])
 		{
 			v->buffer[v->i] = '\0';
-			if (!add_token_with_type(v, env))
+			if (!add_token_with_type(v, env, status))
 			{
 				v->i = 0;
 				return (0);
@@ -54,7 +54,7 @@ int fill2_fourth(t_var *v, char *line, t_env *env)
 		if (!line[v->j + 1])
 		{
 			v->buffer[v->i] = '\0';
-			if (!add_token_with_type(v, env))
+			if (!add_token_with_type(v, env, status))
 			{
 				v->i = 0;
 				return (0);
@@ -65,10 +65,10 @@ int fill2_fourth(t_var *v, char *line, t_env *env)
 	}
 	return (2);
 }
-int	fill_fill3_fourth(t_var *v, t_env *env)
+int	fill_fill3_fourth(t_var *v, t_env *env, int status)
 {
 	v->buffer[v->i] = '\0';
-	if (!add_token_with_type(v, env))
+	if (!add_token_with_type(v, env, status))
 	{
 		v->i = 0;
 		return (0);
@@ -77,12 +77,12 @@ int	fill_fill3_fourth(t_var *v, t_env *env)
 	return (1);
 }
 
-int fill3_fourth(t_var *v, t_env *env)
+int fill3_fourth(t_var *v, t_env *env, int status)
 {
 	if (v->i > 0 && v->buffer[0] == '<' && v->c != '<')
 	{
 		v->buffer[v->i] = '\0';
-		if (!add_token_with_type(v, env))
+		if (!add_token_with_type(v, env, status))
 		{
 			v->i = 0;
 			return (0);
@@ -93,7 +93,7 @@ int fill3_fourth(t_var *v, t_env *env)
 	else if (v->i > 0 && v->buffer[0] == '>' && v->c != '>')
 	{
 		v->buffer[v->i] = '\0';
-		if (!add_token_with_type(v, env))
+		if (!add_token_with_type(v, env, status))
 		{
 			v->i = 0;
 			return (0);
@@ -102,21 +102,21 @@ int fill3_fourth(t_var *v, t_env *env)
 		return (1);
 	}
 	else if (v->i > 0 && v->buffer[0] == '|' && v->c != '|')
-		return (fill_fill3_fourth(v, env));
+		return (fill_fill3_fourth(v, env, status));
 	else
 		return (2);
 }
 
 
-int Fourth_condition(t_var *v, char *line, t_env *env)
+int Fourth_condition(t_var *v, char *line, t_env *env, int status)
 {
 	int	a;
 	int	b;
 	int c;
 	v->wait_more_args = false;
-	a = fill1_fourth(v, line, env);
-	b = fill2_fourth(v, line, env);
-	c = fill3_fourth(v, env);
+	a = fill1_fourth(v, line, env, status);
+	b = fill2_fourth(v, line, env, status);
+	c = fill3_fourth(v, env, status);
 	if (a != 2  )
 	{
 		if (a == 0)

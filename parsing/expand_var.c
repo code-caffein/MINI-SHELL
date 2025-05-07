@@ -16,15 +16,17 @@ char *get_var_value(char *var_name, t_env *env)
 }
 
 
-char *expand_env_vars(char *str, t_quote_state *state, t_env *env)
+char *expand_env_vars(char *str, t_quote_state *state, t_env *env, int status)
 {
     if (!str)
         return NULL;
     
     int i = 0;
     int j = 0;
+	char *tmp;
     char result[9999] = {0};
-    
+	int m;
+    // printf("[%d]\n",status);
     while (str[i])
     {
         if (str[i] == '$' && str[i+1] && *state != SINGLE_QUOTED)
@@ -32,16 +34,16 @@ char *expand_env_vars(char *str, t_quote_state *state, t_env *env)
             i++;
             if (str[i] == '?')
             {
-                char c;
-				int a = 0;
-                if(!a)// exit status not a (a just for test)!!!!!!!
-					c = '0';
-				else
-					c = '1';
-                result[j++] = c;
-                
-                i++;
-                continue;
+                // if(!status)// exit status not a (a just for test)!!!!!!!
+				// {
+					m = 0;
+					tmp = ft_itoa(status);
+                	while (tmp[m])
+                    	result[j++] = tmp[m++];
+                	free(tmp);
+                	i++;
+                	continue;
+				// }
             }
             
             char var_name[256] = {0};
