@@ -3,7 +3,7 @@
 
 int	main(int argc, char **argv, char **envp)
 {
-	char input;
+	char *input;
 	t_cmd *cmds;
 	t_env *env;
 	t_malloc *allocs;
@@ -20,9 +20,9 @@ int	main(int argc, char **argv, char **envp)
 			//generate a function that print exit\n and exit (ctrl + d)
 		}
 
-		if (input != '\0')
+		if (input[0] != '\0')
 			add_history(input);
-		cmds = parse(input);
+		cmds = parse(input, env);
 		if (!cmds)
 			printf("parse failed\n");
 		//-----------

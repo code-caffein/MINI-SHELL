@@ -147,6 +147,7 @@ t_token *tokenize_input(char *line, t_env *env);
 void    detect_file_tokens(t_token **tokens);
 int     validate_syntax(t_token **tokens);
 t_cmd   *parse_tokens(t_token *tokens, t_env *env);
+t_cmd *parse(char *line, t_env *env);
 
 
 // void free_token_list(t_token *start);
