@@ -332,8 +332,8 @@ t_cmd *parse_tokens(t_token *tokens, t_env *env)
 		prev = current;
 		current = current->next;
 	}
-	if (syn_err)
-		printf("syntax error near unexpected token \"%s\"\n", prev->value);
+	// if (syn_err)
+	// 	printf("syntax error near unexpected token \"%s\"\n", prev->value);
 	current = tokens;
 	commands = create_new_command();
 	if (!commands)
