@@ -65,7 +65,7 @@ int	main(int argc, char **argv, char **envp)
 			// printf("exit\n");
 			//generate a function that print exit\n and exit (ctrl + d)
 		}
-		printf("[%d]\n",status);
+		// printf("[%d]\n",status);
 		if (input[0] != '\0')
 			add_history(input);
 		if (input[0] != '\n')
