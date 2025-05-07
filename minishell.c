@@ -27,7 +27,6 @@ int	main(int argc, char **argv, char **envp)
 			printf("parse failed\n");
 		//-----------
 		//hna ktb li bghayti :(
-		ft_execute(cmds, &status, &allocs, &env);
 		//----------
 		free(input);
     }
