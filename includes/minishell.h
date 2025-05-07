@@ -6,7 +6,7 @@
 /*   By: abel-had <abel-had@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 15:34:46 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/07 10:26:43 by abel-had         ###   ########.fr       */
+/*   Updated: 2025/05/07 14:28:21 by abel-had         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -153,5 +153,6 @@ char	*get_key_value(char *key, t_env *env);
 
 
 int		ft_isspace(int c);
+char		*ft_itoa(int n);
 
 #endif
