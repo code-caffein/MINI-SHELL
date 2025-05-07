@@ -110,6 +110,7 @@ t_token *tokenize_input(char *line, t_env *env)
 		free_token_list(&v->tokens);
 		return(free(v),NULL);
 	}
+	free(v->buffer);
 	t_token *result = fill_tokenize(v);
 	free(v);
 	return (result);
