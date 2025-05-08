@@ -345,6 +345,7 @@ t_cmd *parse_tokens(t_token *tokens, t_env *env, int status)
 	current_cmd = commands;
 	while (current && !current->syn_err)
 	{
+		// printf("[%d]\n",current->type);
 		if (current->type == pip)
 		{
 			current_cmd->next = create_new_command();

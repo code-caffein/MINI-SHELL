@@ -51,8 +51,8 @@ t_token *fill_tokenize(t_var *v)
 
 	if (has_syntax_error && !v->has_heredoc)
 	{
-		free_token_list(&v->tokens);
 		printf("syntax error near unexpected token \"%s\"\n", tmp_err);
+		free_token_list(&v->tokens);
 		// free (tmp_err);
 		return (NULL);//exit !!!!!! 
 	}
@@ -101,6 +101,7 @@ t_token *tokenize_input(char *line, t_env *env, int status)
 		{
 			if (!fifth_condition(v, env, status))
 				break;
+			continue;
 		}
 		else
 			v->buffer[v->i++] = v->c;

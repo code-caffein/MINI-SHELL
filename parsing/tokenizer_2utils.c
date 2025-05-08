@@ -112,6 +112,24 @@ void fill1_add_token(t_v *v)
         free(v->new_token->value);
         free(v->new_token);
 }
+void add_expanded_token(t_v *v, t_token **tokens, char *expanded)
+{
+	t_token *new_token;
+	char *tmp = ft_strdup(expanded);
+	new_token = create_new_token(&new_token, tmp);
+	v->new_token = new_token;
+	// new_token->type = text;
+	// printf("aaaaaaaaaaaaaa\n");
+	if (*tokens == NULL)
+        *tokens = v->new_token;
+    else
+   	{
+        v->current = *tokens;
+        while (v->current->next)
+        	v->current = v->current->next;
+        v->current->next = v->new_token;
+   	}
+}
 
 void add_token(t_v *v, t_token **tokens)
 {
@@ -137,6 +155,7 @@ void add_token(t_v *v, t_token **tokens)
 	// 	// printf("buff = %s\n", v->new_token->value);
 	// printf("%s\n", v->buff);
 		v->new_token->value = v->buff;
+		// v->new_token->type = text;
 		if (*tokens == NULL)
         	*tokens = v->new_token;
     	else
@@ -148,17 +167,29 @@ void add_token(t_v *v, t_token **tokens)
    		}
 }
 	
+int need_expandd(char *str)
+{
+	int i = 0;
+	while (str[i])
+	{
+		if (str[i] == '$')
+			return (1);
+		i++;
+	}
+	return (0);
+}
 
 int add_token_with_type(t_var *va, t_env *env, int status)
 {
 
 	static char *static_buffer = NULL;
 	static bool QUOTE = false;
+	bool need_exand = false;
 	t_v *v = malloc(sizeof(t_v));
 	if (!v)
 		return 0;
-	
-	// printf("buffer = [%s]\n", buffer);
+	int a = -1;
+	printf("buffer = [%s]\n", va->buffer);
 	// (*tokens)->need_expand = malloc(sizeof(bool));
 	// if (state == UNQUOTED)
 	// 	(*tokens)->need_expand = true;
@@ -183,19 +214,14 @@ int add_token_with_type(t_var *va, t_env *env, int status)
 		return (free(v),0);//malloc failed
 	v->new_token = create_new_token(&v->new_token, v->new_buff);
 	
-	// if (*state == UNQUOTED)
-	// {
-	// 	v->new_token->need_expand = true;
-	// }
-	// else
-	// 	v->new_token->need_expand = false;
-	// v->new_token->need_expand = (*state == UNQUOTED);
+	
 	if (!v->new_token)
 	{
 		free(v->new_buff);
 		return (free(v),0);//malloc failed
 	}
 	red_pip_txt(v, &va->state);
+	// printf("[%d]\n",v->new_token->type);
 	t_token *prev_token = NULL;
 
 // Safely find the last token in the existing list
@@ -206,47 +232,64 @@ int add_token_with_type(t_var *va, t_env *env, int status)
 	}
 
 // Only expand if the previous token is NOT "<<"
-	if (!(prev_token && ft_strcmp(prev_token->value, "<<") == 0)) {
+	if (!(prev_token && ft_strcmp(prev_token->value, "<<") == 0) && need_expandd(v->new_buff) && !va->wait_more_args && !static_buffer)
+	{
     	char *expanded_value = expand_env_vars(v->new_buff, &va->state, env, status);
     	v->new_buff = expanded_value;
+		char **bib = ft_split(v->new_buff,' ');
+		//append bib to tokens arg
+		int s=-1;
+		while (bib[++s])
+			add_expanded_token(v, &va->tokens, bib[s]);
+		a = 10;
 	}
+		// printf("aaaaaaaa\n");
 
 	// expand_variables(v->new_token, state);
 	// add_token(v, tokens, wait_more_args);
-	if (va->wait_more_args) {
-		// if (*state != UNQUOTED)
-		// 	v->quote = true;
-        if (v->buff) {
-			// char *tmp = static_buffer;
-            static_buffer = ft_strjoin(v->buff, v->new_buff);
-            free(v->buff);
-        } else {
-            static_buffer = ft_strdup(v->new_buff);
-        }
-        free(v->new_token);
-    } else
+	if (a != 10)
 	{
+		// printf("aaaaa\n");
+		if (!(prev_token && ft_strcmp(prev_token->value, "<<") == 0) && need_expandd(v->new_buff))
+		{
+    		char *expanded_value = expand_env_vars(v->new_buff, &va->state, env, status);
+    		v->new_buff = expanded_value;
+		}
+		if (va->wait_more_args) {
+			// if (*state != UNQUOTED)
+			// 	v->quote = true;
+        	if (v->buff) {
+				// char *tmp = static_buffer;
+           		static_buffer = ft_strjoin(v->buff, v->new_buff);
+            	free(v->buff);
+        	}else {
+            	static_buffer = ft_strdup(v->new_buff);
+        	}
+        	free(v->new_token);
+    	} else
+		{
 		// if (*state != UNQUOTED)
 		// 	v->quote = true;
-		if (!QUOTE)
+			if (!QUOTE)
 				v->new_token->need_expand = true;
-		if (!static_buffer)
-		{
+			if (!static_buffer)
+			{
 			// printf("\n[%s]\n\n",static_buffer);
-			v->buff = v->new_buff;
-        	add_token(v, &va->tokens);
-			QUOTE = false;
-		}else
-		{
-			char *joined = ft_strjoin(static_buffer, v->new_buff);
-			v->buff = joined;
-			free(v->new_buff);
+				v->buff = v->new_buff;
+        		add_token(v, &va->tokens);
+				QUOTE = false;
+			}else
+			{
+				char *joined = ft_strjoin(static_buffer, v->new_buff);
+				v->buff = joined;
+				free(v->new_buff);
 			
-			add_token(v, &va->tokens);
-			static_buffer = NULL;
-			QUOTE = false;
-		}
-    }
+				add_token(v, &va->tokens);
+				static_buffer = NULL;
+				QUOTE = false;
+			}
+    	}	
+	}
 	free(v);	
 	return 1;
 }

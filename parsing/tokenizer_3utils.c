@@ -116,7 +116,7 @@ int validate_syntax(t_token **tokens)
     current = current->next;
     
     // Validate first token: can't start with pipe or redirection
-    if (previous->type == pip || previous->type == red)
+    if (previous->type == pip || (previous->type == red && ft_strcmp(previous->value,"<<")))
     {
 		// printf("llllllllllllllllll\n");
         previous->syn_err = true;
@@ -150,6 +150,7 @@ int validate_syntax(t_token **tokens)
         // Redirection must be followed by a filename (file or text)
         if (previous->type == red && current->type != file)
         {
+			// printf("llllllllllllllllll\n");
             previous->syn_err = true;
             free_token_list(&current);
             previous->next = NULL;
@@ -172,14 +173,15 @@ int validate_syntax(t_token **tokens)
         current = current->next;
     }
     
+	// printf("[%s]\n\n",previous->value);
     // Validate final token: can't end with pipe or redirection
-    if (previous->type == pip || previous->type == red || previous->syn_err)
+    if (previous->type == pip || previous->type == red)
     {
         previous->syn_err = true;
         free_token_list(&previous->next);
         previous->next = NULL;
+    // printf("!!!11!\n");
         return 0;
     }
-    
     return 1;
 }
