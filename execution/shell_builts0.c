@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 11:46:22 by aelbour           #+#    #+#             */
-/*   Updated: 2025/04/30 16:33:47 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/08 14:29:17 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,7 +127,7 @@ void	ft_exit(t_malloc **aloc, t_cmd *cmd, int *status)
 		if(cmd->args[2])
 		{
 			printf("exit\n");
-			ft_putstr_fd("minishell: exit: too many arguments", 2);
+			ft_putstr_fd("minishell: exit: too many arguments\n", 2);
 			*status = 1;
 		}
 		else
@@ -160,4 +160,3 @@ void	ft_exit(t_malloc **aloc, t_cmd *cmd, int *status)
 		exit(*status);
 	}
 }
-
