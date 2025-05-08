@@ -94,15 +94,16 @@ t_redirection	*create_redirection(char *file, int type)
 	redir->type = type;
 	redir->fd = -1;
 	redir->next = NULL;
+	redir->err_type = 0;
 	return (redir);
 }
 
 
-void handle_redirection(t_cmd *cmd, t_token *token, t_env *env, int status)
+int handle_redirection(t_cmd *cmd, t_token *token, t_env *env, int status)
 {
 	int i = 0;
     if (!cmd || !token || !token->next)
-        return;
+        return 0;
     
     t_token *file_token = token->next;
     if (file_token->need_expand == true)
@@ -118,7 +119,7 @@ void handle_redirection(t_cmd *cmd, t_token *token, t_env *env, int status)
         redir_type = REDIR_APPEND;
     else if (ft_strcmp(token->value, "<<") == 0)
         redir_type = REDIR_HEREDOC;
-    
+    int s = -1;
     t_redirection *redir = create_redirection(file_token->value, redir_type);
     t_redirection *current;
 
@@ -126,14 +127,6 @@ void handle_redirection(t_cmd *cmd, t_token *token, t_env *env, int status)
 	{
 		if (redir_type == REDIR_HEREDOC)
 		{
-    		// int fd = open("t_m_p_f_i_l_e", O_WRONLY | O_CREAT | O_TRUNC, 0644);
-   			// if (fd < 0)
-    		// {
-       		// 	perror("open");
-        	// 	free(redir->file);
-        	// 	free(redir);
-        	// 	return;
-			// }
 			int in = 0;
 			int capacity = 10;
 			char **bib = malloc(sizeof(char *) * capacity); // Allocate initial memory
@@ -142,7 +135,7 @@ void handle_redirection(t_cmd *cmd, t_token *token, t_env *env, int status)
     			perror("malloc");
     			free(redir->file);
     			free(redir);
-    			return;
+    			return 0;
 			}
 
 			char *line;
@@ -171,7 +164,7 @@ void handle_redirection(t_cmd *cmd, t_token *token, t_env *env, int status)
         			char **new_bib = malloc(sizeof(char *) * capacity);
         			if (!new_bib)
 					{
-            			perror("realloc");
+            			perror("malloc");
             			break;
         			}
 					int j = -1;
@@ -187,10 +180,8 @@ void handle_redirection(t_cmd *cmd, t_token *token, t_env *env, int status)
 			int fd = open("t_m_p_f_i_l_e", O_WRONLY | O_CREAT | O_TRUNC, 0644);
    			if (fd < 0)
     		{
-       			perror("open");
-        		free(redir->file);
-        		free(redir);
-        		return;
+       			redir->err_type = errno;
+        		s = 0;
 			}
 			int j = -1;
 			while (++j < in)
@@ -205,16 +196,17 @@ void handle_redirection(t_cmd *cmd, t_token *token, t_env *env, int status)
     		redir->fd = open("t_m_p_f_i_l_e", O_RDONLY | O_CREAT);
     		if (redir->fd < 0)
     		{
-        		perror("open heredoc tmp");
-        		free(redir->file);
-        		free(redir);
-        		return;
+        		redir->err_type = errno;
+        		s = 0;
     		}
 		}
 		else//input!!!
 			redir->fd = open(redir->file, O_RDONLY);
 		if (redir->fd < 0)
-		    perror("open");
+		{
+        	redir->err_type = errno;
+        	s = 0;
+    	}
         if (!cmd->in)
             cmd->in = redir;
 		else
@@ -231,7 +223,10 @@ void handle_redirection(t_cmd *cmd, t_token *token, t_env *env, int status)
 		else//output!!!
 			redir->fd = open(redir->file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 		if (redir->fd < 0)
-		    perror("open");
+		{
+        	redir->err_type = errno;
+        	s = 0;
+    	}
         if (!cmd->out)
             cmd->out = redir;
         else
@@ -242,6 +237,9 @@ void handle_redirection(t_cmd *cmd, t_token *token, t_env *env, int status)
             current->next = redir;
         }
     }
+	if (s == 0)
+			return 0;
+	return 1;
 }
 
 void free_command(t_cmd *cmd)
@@ -366,7 +364,8 @@ t_cmd *parse_tokens(t_token *tokens, t_env *env, int status)
 			}
 			else if (current->next && current->next->type == file)
 			{
-				handle_redirection(current_cmd, current, env, status);
+				if (!handle_redirection(current_cmd, current, env, status))
+					return commands;
 				current = current->next; // skipp file token!!1
        		}
         }
