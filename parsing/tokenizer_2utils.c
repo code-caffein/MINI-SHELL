@@ -117,6 +117,9 @@ void add_expanded_token(t_v *v, t_token **tokens, char *expanded)
 	t_token *new_token;
 	char *tmp = ft_strdup(expanded);
 	new_token = create_new_token(&new_token, tmp);
+	if (new_token) {
+        new_token->type = text; // Set the token type to text
+    }
 	v->new_token = new_token;
 	// new_token->type = text;
 	// printf("aaaaaaaaaaaaaa\n");
@@ -189,7 +192,7 @@ int add_token_with_type(t_var *va, t_env *env, int status)
 	if (!v)
 		return 0;
 	int a = -1;
-	printf("buffer = [%s]\n", va->buffer);
+	// printf("buffer = [%s]\n", va->buffer);
 	// (*tokens)->need_expand = malloc(sizeof(bool));
 	// if (state == UNQUOTED)
 	// 	(*tokens)->need_expand = true;
