@@ -49,16 +49,18 @@
 
 int	main(int argc, char **argv, char **envp)
 {
-	char *input;
-	t_cmd *cmds;
-	t_env *env;
-	t_malloc *allocs;
+	char *input = NULL;
+	t_cmd *cmds = NULL;
+	t_env *env  = NULL;
+	t_malloc *allocs= NULL;
 	int status;
 
 	status = 0;
 	push_envp(&env, envp);
 	while (1)
 	{
+		if (!isatty(0) || !isatty(1))
+			return (1);
 		input = readline("minishell> ");
 		if (!input)
 		{
