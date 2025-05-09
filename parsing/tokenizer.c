@@ -14,12 +14,19 @@ static void init_var(t_var *v)
 	v->buffer[0] = '\0';
 	v->tokens = NULL;
 }
+int check_red(char *s)
+{
+	if (ft_strcmp(s,"<") == 0 || ft_strcmp(s,"<<") == 0 || ft_strcmp(s,">") == 0 || ft_strcmp(s,">>") == 0 || ft_strcmp(s,"|") == 0)
+		return 1;
+	return 0;
+}
 
 t_token *fill_tokenize(t_var *v)
 {
 	bool has_syntax_error = false;
 	t_token *curr;
 	// t_token *prev;
+	int a = 0;
 
 	detect_file_tokens(&v->tokens);
 	validate_syntax(&v->tokens);
@@ -28,10 +35,16 @@ t_token *fill_tokenize(t_var *v)
 	char *tmp_err;
 	while (curr)
 	{
+		// printf("[%s]\n",curr->value);
 		if (curr->syn_err)
 		{
 			has_syntax_error = true;
 			tmp_err = curr->value;
+			// printf("[%s]\n",curr->value);
+			if (check_red(curr->value))
+				a = 1;
+			else
+				a = 2;
 			break;
 		}
 		if (curr->heredoc)
@@ -44,14 +57,32 @@ t_token *fill_tokenize(t_var *v)
 	}
 	if (has_syntax_error && v->has_heredoc)
 	{
-		printf("syntax error near unexpected token \"%s\"\n", tmp_err);
+		// printf("syntax error near unexpected token \"%s\"\n", tmp_err);
+		if (a == 1)
+			ft_putstr_fd("minishell: syntax error near unexpected token `newline'\n", 2);
+		else if (a == 2)
+		{
+			ft_putstr_fd("minishell: syntax error near unexpected token `", 2);
+			write(2, &tmp_err[0], 1);
+			write(2, &tmp_err[1], 1);
+			ft_putstr_fd("'\n", 2);
+		}
 		// free (tmp_err);
 		return (v->tokens);
 	}
 
 	if (has_syntax_error && !v->has_heredoc)
 	{
-		printf("syntax error near unexpected token \"%s\"\n", tmp_err);
+		if (a == 1)
+			ft_putstr_fd("minishell: syntax error near unexpected token `newline'\n", 2);
+		else if (a == 2)
+		{
+			ft_putstr_fd("minishell: syntax error near unexpected token `", 2);
+			write(2, &tmp_err[0], 1);
+			write(2, &tmp_err[1], 1);
+			ft_putstr_fd("'\n", 2);
+		}
+		// printf("syntax error near unexpected token \"%c\"\n", tmp_err[0]);
 		free_token_list(&v->tokens);
 		// free (tmp_err);
 		return (NULL);//exit !!!!!! 

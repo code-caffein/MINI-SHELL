@@ -128,25 +128,7 @@ int Fourth_condition(t_var *v, char *line, t_env *env, int status)
         if (b == 0)
             return (0);
     }
-    // Add this condition to handle single redirection characters
-    else if (v->i > 0 && (v->buffer[0] == '<' || v->buffer[0] == '>' || v->buffer[0] == '|'))
-    {
-        // Complete the current token
-        v->buffer[v->i] = '\0';
-        if (!add_token_with_type(v, env, status))
-        {
-            v->i = 0;
-            return (0);
-        }
-        v->i = 0;
-        
-        // Only add the current character if it's not a space
-        if (!ft_isspace(v->c))
-            v->buffer[v->i++] = v->c;
-            
-        return (1);
-    }
-    else if (v->i == 0 && !ft_isspace(v->c))  // Only add non-space chars to empty buffer
+    else if (v->i == 0 && !ft_isspace(v->c))
         v->buffer[v->i++] = v->c;
         
     return (1);
