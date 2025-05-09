@@ -89,7 +89,7 @@ typedef struct s_redirection
 	char					*file;
 	int						type;
 	int						fd;
-	int						err_type;
+	// int						err_type;
 	struct s_redirection	*next;
 } t_redirection;
 

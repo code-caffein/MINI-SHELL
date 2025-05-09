@@ -94,13 +94,14 @@ t_redirection	*create_redirection(char *file, int type)
 	redir->type = type;
 	redir->fd = -1;
 	redir->next = NULL;
-	redir->err_type = 0;
+	// redir->err_type = 0;
 	return (redir);
 }
 
 
-int handle_redirection(t_cmd *cmd, t_token *token, t_env *env, int status)
+int handle_redirection(t_cmd *cmd, t_token *token, t_env *env, int status, int ss)
 {
+	// static int a = 0;
 	int i = 0;
     if (!cmd || !token || !token->next)
         return 0;
@@ -119,7 +120,6 @@ int handle_redirection(t_cmd *cmd, t_token *token, t_env *env, int status)
         redir_type = REDIR_APPEND;
     else if (ft_strcmp(token->value, "<<") == 0)
         redir_type = REDIR_HEREDOC;
-    int s = -1;
     t_redirection *redir = create_redirection(file_token->value, redir_type);
     t_redirection *current;
 
@@ -132,10 +132,10 @@ int handle_redirection(t_cmd *cmd, t_token *token, t_env *env, int status)
 			char **bib = malloc(sizeof(char *) * capacity); // Allocate initial memory
 			if (!bib)
 			{
-    			perror("malloc");
+    			// perror("malloc");
     			free(redir->file);
     			free(redir);
-    			return 0;
+    			return errno;
 			}
 
 			char *line;
@@ -164,8 +164,9 @@ int handle_redirection(t_cmd *cmd, t_token *token, t_env *env, int status)
         			char **new_bib = malloc(sizeof(char *) * capacity);
         			if (!new_bib)
 					{
-            			perror("malloc");
-            			break;
+            			// perror("malloc");
+
+            			return errno;
         			}
 					int j = -1;
 					while (++j < in)
@@ -180,8 +181,7 @@ int handle_redirection(t_cmd *cmd, t_token *token, t_env *env, int status)
 			int fd = open("t_m_p_f_i_l_e", O_WRONLY | O_CREAT | O_TRUNC, 0644);
    			if (fd < 0)
     		{
-       			redir->err_type = errno;
-        		s = 0;
+       			return errno;
 			}
 			int j = -1;
 			while (++j < in)
@@ -194,18 +194,12 @@ int handle_redirection(t_cmd *cmd, t_token *token, t_env *env, int status)
     		close(fd);
     
     		redir->fd = open("t_m_p_f_i_l_e", O_RDONLY | O_CREAT);
-    		if (redir->fd < 0)
-    		{
-        		redir->err_type = errno;
-        		s = 0;
-    		}
 		}
-		else//input!!!
+		else if (REDIR_IN && ss != 0)//input!!!
 			redir->fd = open(redir->file, O_RDONLY);
-		if (redir->fd < 0)
+		if (redir->fd < 0 && ss != 0)
 		{
-        	redir->err_type = errno;
-        	s = 0;
+        	return errno;
     	}
         if (!cmd->in)
             cmd->in = redir;
@@ -216,7 +210,7 @@ int handle_redirection(t_cmd *cmd, t_token *token, t_env *env, int status)
                 current = current->next;
             current->next = redir;
         }
-    } else if (redir_type == REDIR_OUT || redir_type == REDIR_APPEND)
+    } else if ((redir_type == REDIR_OUT || redir_type == REDIR_APPEND) && ss != 0)
 	{
 		if (redir_type == REDIR_APPEND)
 			redir->fd = open(redir->file, O_WRONLY | O_CREAT | O_APPEND, 0644);
@@ -224,8 +218,7 @@ int handle_redirection(t_cmd *cmd, t_token *token, t_env *env, int status)
 			redir->fd = open(redir->file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 		if (redir->fd < 0)
 		{
-        	redir->err_type = errno;
-        	s = 0;
+        	return errno;
     	}
         if (!cmd->out)
             cmd->out = redir;
@@ -237,9 +230,7 @@ int handle_redirection(t_cmd *cmd, t_token *token, t_env *env, int status)
             current->next = redir;
         }
     }
-	if (s == 0)
-			return 0;
-	return 1;
+	return 0;
 }
 
 void free_command(t_cmd *cmd)
@@ -319,7 +310,11 @@ t_cmd *parse_tokens(t_token *tokens, t_env *env, int status)
 	t_cmd *current_cmd = NULL;
 	t_token *current = tokens;
 	t_token *prev = NULL;
+	int s = -1;
+	int tmp_err = 0;
+	int err = 0;
 	bool syn_err;
+	char *err_file;
 
 	syn_err = false;
 	while(current)
@@ -346,12 +341,22 @@ t_cmd *parse_tokens(t_token *tokens, t_env *env, int status)
 		// printf("[%d]\n",current->type);
 		if (current->type == pip)
 		{
+			if (err != 0)
+			{
+				ft_putstr_fd("minishell: ", 2);
+				ft_putstr_fd(err_file, 2);
+				write(2,":",1);
+				ft_putstr_fd(strerror(err), 2);
+				write(2,"\n",1);
+				
+			}
 			current_cmd->next = create_new_command();
 			if (!current_cmd->next)
 			{
 				free_commands(commands);
 				return NULL;
 			}
+			s = 1;
 			current_cmd = current_cmd->next;
 		}
 		else if (current->type == red)
@@ -364,8 +369,18 @@ t_cmd *parse_tokens(t_token *tokens, t_env *env, int status)
 			}
 			else if (current->next && current->next->type == file)
 			{
-				if (!handle_redirection(current_cmd, current, env, status))
-					return commands;
+				tmp_err = handle_redirection(current_cmd, current, env, status, s);
+				if (err == 0)
+				{
+					err = tmp_err;
+					err_file = current->next->value;
+				}
+				if (tmp_err != 0)
+				{
+					s = 0;
+					if (current_cmd && current_cmd->name)
+						current_cmd->name = NULL;
+				}
 				current = current->next; // skipp file token!!1
        		}
         }
@@ -377,6 +392,17 @@ t_cmd *parse_tokens(t_token *tokens, t_env *env, int status)
         if (current)
             current = current->next;
     }
+	
+	if (err != 0)
+	{
+		ft_putstr_fd("minishell: ", 2);
+		ft_putstr_fd(err_file, 2);
+		write(2,":",1);
+		ft_putstr_fd(strerror(err), 2);
+		write(2,"\n",1);
+				
+	}
+
 	if (syn_err)
 	{
 		//free cmds
