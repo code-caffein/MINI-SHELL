@@ -16,7 +16,7 @@ static void init_var(t_var *v)
 }
 int check_red(char *s)
 {
-	if (ft_strcmp(s,"<") == 0 || ft_strcmp(s,"<<") == 0 || ft_strcmp(s,">") == 0 || ft_strcmp(s,">>") == 0 || ft_strcmp(s,"|") == 0)
+	if (ft_strcmp(s,"<") == 0 || ft_strcmp(s,"<<") == 0 || ft_strcmp(s,">") == 0 || ft_strcmp(s,">>") == 0 )
 		return 1;
 	return 0;
 }
@@ -123,8 +123,9 @@ t_token *tokenize_input(char *line, t_env *env, int status)
 			if (!third_condition(v, env, status))
 				break;
 		}
-		else if (v->state == UNQUOTED && (ft_strchr("|<>", v->c) || v->buffer[0] == '|' || v->buffer[0] == '>' || v->buffer[0] == '<'))
+		else if (v->state == UNQUOTED && (ft_strchr("|<>", v->c) || (v->buffer[0] == '<' || v->buffer[0] == '>' || v->buffer[0] == '|')))
 		{
+			// printf("-|%c|-\n",v->buffer[0]);
 			if (!Fourth_condition(v, line, env, status))
 				break;
 		}
@@ -135,7 +136,10 @@ t_token *tokenize_input(char *line, t_env *env, int status)
 			continue;
 		}
 		else
+		{
 			v->buffer[v->i++] = v->c;
+			// printf("____|%c|___\n",v->c);
+		}
 	}
 	if (!sixth_condition(v, env, status))
 	{

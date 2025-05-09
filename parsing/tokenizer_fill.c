@@ -13,6 +13,7 @@ void first_condtion(t_var *v, t_env *env, int status)
 			free_token_list(&v->tokens);
 			return ;
 		}
+		v->buffer[0]='\0';
 		v->i = 0;
 	}
 	if (v->c == '\'')
@@ -33,6 +34,7 @@ int	second_condition (t_var *v, t_env *env, int status)
 		v->state = UNQUOTED;
 		return 0;
 	}
+	v->buffer[0]='\0';
 	v->state = UNQUOTED;
 	v->i = 0;
 	return 1;
@@ -51,6 +53,7 @@ int third_condition(t_var *v, t_env *env, int status)
 	}
 	v->wait_more_args = false;
 	v->state = UNQUOTED;
+	v->buffer[0]='\0';
 	v->i = 0;
 	return 1;
 }
@@ -63,6 +66,7 @@ int fifth_condition(t_var *v, t_env *env, int status)
 		v->buffer[v->i] = '\0';
 		if (!add_token_with_type(v, env, status))
 			return (0);
+		v->buffer[0]='\0';
 		v->i = 0;
 	}
 	return (1);
@@ -75,6 +79,7 @@ int sixth_condition(t_var *v, t_env *env, int status)
 		v->buffer[v->i] = '\0';
 		if (!add_token_with_type(v, env, status))
 			return (0);
+		v->buffer[0]='\0';
 		v->i = 0;
 	}
 	return (1);
