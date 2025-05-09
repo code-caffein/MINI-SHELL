@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abel-had <abel-had@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 10:36:58 by abel-had          #+#    #+#             */
-/*   Updated: 2025/05/07 10:37:18 by abel-had         ###   ########.fr       */
+/*   Updated: 2025/05/09 10:58:41 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,10 +37,13 @@ void get_a_child(int *g_exit_status, t_cmd *cmd, t_malloc **allocs, t_env **env)
 	int status;
 
 	pid = fork();
+	if(pid == -1)
+		perror("fork:");
 	if(pid > 0)
 	{
-		waitpid(pid, &status, 0);
-		if (WIFEXITED(status))
+		if(waitpid(pid, &status, 0) == -1)
+			perror("waitpid:");
+		else if (WIFEXITED(status))
 			*g_exit_status = WEXITSTATUS(status);
 		else if (WIFSIGNALED(status))
 			*g_exit_status = 128 + WTERMSIG(status);
@@ -79,6 +82,10 @@ void ft_execute_simple_cmd(t_cmd *cmd, t_malloc **allocs, t_env **env, int *g_ex
 	int		i;
 	char	*path;
 
+	if (!(cmd->name))
+	{
+		return;
+	}
 	i = is_builtins(cmd->name);
 	if (i)
 		execute_builtin(i, cmd, allocs, env, g_exit_status);
@@ -108,7 +115,8 @@ void execute_piped_cmd(t_cmd *cmd, t_malloc **allocs, t_env **env, int *g_exit_s
 {
 	int		i;
 	char	*path;
-
+	if(!cmd->name)
+		exit(*g_exit_status);
 	i = is_builtins(cmd->name);
 	if (i)
 		execute_builtin(i, cmd, allocs, env, g_exit_status);
@@ -150,12 +158,14 @@ void ft_execute(t_cmd *cmd, int *status, t_malloc **a, t_env **env)
 		{
 			in_backup = dup(STDIN_FILENO);
 			out_backup = dup(STDOUT_FILENO);
+			if(in_backup == -1 || out_backup == -1)
+				perror("dup");
 			redirect_command(cmd);
 			ft_execute_simple_cmd(cmd, a, env , status);
-			dup2(in_backup, STDIN_FILENO);
-			dup2(out_backup, STDOUT_FILENO);
-			close(in_backup);
-			close(out_backup);
+			if(dup2(in_backup, STDIN_FILENO) == -1 || dup2(out_backup, STDOUT_FILENO) == -1)
+				perror("dup2:");
+			if(close(in_backup) == -1 || close(out_backup))
+				perror("close:");
 		}
 		else
 			ft_execute_simple_cmd(cmd, a, env , status);

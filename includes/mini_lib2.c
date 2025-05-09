@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/26 19:55:09 by aelbour           #+#    #+#             */
-/*   Updated: 2025/04/30 15:39:35 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/09 10:59:02 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,8 @@ int	ft_isalnum(unsigned char c)
 void	ft_putstr_fd(char *s, int fd)
 {
 	if (s)
-		write(fd, s, ft_strlen(s));
+		if(write(fd, s, ft_strlen(s)) == -1)
+			perror("write:");
 }
 
 void swap_string(char **s1, char **s2)

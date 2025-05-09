@@ -6,23 +6,47 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/27 16:23:42 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/07 11:14:33 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/09 11:02:37 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "execution.h"
 
+
+int skip_nflags(t_cmd *cmd)
+{
+	int i;
+	int j;
+
+	i = 1;
+	if(!cmd->args[i])
+		return(1);
+	while(cmd->args[i])
+	{
+		j = 0;
+		if(cmd->args[i][0] == '-')
+			j++;
+		while(cmd->args[i][j])
+		{
+			if(cmd->args[i][j] != 'n')
+				return(i);//if its 1 then there arr no flags otherwise this cmd have n flags
+			j++;
+		}
+		i++;
+	}
+	return(-1);//in case of they arr all flags -nnn -n -nnnnnnn
+}
+
 int ft_echo(t_cmd *cmd)
 {
 	int nl;
 	int i;
-	i = 1;
+	i = skip_nflags(cmd);
 	nl = 1;
-	if(cmd->args[1] && !ft_strcmp("-n", cmd->args[1]))
-	{
-		i = 2;
-		nl = 0;		
-	}
+	if(i == -1)
+		return(0);
+	else if(i > 1)
+		nl = 0;
 	while(cmd->args[i])
 	{
 		ft_putstr_fd(cmd->args[i],1);

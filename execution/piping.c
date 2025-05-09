@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   piping.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abel-had <abel-had@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 15:11:23 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/07 14:56:56 by abel-had         ###   ########.fr       */
+/*   Updated: 2025/05/09 10:12:08 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,14 +38,14 @@ int **get_pipe_buff(t_cmd *cmd)
 	}
 	arr = malloc(sizeof(int *) * (n - 1));
 	if(!arr)
-		return(perror("malloc"), NULL);
+		return(perror("malloc:"), NULL);
 	while(--n > 0)
 	{
 		arr[n - 1] = malloc(2* sizeof(int));
 		if(!arr[n - 1])
-			return(perror("malloc"), NULL);
+			return(perror("malloc:"), NULL);
 		if(pipe(arr[n - 1]) == -1) 
-			return(perror("pipe"), NULL);
+			return(perror("pipe:"), NULL);
 	}
 	return(arr);
 }
@@ -55,10 +55,8 @@ void close_fds(int pipe_count, int **arr)
     int i = 0;
     while (i < pipe_count)
     {
-        // if (arr[i][0] != -1)
-            close(arr[i][0]);
-        // if (arr[i][1] != -1)
-            close(arr[i][1]);
+        if (close(arr[i][0]) == -1 || close(arr[i][1]) == -1)
+			perror("close:");
         i++;
     }
 }
@@ -85,14 +83,16 @@ void execute_pipeline(t_cmd *cmd, t_malloc **a, t_env **env, int *last_status)
 	while(cmd)
 	{
 		pid = fork();
-		if (pid == 0)
+		if(pid == -1)
+			perror("fork:");
+		else if (pid == 0)
 		{
 			if (cmd->next)
 				if (dup2(arr[num][1], STDOUT_FILENO) == -1)
-					return (printf("an error in fd[%i][1]\n", num),perror("dup2 write"), exit(EXIT_FAILURE));
+					return (printf("an error in fd[%i][1]\n", num),perror("dup2:"), exit(EXIT_FAILURE));
 			if (num)
 				if (dup2(arr[num - 1][0], STDIN_FILENO) == -1)
-					return (printf("an error in fd[%i][0]\n", num),perror("dup2 read"), exit(EXIT_FAILURE));
+					return (printf("an error in fd[%i][0]\n", num),perror("dup2:"), exit(EXIT_FAILURE));
 			close_fds(cmd_count - 1, arr);
 			redirect_command(cmd);
 			execute_piped_cmd(cmd, a, env , last_status);
@@ -103,7 +103,10 @@ void execute_pipeline(t_cmd *cmd, t_malloc **a, t_env **env, int *last_status)
 		num++;
 	}
 	close_fds(cmd_count - 1, arr);
-	if(waitpid(right_most, &status, 0) == right_most)
+	num = waitpid(right_most, &status, 0);
+	if(num == -1)
+		perror("waitpid:");
+	else if(num == right_most)
 	{
 		if (WIFEXITED(status))
 			*last_status = WEXITSTATUS(status);

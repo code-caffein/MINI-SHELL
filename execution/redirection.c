@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 12:31:09 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/06 15:51:47 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/09 10:04:44 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,8 @@ void output_redirection(t_cmd *cmd)
 		// if(cur->type == REDIR_APPEND)
 		cur = cur->next;
 	}
-	dup2(cur->fd, STDOUT_FILENO);
+	if(dup2(cur->fd, STDOUT_FILENO) == -1)
+		perror("dup2");
 }
 
 void input_redirection(t_cmd *cmd)
@@ -36,7 +37,8 @@ void input_redirection(t_cmd *cmd)
 		// if(cur->type == REDIR_APPEND)
 		cur = cur->next;
 	}
-	dup2(cur->fd, STDIN_FILENO);
+	if(dup2(cur->fd, STDIN_FILENO) == -1)
+		perror("dup2:");
 }
 
 void redirect_command(t_cmd *cmd)

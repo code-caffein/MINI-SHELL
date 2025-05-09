@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/27 12:21:50 by aelbour           #+#    #+#             */
-/*   Updated: 2025/04/27 15:03:58 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/09 09:59:13 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,23 +32,23 @@ void cmd_file_error(char *path, char *msg)
 
 void execve_error(char *cmd)
 {
-	write(2, "minishell: ", 11);
-	write(2, cmd, ft_strlen(cmd));
+	ft_putstr_fd("minishell: ", 21);
+	ft_putstr_fd(cmd, 2);
 	if (errno == ENOENT)
 	{
-		write(2, ": command not found\n", 21);
+		ft_putstr_fd(": command not found\n", 2);
 		exit(127);
 	}
 	else if (errno == EACCES)
 	{
-		write(2, ": Permission denied\n", 21);
+		ft_putstr_fd(": Permission denied\n", 2);
 		exit(126);
 	}
 	else
 	{
-		write(2, ": ", 2);
-		write(2, strerror(errno), ft_strlen(strerror(errno)));
-		write(2, "\n", 1);
+		ft_putstr_fd(": ", 2);
+		ft_putstr_fd(strerror(errno), 2);
+		ft_putstr_fd("\n", 2);
 		exit(1);
 	}
 }
