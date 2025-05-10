@@ -1,5 +1,6 @@
 #include "./includes/minishell.h"
 #include "./execution/execution.h"
+int g_signal_pid = 0;
 
 // void print_redirections(t_redirection *redir, const char *type) {
 //     while (redir != NULL) {
@@ -46,7 +47,6 @@
 //     }
 // }
 
-
 int	main(int argc, char **argv, char **envp)
 {
 	char *input = NULL;
@@ -56,6 +56,7 @@ int	main(int argc, char **argv, char **envp)
 	int status;
 
 	status = 0;
+	signals();
 	push_envp(&env, envp);
 	while (1)
 	{
@@ -75,14 +76,18 @@ int	main(int argc, char **argv, char **envp)
 			cmds = parse(input, env, status);
 		// print_commands(cmds);
         // free_commands(cmds);
-			if (cmds)
+		//check 
+			if (cmds )
 			{
 				// print_commands(cmds);
         		// free_commands(cmds);
 				ft_execute(cmds, &status, &allocs, &env);
 			}
+			else
+				status = 258;
 		}
 		//-----------
+
 		//hna ktb li bghayti :(
 			// printf("parse failed\n");
 		//----------
