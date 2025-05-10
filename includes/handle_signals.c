@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-extern int g_signal_pid;
+extern volatile sig_atomic_t g_signal_pid;
 
 
 
@@ -11,7 +11,10 @@ static void	handle_sigint(int n)
 	rl_replace_line("", 0);
 	rl_on_new_line();
 	if (g_signal_pid == 0)
+	{
 		rl_redisplay();
+		g_signal_pid = -1;
+	}
 }
 
 

@@ -6,7 +6,7 @@
 /*   By: abel-had <abel-had@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 15:34:46 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/07 14:28:21 by abel-had         ###   ########.fr       */
+/*   Updated: 2025/05/10 14:42:09 by abel-had         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,11 +18,16 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <limits.h>
+// #include <readline/readline.h>
+// #include <readline/history.h>
+#include <stddef.h>
+#include <errno.h>
 #include <readline/readline.h>
 #include <readline/history.h>
-#include <stddef.h>
+#include <signal.h>
 #include "../execution/execution.h"
 #include "../parsing/he.h"
+// #include "../signals/signals.h"
 // typedef enum e_types {
 //     pip,    // Pipe operator (|)
 //     red,    // Redirection operator (<, >, >>, <<)
@@ -100,6 +105,7 @@
 // 	char					*file;
 // 	int						type;
 // 	int						fd;
+// 	int						err_type;
 // 	struct s_redirection	*next;
 // } t_redirection;
 
@@ -128,6 +134,9 @@ typedef struct s_env {
 	struct s_env *next;
 } t_env;
 
+// Add this declaration
+extern volatile sig_atomic_t g_signal_pid;
+
 char	*ft_isnum(char *s);
 size_t  ft_strlcpy(char *dst, const char *src, size_t dstsize);
 size_t  ft_strlen(const char *s);
@@ -154,5 +163,6 @@ char	*get_key_value(char *key, t_env *env);
 
 int		ft_isspace(int c);
 char		*ft_itoa(int n);
+void	signals(void);
 
 #endif
