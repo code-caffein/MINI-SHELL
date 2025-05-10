@@ -22,7 +22,7 @@ void	cd_error(char *path);
 void	cmd_file_error(char *path, char *msg);
 void	execve_error(char *cmd);
 
-void	export_display(t_env **env);
+void export_display(t_env **env, t_malloc **a);
 int		ft_echo(t_cmd *cmd);
 int		ft_pwd();
 int		ft_export(t_cmd *cmd, t_malloc **aloc, t_env **env);
@@ -33,17 +33,17 @@ int		ft_unset(t_cmd *cmd, t_malloc **aloc, t_env **env);
 
 int		var_action(char *key ,char *value, t_env *env);
 int		is_var_exist(char *key, t_env *vars);
-void	update_var(t_env *var, char *new_value ,char *key);
+void	update_var(t_env *env, char *new_value ,char *key, t_malloc **alloc);
 int		is_key_valid(char *key);
-void	remove_variable(char *key, t_env **vars);
-void	append_value(t_env **env, char *key, char *value);
-char	**keys_to_2darray(t_env * env, int type);
+void remove_variable(char *key, t_env **vars, t_malloc **alloc);
+void append_value(t_env **env, char *key, char *value, t_malloc **alloc);
+char	**keys_to_2darray(t_env * env, int  type, t_malloc **alloc);
 char	**sort_2d_array(char **arr);
 
 void	execute_builtin(int i, t_cmd *cmd, t_malloc **allocs, t_env **env, int *g_exit_status);
 int		is_builtins(char *str);
 
-char	*get_executable_path(char *str);
+char *get_executable_path(char *str, t_malloc **alloc);
 void ft_execute_simple_cmd(t_cmd *cmd, t_malloc **allocs, t_env **env, int *g_exit_status);
 
 void execute_pipeline(t_cmd *cmd, t_malloc **a, t_env **env, int *last_status);

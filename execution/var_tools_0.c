@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/21 14:28:51 by aelbour           #+#    #+#             */
-/*   Updated: 2025/04/29 09:55:15 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/10 11:21:32 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,20 +51,25 @@ int is_var_exist(char *key, t_env *env)
 	return(0);
 }
 
-void update_var(t_env *env, char *new_value ,char *key)
+void update_var(t_env *env, char *new_value ,char *key, t_malloc **alloc)
 {
+	char *tmp;
+
+	tmp = NULL;
 	while(env)
 	{
 		if(!ft_strcmp(env->key, key))
 		{
+			tmp	 = env->value;
 			env->value = new_value;
+			free_ptr(alloc, tmp);
 			break;
 		}
 		env = env->next;
 	}
 }
 
-void remove_variable(char *key, t_env **vars)
+void remove_variable(char *key, t_env **vars, t_malloc **alloc)
 {
 	t_env *p;
 	t_env *helper;
@@ -77,11 +82,19 @@ void remove_variable(char *key, t_env **vars)
 			if(p == (*vars))
 			{
 				*vars = p->next;
+				free_ptr(alloc, p->key);
+				free_ptr(alloc, p->value);
+				free_ptr(alloc, p);
+				break;
 			}
 			else
 			{
 				helper = get_bef_node(*vars, p);
 				helper->next = p->next;
+				free_ptr(alloc, p->key);
+				free_ptr(alloc, p->value);
+				free_ptr(alloc, p);
+				break;
 			}
 		}
 		p = p->next;

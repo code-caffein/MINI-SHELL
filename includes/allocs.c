@@ -6,13 +6,13 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 15:33:05 by aelbour           #+#    #+#             */
-/*   Updated: 2025/04/28 10:53:42 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/09 15:08:55 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void *mmallocc(size_t size, t_malloc **head)
+void *mmallocc(size_t size, t_malloc **head, int p_type)
 {
 	void *pointer;
 	t_malloc *new;
@@ -25,11 +25,12 @@ void *mmallocc(size_t size, t_malloc **head)
 		return(free(pointer) ,NULL);
 	new->next = (*head);
 	new->ptr = pointer;
+	new->p_type = p_type;
 	(*head) = new;
 	return(pointer);
 }
 
-void clean_up(t_malloc **head)
+void clean_up(t_malloc **head, int t_type)
 {
 	t_malloc *nxt;
 

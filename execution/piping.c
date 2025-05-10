@@ -6,12 +6,11 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 15:11:23 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/09 10:12:08 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/10 15:03:07 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "execution.h"
-
 
 int count_cmd_list(t_cmd *cmd)
 {
@@ -25,7 +24,7 @@ int count_cmd_list(t_cmd *cmd)
 	}
 	return (i);
 }
-int **get_pipe_buff(t_cmd *cmd)
+int **get_pipe_buff(t_cmd *cmd, t_malloc **alloc)
 {
 	int n;
 	int **arr;
@@ -36,12 +35,13 @@ int **get_pipe_buff(t_cmd *cmd)
 		cmd = cmd->next;
 		n++;
 	}
-	arr = malloc(sizeof(int *) * (n - 1));
+	// arr = malloc(sizeof(int *) * (n - 1));
+	arr = mmallocc(sizeof(int *) * (n - 1), alloc, P_GARBAGE);
 	if(!arr)
 		return(perror("malloc:"), NULL);
 	while(--n > 0)
 	{
-		arr[n - 1] = malloc(2* sizeof(int));
+		arr[n - 1] = mmallocc(2* sizeof(int), alloc, P_GARBAGE);
 		if(!arr[n - 1])
 			return(perror("malloc:"), NULL);
 		if(pipe(arr[n - 1]) == -1) 
@@ -61,7 +61,6 @@ void close_fds(int pipe_count, int **arr)
     }
 }
 
-
 void execute_pipeline(t_cmd *cmd, t_malloc **a, t_env **env, int *last_status)
 {
 	pid_t pid;
@@ -74,7 +73,7 @@ void execute_pipeline(t_cmd *cmd, t_malloc **a, t_env **env, int *last_status)
 	cmd_count = count_cmd_list(cmd);
 	num = 0;
 	right_most  = -1;
-	arr = get_pipe_buff(cmd);
+	arr = get_pipe_buff(cmd, a);
 	if(!arr)
 	{
 		*last_status = EXIT_FAILURE;

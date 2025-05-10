@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 15:52:56 by aelbour           #+#    #+#             */
-/*   Updated: 2025/04/17 16:05:34 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/10 15:18:37 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ static int	check_crash(char **arr, size_t i)
 	return (1);
 }
 
-static int	ft_store(char **arr, const char *s, char c, size_t cols)
+static int	ft_store(char **arr, const char *s, char c, size_t cols, t_malloc **a)
 {
 	size_t	i;
 	size_t	j;
@@ -72,7 +72,7 @@ static int	ft_store(char **arr, const char *s, char c, size_t cols)
 	{
 		if (s[i] == c || !s[i])
 		{
-			arr[j] = ft_substr(s, l, i - l);
+			arr[j] = ft_substr(s, l, i - l, a);
 			if (!check_crash(arr, j))
 				return (0);
 			skip_seps(&i, s, c);
@@ -85,7 +85,7 @@ static int	ft_store(char **arr, const char *s, char c, size_t cols)
 	return (1);
 }
 
-char	**ft_split(char const *s, char c)
+char	**ft_split(char const *s, char c, t_malloc **alloc)
 {
 	size_t	cols;
 	char	**arr;
@@ -93,13 +93,15 @@ char	**ft_split(char const *s, char c)
 	if (!s)
 		return (NULL);
 	cols = count_cols(s, c);
-	arr = (char **)malloc((cols + 1) * sizeof(char *));
+	// arr = (char **)malloc((cols + 1) * sizeof(char *));
+
+	arr = (char **)mmallocc((cols + 1) * sizeof(char *), alloc, P_GARBAGE);
 	if (!arr)
 		return (NULL);
 	arr[cols] = NULL;
 	if (cols)
 	{
-			if (ft_store(arr, s, c, cols))
+			if (ft_store(arr, s, c, cols, alloc))
 				return (arr);
 			else
 				return (NULL);

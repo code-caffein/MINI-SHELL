@@ -6,24 +6,24 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 10:36:58 by abel-had          #+#    #+#             */
-/*   Updated: 2025/05/09 10:58:41 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/10 15:23:20 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
 #include "execution.h"
 
-char *get_executable_path(char *str)
+char *get_executable_path(char *str, t_malloc **alloc)
 {
 	int  i;
 	char *s = getenv("PATH");
-	char **paths = ft_split(s,':');
+	char **paths = ft_split(s, ':', alloc);
 	char *check;
 
 	i = -1;
 	while(paths[++i])
 	{
-		check = ft_strjoin(paths[i], ft_strjoin("/", str));
+		check = ft_strjoin(paths[i], ft_strjoin("/", str, alloc), alloc);
 		// printf("path checked = %s\n", check);
 		if(!access(check, X_OK))
 			return(check);
@@ -96,7 +96,7 @@ void ft_execute_simple_cmd(t_cmd *cmd, t_malloc **allocs, t_env **env, int *g_ex
 	}
 	else
 	{
-		path = get_executable_path(cmd->name);
+		path = get_executable_path(cmd->name, allocs);
 		// printf("executable path = %s\n", path);
 		if (path)
 		{
@@ -128,7 +128,7 @@ void execute_piped_cmd(t_cmd *cmd, t_malloc **allocs, t_env **env, int *g_exit_s
 	}
 	else
 	{
-		path = get_executable_path(cmd->name);
+		path = get_executable_path(cmd->name, allocs);
 		// printf("executable path = %s\n", path);
 		if (path)
 		{

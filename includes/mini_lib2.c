@@ -6,19 +6,19 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/26 19:55:09 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/09 10:59:02 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/10 15:17:26 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
 
-char *ft_isnum(char *s)
+char *ft_isnum(char *s, t_malloc **a)
 {
 	int	i;
 	char **arr;
 
-	arr = ft_split(s, ' ');
+	arr = ft_split(s, ' ', a);
 	if (arr[1])
 		return(0);
 	i = 0;

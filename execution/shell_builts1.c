@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/27 16:23:42 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/09 11:02:37 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/10 15:23:40 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,8 @@ int skip_nflags(t_cmd *cmd)
 		j = 0;
 		if(cmd->args[i][0] == '-')
 			j++;
+		else
+			return(i);
 		while(cmd->args[i][j])
 		{
 			if(cmd->args[i][j] != 'n')
@@ -78,9 +80,9 @@ int ft_pwd()
 	}
 }
 
-void export_display(t_env **env)
+void export_display(t_env **env, t_malloc **a)
 {
-    char **arr = keys_to_2darray(*env, 0);
+    char **arr = keys_to_2darray(*env, 0, a);
     int i = 0;
     char *value;
 
@@ -94,7 +96,7 @@ void export_display(t_env **env)
             printf("declare -x %s=\n", arr[i]);
         i++;
     }
-    arr = keys_to_2darray(*env, 1);
+    arr = keys_to_2darray(*env, 1, a);
     arr = sort_2d_array(arr);
     i = 0;
     while (arr[i])

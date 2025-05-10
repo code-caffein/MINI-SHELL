@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 11:46:22 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/08 14:29:17 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/10 15:27:31 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,21 +49,21 @@ int	ft_export(t_cmd *cmd, t_malloc **aloc, t_env **env)
 	char *key;
 	t_env *ptr = *env; 
 	status = 0;
- 
+
  	while(cmd->args[++i])
 	{
-		key = ft_split(cmd->args[i], '=')[0];
+		key = ft_split(cmd->args[i], '=', aloc)[0];
 		value = ft_strchr(cmd->args[i], '=');
 		if(value)
 			value++;
 		check = var_action(key, value, *env);
 		// printf("arg=%i key=|%s| value=|%s| check=%i\n", i, key, value, check);
 		if(check == 1)
-			push_to_env(env, key, value, 1);
+			push_to_env(env, aloc, key, value, 1);
 		if(check == 2)
-			update_var(*env, value, key);
+			update_var(*env, value, key, aloc);
 		if(check == 4)
-			append_value(env, key, value);
+			append_value(env, key, value, aloc);
 		if(check == 3)
 		{
 			status = 1;
@@ -73,7 +73,7 @@ int	ft_export(t_cmd *cmd, t_malloc **aloc, t_env **env)
 		}
 	}
 	if(i == 1)
-		export_display(env);
+		export_display(env, aloc);
 	return(status);
 }
 
@@ -106,7 +106,7 @@ int	ft_unset(t_cmd *cmd, t_malloc **aloc, t_env **env)
  	while(cmd->args[++i])
 	{
 		if(is_var_exist(cmd->args[i], *env))
-			remove_variable(cmd->args[i], env);
+			remove_variable(cmd->args[i], env, aloc);
 		if(!is_key_valid(cmd->args[i]))
 		{
 			ft_putstr_fd("minishell: unset: `", 2);
@@ -132,13 +132,16 @@ void	ft_exit(t_malloc **aloc, t_cmd *cmd, int *status)
 		}
 		else
 		{
-			s = ft_isnum(cmd->args[1]);
+			s = ft_isnum(cmd->args[1], aloc);
 			if(s)
 			{
 				i = ft_atoi(s);
 				printf("exit\n");
 				if(aloc)
-					clean_up(aloc);
+				{
+					clean_up(aloc, P_ENVIRONMENT);
+					clean_up(aloc, P_GARBAGE);
+				}
 				exit(i % 256);
 			}
 			else
@@ -148,7 +151,10 @@ void	ft_exit(t_malloc **aloc, t_cmd *cmd, int *status)
 				ft_putstr_fd(cmd->args[1], 2);
 				ft_putstr_fd(": numeric argument required\n", 2);
 				if(aloc)
-					clean_up(aloc);
+				{
+					clean_up(aloc, P_ENVIRONMENT);
+					clean_up(aloc, P_GARBAGE);
+				}
 				exit(255);
 			}
 		}
@@ -156,7 +162,11 @@ void	ft_exit(t_malloc **aloc, t_cmd *cmd, int *status)
 	else
 	{
 		if(aloc)
-			clean_up(aloc);
+		{
+			clean_up(aloc, P_ENVIRONMENT);
+			clean_up(aloc, P_GARBAGE);
+		}
+		printf("exit\n");
 		exit(*status);
 	}
 }

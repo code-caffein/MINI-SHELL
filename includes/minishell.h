@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abel-had <abel-had@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 15:34:46 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/07 14:28:21 by abel-had         ###   ########.fr       */
+/*   Updated: 2025/05/10 15:22:29 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,11 +115,17 @@
 // 	struct s_cmd *next; // Next command in pipeline
 // } t_cmd;
 
+enum {
+    P_ENVIRONMENT,
+    P_GARBAGE,
+    P_CHILD,
+};
 
 typedef struct s_malloc {
-	void            *ptr;   // the allocated block
-	struct s_malloc  *next;	
-}               t_malloc;
+	void			*ptr;   // the allocated block
+	int				p_type;
+	struct s_malloc	*next;
+} t_malloc;
 
 typedef struct s_env {
 	char *key;
@@ -128,28 +134,29 @@ typedef struct s_env {
 	struct s_env *next;
 } t_env;
 
-char	*ft_isnum(char *s);
+char *ft_isnum(char *s, t_malloc **a);
 size_t  ft_strlcpy(char *dst, const char *src, size_t dstsize);
 size_t  ft_strlen(const char *s);
-char    **ft_split(char const *s, char c);
-char    *ft_strdup(const char *s);
+char	**ft_split(char const *s, char c, t_malloc **alloc);
+char	*ft_strdup(const char *s1, t_malloc **alloc, int p_type);
 char    *ft_strchr(const char *s, int c);
-char	*ft_strjoin(char const *s1, char const *s2);
-char	*ft_substr(char const *s, unsigned int start, size_t len);
+char	*ft_strjoin(char const *s1, char const *s2, t_malloc **a);
+char	*ft_substr(char const *s, unsigned int start, size_t len, t_malloc **a);
 int	count_list_size(void *head, size_t offset);
 int	ft_strcmp(const char *s1, const char *s2);
-void clean_up(t_malloc **head);
-void *mmallocc(size_t size, t_malloc **head);
+void clean_up(t_malloc **head, int p_type);
+void *mmallocc(size_t size, t_malloc **head, int p_type);
 int	ft_isalnum(unsigned char c);
 int	ft_isalpha(int c);
 int	ft_isdigit(int c);
 void	ft_putstr_fd(char *s, int fd);
 void swap_string(char **s1, char **s2);
-void	*push_to_env(t_env **head, char *key, char *value, int type);
+void *push_to_env(t_env **head, t_malloc **alloc, char *key, char *value, int type);
 int count_env_nodes(t_env *env, int type);
-void push_envp(t_env **head ,char **envp);
+void push_envp(t_env **head ,char **envp, t_malloc **a);
 int	ft_atoi(const char *str);
 char	*get_key_value(char *key, t_env *env);
+void free_ptr(t_malloc **head, void *addr);
 
 
 int		ft_isspace(int c);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mini_lib0.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abel-had <abel-had@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 15:55:09 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/06 18:48:53 by abel-had         ###   ########.fr       */
+/*   Updated: 2025/05/10 14:40:13 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,6 @@ size_t	ft_strlcpy(char *dst, const char *src, size_t dstsize)
 	return (src_len);
 }
 
-
 size_t	ft_strlcat(char *dst, const char *src, size_t dstsize)
 {
 	size_t	i;
@@ -48,7 +47,7 @@ size_t	ft_strlcat(char *dst, const char *src, size_t dstsize)
 	return (i + ft_strlen((char *)src) - j);
 }
 
-char	*ft_strdup(const char *s1)
+char	*ft_strdup(const char *s1, t_malloc **alloc, int p_type)
 {
 	char	*c;
 	size_t	i;
@@ -58,14 +57,14 @@ char	*ft_strdup(const char *s1)
 		return(NULL);
 	l = ft_strlen((char *) s1);
 	i = 0;
-	c = (char *) malloc(l + 1);
+	c = (char *) mmallocc(l + 1, alloc, p_type);
 	if (!c)
 		return (NULL);
 	ft_strlcpy(c, s1, l + 1);
 	return (c);
 }
 
-char	*ft_substr(char const *s, unsigned int start, size_t len)
+char	*ft_substr(char const *s, unsigned int start, size_t len, t_malloc **a)
 {
 	size_t	s_len;
 	char	*c;
@@ -75,19 +74,19 @@ char	*ft_substr(char const *s, unsigned int start, size_t len)
 		return (NULL);
 	s_len = ft_strlen((char *) s);
 	if (start > s_len)
-		return (ft_strdup(""));
+		return (ft_strdup("", a, P_GARBAGE));
 	s_len = ft_strlen((char *) &s[start]);
 	size = len + 1;
 	if (s_len < len)
 		size = s_len + 1;
-	c = (char *) malloc(size);
+	c = (char *) mmallocc(size, a, P_GARBAGE);
 	if (!c)
 		return (NULL);
 	ft_strlcpy(c, &s[start], size);
 	return (c);
 }
 
-char	*ft_strjoin(char const *s1, char const *s2)
+char	*ft_strjoin(char const *s1, char const *s2, t_malloc **a)
 {
 	size_t	siz;
 	char	*c = NULL;
@@ -99,7 +98,7 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	else
 	{
 		siz = ft_strlen((char *) s1) + ft_strlen((char *) s2) + 1;
-		c = (char *) malloc(siz);
+		c = (char *) mmallocc(siz, a, P_GARBAGE);
 		if (!c)
 			return (NULL);
 		ft_strlcpy(c, s1, ft_strlen((char *) s1) + 1);
