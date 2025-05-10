@@ -40,6 +40,7 @@ void add_error_token(t_token **token, char *buffer)
         return;
 
     // Initialize all fields
+	// printf("[%s]\n",buffer);
     new_token->value = ft_strdup(buffer);
     new_token->type = text;  // Default type instead of NULL
     new_token->syn_err = true;
@@ -114,9 +115,9 @@ int validate_syntax(t_token **tokens)
         
     previous = current;
     current = current->next;
-    
+    //|| (previous->type == red && ft_strcmp(previous->value,"<<")
     // Validate first token: can't start with pipe or redirection
-    if (previous->type == pip || (previous->type == red && ft_strcmp(previous->value,"<<")))
+    if (previous->type == pip)
     {
 		// printf("llllllllllllllllll\n");
         previous->syn_err = true;

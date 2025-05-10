@@ -198,6 +198,8 @@ int add_token_with_type(t_var *va, t_env *env, int status)
 	// 	(*tokens)->need_expand = true;
 	// else
 	// 	(*tokens)->need_expand = false;
+	// printf("[%s]\n",va->buffer);
+
 	init_variable(v);
 	if (va->buffer[0] == '\0')
 		return (free(v),0);

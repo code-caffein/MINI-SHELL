@@ -130,8 +130,8 @@ typedef struct s_cmd {
 /*
  * Variable expansion functions
  */
-// int     expand_variables(t_token *tokens, t_quote_state *state, int exit_status);
-// char    *expand_env_vars(char *str, t_quote_state *state, int exit_status);
+// int     expand_variables(t_token *tokens, t_quote_state *state, int exit_*status);
+// char    *expand_env_vars(char *str, t_quote_state *state, int exit_*status);
 // char    *get_var_value(char *var_name);
 
 /*

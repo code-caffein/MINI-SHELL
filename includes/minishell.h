@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 15:34:46 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/10 15:22:29 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/10 15:31:17 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,11 +18,16 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <limits.h>
+// #include <readline/readline.h>
+// #include <readline/history.h>
+#include <stddef.h>
+#include <errno.h>
 #include <readline/readline.h>
 #include <readline/history.h>
-#include <stddef.h>
+#include <signal.h>
 #include "../execution/execution.h"
 #include "../parsing/he.h"
+// #include "../signals/signals.h"
 // typedef enum e_types {
 //     pip,    // Pipe operator (|)
 //     red,    // Redirection operator (<, >, >>, <<)
@@ -100,6 +105,7 @@
 // 	char					*file;
 // 	int						type;
 // 	int						fd;
+// 	int						err_type;
 // 	struct s_redirection	*next;
 // } t_redirection;
 
@@ -161,5 +167,6 @@ void free_ptr(t_malloc **head, void *addr);
 
 int		ft_isspace(int c);
 char		*ft_itoa(int n);
+void	signals(void);
 
 #endif
