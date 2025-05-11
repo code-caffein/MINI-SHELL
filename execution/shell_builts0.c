@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 11:46:22 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/10 15:27:31 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/11 12:13:19 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,7 +121,7 @@ int	ft_unset(t_cmd *cmd, t_malloc **aloc, t_env **env)
 void	ft_exit(t_malloc **aloc, t_cmd *cmd, int *status)
 {
 	char *s;
-	int i;
+	long long i;
 	if(cmd->args[1])
 	{
 		if(cmd->args[2])
@@ -137,6 +137,19 @@ void	ft_exit(t_malloc **aloc, t_cmd *cmd, int *status)
 			{
 				i = ft_atoi(s);
 				printf("exit\n");
+				if(errno == ERANGE)
+				{
+					ft_putstr_fd("bash: exit: ", 2);
+					ft_putstr_fd(s, 2);
+					ft_putstr_fd(": numeric argument required", 2);
+					if(aloc)
+					{
+						clean_up(aloc, P_ENVIRONMENT);
+						clean_up(aloc, P_GARBAGE);
+					}
+					errno = 0;
+					exit(255);
+				}
 				if(aloc)
 				{
 					clean_up(aloc, P_ENVIRONMENT);
