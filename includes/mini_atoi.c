@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 14:34:33 by aelbour           #+#    #+#             */
-/*   Updated: 2025/04/30 14:39:43 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/11 12:06:36 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ static void	ft_skip_space(long *i, const char *str)
 		(*i)++;
 }
 
-int	ft_atoi(const char *str)
+long long int	ft_atoi(const char *str)
 {
 	long	i;
 	long	t;
@@ -45,9 +45,15 @@ int	ft_atoi(const char *str)
 	{
 		t = (t * 10) + (str[i++] - '0');
 		if ((t / 10) != oldt && s < 0)
-			return (0);
+		{
+			errno =  ERANGE;
+			return (255);
+		}
 		else if ((t / 10) != oldt && s > 0)
-			return (-1);
+		{
+			errno = ERANGE;
+			return (255);
+		}
 		oldt = t;
 	}
 	return ((int)t * s);

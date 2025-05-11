@@ -47,22 +47,25 @@ volatile sig_atomic_t g_signal_pid = 0;
 //     }
 // }
 
-// void init_v(t_sp_var **v)
-// {
-// 	(*v)->line = NULL;
-// 	(*v)->cmds = NULL;
-// 	(*v)->env = NULL;
-// 	(*v)->allocs = NULL;
-// }
+void init_v(t_sp_var *v)
+{
+	(v)->line = NULL;
+	(v)->cmds = NULL;
+	(v)->env = NULL;
+	(v)->allocs = NULL;
+}
 
 int	main(int argc, char **argv, char **envp)
 {
 	t_sp_var *v;
+	t_sp_var s;
+	v =  &s;
 
-	// init_v(&v);
+	init_v(v);
 
 	signals();
-	push_envp(&v->env, envp, &v->allocs);
+
+	push_envp(&(v->env), envp, &(v->allocs));
 	while (1)
 	{
 		// if (g_signal_pid == -1)

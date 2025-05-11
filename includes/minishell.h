@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 15:34:46 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/10 15:31:17 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/11 11:52:35 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -160,9 +160,10 @@ void swap_string(char **s1, char **s2);
 void *push_to_env(t_env **head, t_malloc **alloc, char *key, char *value, int type);
 int count_env_nodes(t_env *env, int type);
 void push_envp(t_env **head ,char **envp, t_malloc **a);
-int	ft_atoi(const char *str);
+long long int	ft_atoi(const char *str);
 char	*get_key_value(char *key, t_env *env);
 void free_ptr(t_malloc **head, void *addr);
+size_t	ft_strlcat(char *dst, const char *src, size_t dstsize);
 
 
 int		ft_isspace(int c);
