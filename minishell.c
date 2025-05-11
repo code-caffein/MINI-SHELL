@@ -62,7 +62,6 @@ int	main(int argc, char **argv, char **envp)
 	v =  &s;
 
 	init_v(v);
-
 	signals();
 
 	push_envp(&(v->env), envp, &(v->allocs));
@@ -97,7 +96,7 @@ int	main(int argc, char **argv, char **envp)
 			{
 				// print_commands(cmds);
         		// free_commands(cmds);
-				ft_execute(v->cmds, &v->status, &v->allocs, &v->env);
+				ft_execute(v->cmds, &v->status, &v->allocs, &v->env, envp);
 			}
 			else
 				v->status = 258;

@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 15:11:23 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/10 15:03:07 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/11 12:42:12 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ void close_fds(int pipe_count, int **arr)
     }
 }
 
-void execute_pipeline(t_cmd *cmd, t_malloc **a, t_env **env, int *last_status)
+void execute_pipeline(t_cmd *cmd, t_malloc **a, t_env **env, int *last_status, char **envp)
 {
 	pid_t pid;
 	int num;
@@ -94,7 +94,7 @@ void execute_pipeline(t_cmd *cmd, t_malloc **a, t_env **env, int *last_status)
 					return (printf("an error in fd[%i][0]\n", num),perror("dup2:"), exit(EXIT_FAILURE));
 			close_fds(cmd_count - 1, arr);
 			redirect_command(cmd);
-			execute_piped_cmd(cmd, a, env , last_status);
+			execute_piped_cmd(cmd, a, env , last_status, envp);
 			exit(*last_status);
 		}
 		right_most = pid;

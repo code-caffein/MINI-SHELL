@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 10:36:58 by abel-had          #+#    #+#             */
-/*   Updated: 2025/05/10 15:23:20 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/11 12:45:55 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ char *get_executable_path(char *str, t_malloc **alloc)
 	return(NULL);
 }
 
-void get_a_child(int *g_exit_status, t_cmd *cmd, t_malloc **allocs, t_env **env)
+void get_a_child(int *g_exit_status, t_cmd *cmd, t_malloc **allocs, t_env **env, char **envp)
 {
 	pid_t pid;
 	int status;
@@ -50,7 +50,7 @@ void get_a_child(int *g_exit_status, t_cmd *cmd, t_malloc **allocs, t_env **env)
 	}
 	else
 	{
-		if (execve(cmd->name, cmd->args, NULL) == -1)
+		if (execve(cmd->name, cmd->args, envp) == -1)
 			execve_error(cmd->name);
 	}
 }
@@ -77,7 +77,7 @@ int file_error_handler(char *path, int *status)
 	return (0);
 }
 
-void ft_execute_simple_cmd(t_cmd *cmd, t_malloc **allocs, t_env **env, int *g_exit_status)
+void ft_execute_simple_cmd(t_cmd *cmd, t_malloc **allocs, t_env **env, int *g_exit_status, char **envp)
 {
 	int		i;
 	char	*path;
@@ -92,7 +92,7 @@ void ft_execute_simple_cmd(t_cmd *cmd, t_malloc **allocs, t_env **env, int *g_ex
 	else if (ft_strchr(cmd->name, '/'))
 	{
 		if (file_error_handler(cmd->name, g_exit_status))
-			get_a_child(g_exit_status ,cmd, allocs, env);
+			get_a_child(g_exit_status ,cmd, allocs, env, envp);
 	}
 	else
 	{
@@ -101,7 +101,7 @@ void ft_execute_simple_cmd(t_cmd *cmd, t_malloc **allocs, t_env **env, int *g_ex
 		if (path)
 		{
 			cmd->name = path;
-			get_a_child(g_exit_status, cmd, allocs, env);
+			get_a_child(g_exit_status, cmd, allocs, env, envp);
 		}
 		else
 		{
@@ -111,7 +111,7 @@ void ft_execute_simple_cmd(t_cmd *cmd, t_malloc **allocs, t_env **env, int *g_ex
 	}
 }
 
-void execute_piped_cmd(t_cmd *cmd, t_malloc **allocs, t_env **env, int *g_exit_status)
+void execute_piped_cmd(t_cmd *cmd, t_malloc **allocs, t_env **env, int *g_exit_status, char **envp)
 {
 	int		i;
 	char	*path;
@@ -123,7 +123,7 @@ void execute_piped_cmd(t_cmd *cmd, t_malloc **allocs, t_env **env, int *g_exit_s
 	else if (ft_strchr(cmd->name, '/'))
 	{
 		if (file_error_handler(cmd->name, g_exit_status))
-			if (execve(cmd->name, cmd->args, NULL) == -1)
+			if (execve(cmd->name, cmd->args, envp) == -1)
 				execve_error(cmd->name);
 	}
 	else
@@ -133,7 +133,7 @@ void execute_piped_cmd(t_cmd *cmd, t_malloc **allocs, t_env **env, int *g_exit_s
 		if (path)
 		{
 			cmd->name = path;
-			if (execve(cmd->name, cmd->args, NULL) == -1)
+			if (execve(cmd->name, cmd->args, envp) == -1)
 				execve_error(cmd->name);
 		}
 		else
@@ -144,14 +144,14 @@ void execute_piped_cmd(t_cmd *cmd, t_malloc **allocs, t_env **env, int *g_exit_s
 	}
 }
 
-void ft_execute(t_cmd *cmd, int *status, t_malloc **a, t_env **env)
+void ft_execute(t_cmd *cmd, int *status, t_malloc **a, t_env **env, char **envp)
 {
 	int in_backup;
 	int out_backup;
 
 	
 	if(cmd->next)
-		execute_pipeline(cmd, a, env , status);
+		execute_pipeline(cmd, a, env , status, envp);
 	else
 	{
 		if(cmd->in || cmd->out)
@@ -161,13 +161,13 @@ void ft_execute(t_cmd *cmd, int *status, t_malloc **a, t_env **env)
 			if(in_backup == -1 || out_backup == -1)
 				perror("dup");
 			redirect_command(cmd);
-			ft_execute_simple_cmd(cmd, a, env , status);
+			ft_execute_simple_cmd(cmd, a, env , status, envp);
 			if(dup2(in_backup, STDIN_FILENO) == -1 || dup2(out_backup, STDOUT_FILENO) == -1)
 				perror("dup2:");
 			if(close(in_backup) == -1 || close(out_backup))
 				perror("close:");
 		}
 		else
-			ft_execute_simple_cmd(cmd, a, env , status);
+			ft_execute_simple_cmd(cmd, a, env , status, envp);
 	}
 }

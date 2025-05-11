@@ -44,15 +44,15 @@ void	execute_builtin(int i, t_cmd *cmd, t_malloc **allocs, t_env **env, int *g_e
 int		is_builtins(char *str);
 
 char *get_executable_path(char *str, t_malloc **alloc);
-void ft_execute_simple_cmd(t_cmd *cmd, t_malloc **allocs, t_env **env, int *g_exit_status);
+void ft_execute_simple_cmd(t_cmd *cmd, t_malloc **allocs, t_env **env, int *g_exit_status, char **envp);
 
-void execute_pipeline(t_cmd *cmd, t_malloc **a, t_env **env, int *last_status);
-void execute_piped_cmd(t_cmd *cmd, t_malloc **allocs, t_env **env, int *g_exit_status);
+void execute_pipeline(t_cmd *cmd, t_malloc **a, t_env **env, int *last_status, char **envp);
+void execute_piped_cmd(t_cmd *cmd, t_malloc **allocs, t_env **env, int *g_exit_status, char **envp);
 
 void redirect_command(t_cmd *cmd);
 
 // void execute_piped_cmd(t_cmd *cmd, t_malloc **allocs, t_env **env, int *g_exit_status);
-void ft_execute(t_cmd *cmd, int *status, t_malloc **a, t_env **env);
+void ft_execute(t_cmd *cmd, int *status, t_malloc **a, t_env **env, char **envp);
 
 
 
