@@ -13,7 +13,13 @@ int fill1_fourth(t_var *v, char *line, t_env *env, int status)
 			return (0);
 		}
 		v->i = 0;
-		v->buffer[0]='\0';
+		v->buffer[v->i] = '\0';
+		if (!ft_isspace(v->c))
+		{
+			// printf("SSSs\n");
+			v->buffer[v->i++] = v->c;
+			v->buffer[v->i] = '\0';
+		}
 		return (1);
 	}
 	else if (v->i > 0 && v->buffer[0] == '<' && v->c == '<')
@@ -137,8 +143,10 @@ int Fourth_condition(t_var *v, char *line, t_env *env, int  status)
 	int c;
     v->wait_more_args = false;
     a = fill1_fourth(v, line, env,  status);
-    b = fill2_fourth(v, line, env,  status);
-	c = fill3_fourth(v, env,  status);
+    if (a == 2)
+		b = fill2_fourth(v, line, env,  status);
+	if (a == 2 && b == 2)
+		c = fill3_fourth(v, env,  status);
     // printf("----------- [%c]-------------\n",v->c);
     if (a != 2)
     {
