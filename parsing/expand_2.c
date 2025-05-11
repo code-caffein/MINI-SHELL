@@ -3,20 +3,20 @@
 
 
 
-char *get_var_value(char *var_name, t_env *env)
+static char *get_var_value(char *var_name, t_env *env, t_malloc **a)
 {
     if (!var_name)
         return NULL;
 
     char *env_value = get_key_value(var_name, env);
     if (env_value)
-        return ft_sttrdup(env_value);
+        return ft_strdup(env_value, a, P_GARBAGE);
     
-    return ft_sttrdup("");
+    return ft_strdup("", a, P_GARBAGE);
 }
 
 
-char *expand_env_vars(char *str, t_quote_state *state, t_env *env, int status)
+char *expand2_env_vars(char *str, t_quote_state *state, t_sp_var *v, t_malloc **a)
 {
     if (!str)
         return NULL;
@@ -37,7 +37,7 @@ char *expand_env_vars(char *str, t_quote_state *state, t_env *env, int status)
                 // if(!status)// exit status not a (a just for test)!!!!!!!
 				// {
 					m = 0;
-					tmp = ft_itoa(status);
+					tmp = ft_itoa(v->status);
                 	while (tmp[m])
                     	result[j++] = tmp[m++];
                 	free(tmp);
@@ -57,7 +57,7 @@ char *expand_env_vars(char *str, t_quote_state *state, t_env *env, int status)
             
             var_name[k] = '\0';
             
-            char *value = get_var_value(var_name, env);
+            char *value = get_var_value(var_name, v->env, &v->allocs);
             if (value)
             {
                 int m = 0;
@@ -71,25 +71,5 @@ char *expand_env_vars(char *str, t_quote_state *state, t_env *env, int status)
     }
     
     result[j] = '\0';
-    return ft_sttrdup(result);
+    return ft_strdup(result, &v->allocs, P_GARBAGE);
 }
-
-// int expand_variables(t_token *tokens, t_quote_state *state)
-// {
-// 	t_token *current = tokens;
-
-// 	while (current)
-// 	{
-//         if (current->type == text)
-//         {
-//             char *expanded = expand_env_vars(current->value, state);
-//             if (!expanded)
-//                 return 0; 
-//             free(current->value);
-//             current->value = expanded;
-//         }
-//         current = current->next;
-//     }
-//     return (1);
-// }
-

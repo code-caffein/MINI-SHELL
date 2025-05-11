@@ -41,7 +41,7 @@ void add_error_token(t_token **token, char *buffer)
 
     // Initialize all fields
 	// printf("[%s]\n",buffer);
-    new_token->value = ft_strdup(buffer);
+    new_token->value = ft_sttrdup(buffer);
     new_token->type = text;  // Default type instead of NULL
     new_token->syn_err = true;
     new_token->heredoc = false;

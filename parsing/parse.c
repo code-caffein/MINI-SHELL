@@ -42,7 +42,7 @@ void add_argument(t_cmd *cmd, char *arg)
         return;
 
     if (cmd->arg_count == 0)
-        cmd->name = ft_strdup(arg);
+        cmd->name = ft_sttrdup(arg);
 	if (!cmd->name)
 	{
 		perror("malloc");
@@ -77,7 +77,7 @@ void add_argument(t_cmd *cmd, char *arg)
         cmd->args = new_args;
     }
     
-    cmd->args[cmd->arg_count] = ft_strdup(arg);
+    cmd->args[cmd->arg_count] = ft_sttrdup(arg);
     cmd->arg_count++;
     cmd->args[cmd->arg_count] = NULL;
 }
@@ -90,7 +90,7 @@ t_redirection	*create_redirection(char *file, int type)
 	redir = malloc(sizeof(t_redirection));
 	if (!redir)
 		return NULL;
-	redir->file = ft_strdup(file);
+	redir->file = ft_sttrdup(file);
 	redir->type = type;
 	redir->fd = -1;
 	redir->next = NULL;
@@ -99,7 +99,7 @@ t_redirection	*create_redirection(char *file, int type)
 }
 
 
-int handle_redirection(t_cmd *cmd, t_token *token, t_env *env, int status, int ss)
+int handle_redirection(t_cmd *cmd, t_token *token, t_sp_var *v, int ss)
 {
 	// static int a = 0;
 	int i = 0;
@@ -153,7 +153,7 @@ int handle_redirection(t_cmd *cmd, t_token *token, t_env *env, int status, int s
 				{
        				char *tmp;
         			t_quote_state state = UNQUOTED;
-        			tmp = expand_env_vars(line, &state, env, status);
+        			tmp = expand2_env_vars(line, &state, v, &v->allocs);
         			free(line);
         			line = tmp;
     			}
@@ -304,7 +304,7 @@ void	free_commands(t_cmd *commands)
 
 
 
-t_cmd *parse_tokens(t_token *tokens, t_env *env, int status)
+t_cmd *parse_tokens(t_token *tokens, t_sp_var *v)
 {
 	t_cmd *commands = NULL;
 	t_cmd *current_cmd = NULL;
@@ -369,7 +369,7 @@ t_cmd *parse_tokens(t_token *tokens, t_env *env, int status)
 			}
 			else if (current->next && current->next->type == file)
 			{
-				tmp_err = handle_redirection(current_cmd, current, env, status, s);
+				tmp_err = handle_redirection(current_cmd, current, v, s);
 				if (err == 0)
 				{
 					err = tmp_err;

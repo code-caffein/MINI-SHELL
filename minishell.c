@@ -47,18 +47,22 @@ volatile sig_atomic_t g_signal_pid = 0;
 //     }
 // }
 
+// void init_v(t_sp_var **v)
+// {
+// 	(*v)->line = NULL;
+// 	(*v)->cmds = NULL;
+// 	(*v)->env = NULL;
+// 	(*v)->allocs = NULL;
+// }
+
 int	main(int argc, char **argv, char **envp)
 {
-	char *input = NULL;
-	t_cmd *cmds = NULL;
-	t_env *env  = NULL;
-	t_malloc *allocs= NULL;
-	// pid_t pid;
-	int status;
+	t_sp_var *v;
 
-	status = 0;
+	// init_v(&v);
+
 	signals();
-	push_envp(&env, envp);
+	push_envp(&v->env, envp, &v->allocs);
 	while (1)
 	{
 		// if (g_signal_pid == -1)
@@ -68,39 +72,39 @@ int	main(int argc, char **argv, char **envp)
 		// }
 		if (!isatty(0) || !isatty(1))
 			return (1);
-		input = readline("minishell> ");
-		if (!input)
-        	input = ft_strdup("exit");
+		v->line = readline("minishell> ");
+		if (!v->line)
+        	v->line = ft_sttrdup("exit");
 		// printf("[%d]\n",status);
-		if (input[0] != '\0')
-			add_history(input);
+		if (v->line[0] != '\0')
+			add_history(v->line);
 		if (g_signal_pid == -1)
 		{
-			status = 1;
+			v->status = 1;
 			g_signal_pid = 0;
 		}
-		if (*input != '\0')
+		if (*v->line != '\0')
 		{
 			// printf("\n[%c]\n",*input);
-			cmds = parse(input, env, status);
+			v->cmds = parse(v);
 		// print_commands(cmds);
         // free_commands(cmds);
 		//check 
-			if (cmds )
+			if (v->cmds )
 			{
 				// print_commands(cmds);
         		// free_commands(cmds);
-				ft_execute(cmds, &status, &allocs, &env);
+				ft_execute(v->cmds, &v->status, &v->allocs, &v->env);
 			}
 			else
-				status = 258;
+				v->status = 258;
 			
 		}
 		//-----------
 		//hna ktb li bghayti :(
 			// printf("parse failed\n");
 		//----------
-		free(input);
+		free(v->line);
     }
 
     return 0;

@@ -21,7 +21,7 @@ int ft_fill_2(t_v *v, char *buffer, t_quote_state *state)
 	else if (*state == SINGLE_QUOTED)
 		v->new_buff = remove_character(buffer, '\'');
 	else if (*state == UNQUOTED)
-		v->new_buff = ft_strdup(buffer);
+		v->new_buff = ft_sttrdup(buffer);
 	if (!v->new_buff)
 		return 0;
 	return 1;
@@ -101,12 +101,12 @@ void red_pip_txt(t_v *v , t_quote_state *state)
 void fill1_add_token(t_v *v)
 {
 	if (v->buff) {
-            char *joined = ft_strjoin(v->buff, v->new_buff);
+            char *joined = ft_sttrjoin(v->buff, v->new_buff);
             free(v->buff);
             free(v->new_buff);
             v->buff = joined;
     } else{
-            v->buff = ft_strdup(v->new_buff);
+            v->buff = ft_sttrdup(v->new_buff);
         }
 		// printf("buff = %s\n", v->buff);
         free(v->new_token->value);
@@ -115,7 +115,7 @@ void fill1_add_token(t_v *v)
 void add_expanded_token(t_v *v, t_token **tokens, char *expanded)
 {
 	t_token *new_token;
-	char *tmp = ft_strdup(expanded);
+	char *tmp = ft_sttrdup(expanded);
 	new_token = create_new_token(&new_token, tmp);
 	if (new_token) {
         new_token->type = text; // Set the token type to text
@@ -241,7 +241,7 @@ int add_token_with_type(t_var *va, t_env *env, int status)
 	{
     	char *expanded_value = expand_env_vars(v->new_buff, &va->state, env, status);
     	v->new_buff = expanded_value;
-		char **bib = ft_split(v->new_buff,' ');
+		char **bib = ft_spplit(v->new_buff,' ');
 		//append bib to tokens arg
 		int s=-1;
 		while (bib[++s])
@@ -265,10 +265,10 @@ int add_token_with_type(t_var *va, t_env *env, int status)
 			// 	v->quote = true;
         	if (v->buff) {
 				// char *tmp = static_buffer;
-           		static_buffer = ft_strjoin(v->buff, v->new_buff);
+           		static_buffer = ft_sttrjoin(v->buff, v->new_buff);
             	free(v->buff);
         	}else {
-            	static_buffer = ft_strdup(v->new_buff);
+            	static_buffer = ft_sttrdup(v->new_buff);
         	}
         	free(v->new_token);
     	} else
@@ -285,7 +285,7 @@ int add_token_with_type(t_var *va, t_env *env, int status)
 				QUOTE = false;
 			}else
 			{
-				char *joined = ft_strjoin(static_buffer, v->new_buff);
+				char *joined = ft_sttrjoin(static_buffer, v->new_buff);
 				v->buff = joined;
 				free(v->new_buff);
 			

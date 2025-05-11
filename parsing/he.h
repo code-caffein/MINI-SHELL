@@ -105,6 +105,14 @@ typedef struct s_cmd {
 	struct s_cmd *next; // Next command in pipeline
 } t_cmd;
 
+typedef struct s_sp_var{
+	char *line;
+	t_cmd *cmds;
+	t_env *env;
+	t_malloc *allocs;
+	int status;
+	t_var *var;
+} t_sp_var;
 // typedef struct s_env {
 // 	char *key;
 // 	char *value;
@@ -144,11 +152,11 @@ typedef struct s_cmd {
 //     struct s_arr *next;
 // } t_arr;
 
-t_token *tokenize_input(char *line, t_env *env, int status);
+t_token *tokenize_input(t_sp_var *v);
 void    detect_file_tokens(t_token **tokens);
 int     validate_syntax(t_token **tokens);
-t_cmd   *parse_tokens(t_token *tokens, t_env *env, int status);
-t_cmd *parse(char *line, t_env *env, int status);
+t_cmd   *parse_tokens(t_token *tokens, t_sp_var *v);
+t_cmd *parse(t_sp_var *v);
 
 
 // void free_token_list(t_token *start);
@@ -168,6 +176,7 @@ void    free_commands(t_cmd *commands);
 
 
 // int expand_variables(t_token *tokens, t_quote_state *state);
+char *expand2_env_vars(char *str, t_quote_state *state, t_sp_var *v, t_malloc **a);
 char *expand_env_vars(char *str, t_quote_state *state, t_env *env, int status);
 
 // char		*handle_quotes(char *buffer, t_quote_state *state);
@@ -189,5 +198,9 @@ int sixth_condition(t_var *v, t_env *env, int status);
 
 //tkenizer utils
 
+
+char	*ft_sttrdup(const char *s1);
+char	*ft_sttrjoin(char const *s1, char const *s2);
+char	**ft_spplit(char const *s, char c);
 
 #endif /* HE_H */

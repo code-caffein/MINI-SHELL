@@ -1,16 +1,16 @@
 #include "he.h"
 
 
-static void init_var(t_var *v)
+static void init_var(t_var *v, char *line)
 {
 	v->i = 0;
 	v->j = -1;
 	v->state = UNQUOTED;
 	v->has_heredoc = false;
 	v->wait_more_args = false;
-	v->buffer = malloc(sizeof(char) * 2000);
-	if (!v->buffer)
-		return ;
+	v->buffer = malloc(sizeof(char) * (ft_strlen(line) + 1));
+if (!v->buffer)
+    return;
 	v->buffer[0] = '\0';
 	v->tokens = NULL;
 }
@@ -98,57 +98,56 @@ t_token *fill_tokenize(t_var *v)
 	return (v->tokens);
 }
 //v->state == UNQUOTED && !is_token_separator(v->c) && (line[v->j + 1] == '\'' || line[v->j + 1] == '"' || !is_token_separator(line[v->j+1])))
-t_token *tokenize_input(char *line, t_env *env, int status)
+t_token *tokenize_input(t_sp_var *va)
 {
-	t_var *v = malloc(sizeof(t_var));
-	if (!v)
-		return (NULL);
+	va->var =malloc(sizeof(t_var));
 
-	init_var(v);
-	while (line[++v->j])
+	init_var(va->var, va->line);
+
+	while (va->line[++va->var->j])
 	{
-		v->c = line[v->j];
-		if (v->state == UNQUOTED && (v->c == '\'' || v->c == '"'))
-			first_condtion(v, env, status);
-		else if ((v->state == SINGLE_QUOTED && v->c == '\'' && (line[v->j + 1] != '\'' && line[v->j  + 1] != '"' && (is_token_separator(line[v->j + 1]) || !line[v->j + 1]))) || 
-                (v->state == DOUBLE_QUOTED && v->c == '"'  && (line[v->j + 1] != '\'' && line[v->j  + 1] != '"' && (is_token_separator(line[v->j + 1]) || !line[v->j + 1]))))
+		va->var->c = va->line[va->var->j];
+		if (va->var->state == UNQUOTED && (va->var->c == '\'' || va->var->c == '"'))
+			first_condtion(va->var, va->env, va->status);
+		else if ((va->var->state == SINGLE_QUOTED && va->var->c == '\'' && (va->line[va->var->j + 1] != '\'' && va->line[va->var->j  + 1] != '"' && (is_token_separator(va->line[va->var->j + 1]) || !va->line[va->var->j + 1]))) || 
+                (va->var->state == DOUBLE_QUOTED && va->var->c == '"'  && (va->line[va->var->j + 1] != '\'' && va->line[va->var->j  + 1] != '"' && (is_token_separator(va->line[va->var->j + 1]) || !va->line[va->var->j + 1]))))
 		{
-			v->wait_more_args = false;
-			if (!second_condition(v, env, status))
+			va->var->wait_more_args = false;
+			if (!second_condition(va->var, va->env, va->status))
 				break;
 		}
-		else if ((v->state == SINGLE_QUOTED && v->c == '\'' && line[v->j + 1] && (line[v->j + 1] == '\'' || line[v->j + 1] == '"' || !is_token_separator(line[v->j+1]))) || 
-				(v->state == DOUBLE_QUOTED && v->c == '"' && line[v->j + 1] && (line[v->j + 1] == '\'' || line[v->j + 1] == '"' || !is_token_separator(line[v->j+1]))))
+		else if ((va->var->state == SINGLE_QUOTED && va->var->c == '\'' && va->line[va->var->j + 1] && (va->line[va->var->j + 1] == '\'' || va->line[va->var->j + 1] == '"' || !is_token_separator(va->line[va->var->j+1]))) || 
+				(va->var->state == DOUBLE_QUOTED && va->var->c == '"' && va->line[va->var->j + 1] && (va->line[va->var->j + 1] == '\'' || va->line[va->var->j + 1] == '"' || !is_token_separator(va->line[va->var->j+1]))))
 		{
-			if (!third_condition(v, env, status))
+			if (!third_condition(va->var, va->env, va->status))
 				break;
 		}
-		else if (v->state == UNQUOTED && (ft_strchr("|<>", v->c) || (v->buffer[0] == '<' || v->buffer[0] == '>' || v->buffer[0] == '|')))
+		else if (va->var->state == UNQUOTED && (ft_strchr("|<>", va->var->c) || (va->var->buffer[0] == '<' || va->var->buffer[0] == '>' ||va->var->buffer[0] == '|')))
 		{
 			// printf("-|%c|-\n",v->buffer[0]);
-			if (!Fourth_condition(v, line, env, status))
+			if (!Fourth_condition(va->var, va->line, va->env, va->status))
 				break;
 		}
-		else if (v->state == UNQUOTED && ft_isspace(v->c))
+		else if (va->var->state == UNQUOTED && ft_isspace(va->var->c))
 		{
-			if (!fifth_condition(v, env, status))
+			if (!fifth_condition(va->var, va->env, va->status))
 				break;
 			continue;
 		}
 		else
 		{
-			v->buffer[v->i++] = v->c;
+			va->var->buffer[va->var->i++] = va->var->c;
 			// printf("____|%c|___\n",v->c);
 		}
 	}
-	if (!sixth_condition(v, env, status))
+	if (!sixth_condition(va->var, va->env, va->status))
 	{
-		free_token_list(&v->tokens);
-		return(free(v),NULL);
+		free_token_list(&va->var->tokens);
+		return(free(va->var),NULL);
 	}
-	free(v->buffer);
-	t_token *result = fill_tokenize(v);
-	free(v);
+	free(va->var->buffer);
+	t_token *result = fill_tokenize(va->var);
+	free(va->var);
 	return (result);
 }
 // int main(void)
