@@ -183,7 +183,7 @@ int handle_redirection(t_cmd *cmd, t_token *token, t_sp_var *v, int ss)
 				if (g_signal_pid == -1)
 				{
 					g_signal_pid = 0;
-					int j = -1;
+					// int j = -1;
         			// while (++j < in)
             		// 	free(bib[j]);
         			free(bib);

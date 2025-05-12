@@ -240,12 +240,17 @@ int add_token_with_type(t_var *va, t_env *env, int status)
 	if (!(prev_token && ft_strcmp(prev_token->value, "<<") == 0) && need_expandd(v->new_buff) && !va->wait_more_args && !static_buffer)
 	{
     	char *expanded_value = expand_env_vars(v->new_buff, &va->state, env, status);
+		free(v->new_buff);//
     	v->new_buff = expanded_value;
 		char **bib = ft_spplit(v->new_buff,' ');
 		//append bib to tokens arg
 		int s=-1;
 		while (bib[++s])
 			add_expanded_token(v, &va->tokens, bib[s]);
+		s=-1;
+        while (bib[++s])
+            free(bib[s]);
+        free(bib);
 		a = 10;
 	}
 		// printf("aaaaaaaa\n");
@@ -258,6 +263,7 @@ int add_token_with_type(t_var *va, t_env *env, int status)
 		if (!(prev_token && ft_strcmp(prev_token->value, "<<") == 0) && need_expandd(v->new_buff))
 		{
     		char *expanded_value = expand_env_vars(v->new_buff, &va->state, env, status);
+			free(v->new_buff);
     		v->new_buff = expanded_value;
 		}
 		if (va->wait_more_args) {
@@ -290,11 +296,18 @@ int add_token_with_type(t_var *va, t_env *env, int status)
 				free(v->new_buff);
 			
 				add_token(v, &va->tokens);
+				free(static_buffer);
 				static_buffer = NULL;
 				QUOTE = false;
 			}
     	}	
 	}
+	if (v->buff)
+		free(v->buff);
+	if (v->new_buff)
+		free(v->new_buff);
+	if (v->joined)
+		free(v->joined);
 	free(v);	
 	return 1;
 }
