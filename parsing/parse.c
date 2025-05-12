@@ -1,7 +1,7 @@
 
 #include "he.h"
 
-
+volatile sig_atomic_t g_signal_pid;
 
 
 
@@ -81,7 +81,40 @@ void add_argument(t_cmd *cmd, char *arg)
     cmd->arg_count++;
     cmd->args[cmd->arg_count] = NULL;
 }
+ssize_t heredoc_readline(char **out)
+{
+    size_t cap = 128, len = 0;
+    char *buf = malloc(cap);
+    if (!buf) return -1;
 
+    while (1)
+    {
+        char c;
+        ssize_t r = read(STDIN_FILENO, &c, 1);
+        if (r == 0)       break;            // EOF
+        if (r < 0)
+        {
+            if (errno == EINTR) { free(buf); return -2; }
+            free(buf);
+            return -1;                      // other errors
+        }
+
+        // append c
+        if (len + 1 >= cap)
+        {
+            cap *= 2;
+            char *t = realloc(buf, cap);
+            if (!t) { free(buf); return -1; }
+            buf = t;
+        }
+        buf[len++] = c;
+        if (c == '\n')   break;
+    }
+
+    buf[len] = '\0';
+    *out = buf;
+    return (ssize_t)len;
+}
 
 t_redirection	*create_redirection(char *file, int type)
 {
@@ -137,13 +170,28 @@ int handle_redirection(t_cmd *cmd, t_token *token, t_sp_var *v, int ss)
     			free(redir);
     			return errno;
 			}
-
+			ssize_t n;
 			char *line;
 			while (1)
 			{
-    			line = readline("> ");
-    			if (!line)
+				// printf("[[ %d ]]\n\n",g_signal_pid);
+				if (g_signal_pid == -1)
+				{
+					//free allcated memory!!!!
+					// printf("sssssssssssss\n");
+					g_signal_pid = 0;
+					int j = -1;
+        			while (++j < in)
+            			free(bib[j]);
+        			free(bib);
+					return -2;
+				}
+    			write(STDOUT_FILENO, "> ", 2);
+   				n = heredoc_readline(&line);
+    			if (!line) 
         			break;
+				if (n > 0 && line[n-1] == '\n')
+    				line[n-1] = '\0';
     			if (ft_strcmp(line, file_token->value) == 0)
 				{
         			free(line);
@@ -193,7 +241,7 @@ int handle_redirection(t_cmd *cmd, t_token *token, t_sp_var *v, int ss)
 			free (bib);
     		close(fd);
     
-    		redir->fd = open("t_m_p_f_i_l_e", O_RDONLY | O_CREAT);
+    		redir->fd = open("t_m_p_f_i_l_e", O_RDONLY);
 		}
 		else if (REDIR_IN && ss != 0)//input!!!
 			redir->fd = open(redir->file, O_RDONLY);
@@ -341,7 +389,7 @@ t_cmd *parse_tokens(t_token *tokens, t_sp_var *v)
 		// printf("[%d]\n",current->type);
 		if (current->type == pip)
 		{
-			if (err != 0)
+			if (err != 0 && tmp_err != -2)
 			{
 				ft_putstr_fd("minishell: ", 2);
 				ft_putstr_fd(err_file, 2);
@@ -375,6 +423,12 @@ t_cmd *parse_tokens(t_token *tokens, t_sp_var *v)
 					err = tmp_err;
 					err_file = current->next->value;
 				}
+				if (tmp_err == -2)
+				{
+    // user hit Ctrl+C — abort this entire pipeline/command silently
+    				free_commands(commands);   // or otherwise drop it
+    				return NULL;               // or set a flag so you just redisplay prompt
+				}
 				if (tmp_err != 0)
 				{
 					s = 0;
@@ -393,7 +447,7 @@ t_cmd *parse_tokens(t_token *tokens, t_sp_var *v)
             current = current->next;
     }
 	
-	if (err != 0)
+	if (err != 0 && tmp_err != -2)
 	{
 		ft_putstr_fd("minishell: ", 2);
 		ft_putstr_fd(err_file, 2);

@@ -38,7 +38,9 @@ char *expand_env_vars(char *str, t_quote_state *state, t_env *env, int status)
 				// {
 					m = 0;
 					tmp = ft_itoa(status);
-                	while (tmp[m])
+					if (!tmp)
+						return NULL;
+                	while (tmp[m] != '\0')
                     	result[j++] = tmp[m++];
                 	free(tmp);
                 	i++;
