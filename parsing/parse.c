@@ -93,11 +93,15 @@ ssize_t heredoc_readline(char **out)
         ssize_t r = read(STDIN_FILENO, &c, 1);
         if (r == 0)       break;            // EOF
         if (r < 0)
-        {
-            if (errno == EINTR) { free(buf); return -2; }
+    {
+        if (errno == EINTR) {
             free(buf);
-            return -1;                      // other errors
+            *out = NULL; // Set out to NULL on interrupt
+            return -2;
         }
+        free(buf);
+        return -1;
+    }
 
         // append c
         if (len + 1 >= cap)
@@ -162,7 +166,8 @@ int handle_redirection(t_cmd *cmd, t_token *token, t_sp_var *v, int ss)
 		{
 			int in = 0;
 			int capacity = 10;
-			char **bib = malloc(sizeof(char *) * capacity); // Allocate initial memory
+			char **
+			bib = malloc(sizeof(char *) * capacity); // Allocate initial memory
 			if (!bib)
 			{
     			// perror("malloc");
@@ -174,21 +179,19 @@ int handle_redirection(t_cmd *cmd, t_token *token, t_sp_var *v, int ss)
 			char *line;
 			while (1)
 			{
-				// printf("[[ %d ]]\n\n",g_signal_pid);
+
 				if (g_signal_pid == -1)
 				{
-					//free allcated memory!!!!
-					// printf("sssssssssssss\n");
 					g_signal_pid = 0;
 					int j = -1;
-        			while (++j < in)
-            			free(bib[j]);
+        			// while (++j < in)
+            		// 	free(bib[j]);
         			free(bib);
 					return -2;
 				}
     			write(STDOUT_FILENO, "> ", 2);
    				n = heredoc_readline(&line);
-    			if (!line) 
+    			if (!line || n == -2) 
         			break;
 				if (n > 0 && line[n-1] == '\n')
     				line[n-1] = '\0';
@@ -202,7 +205,7 @@ int handle_redirection(t_cmd *cmd, t_token *token, t_sp_var *v, int ss)
        				char *tmp;
         			t_quote_state state = UNQUOTED;
         			tmp = expand2_env_vars(line, &state, v, &v->allocs);
-        			free(line);
+        			// free(line);
         			line = tmp;
     			}
     // Check if we need to resize bib
@@ -236,7 +239,7 @@ int handle_redirection(t_cmd *cmd, t_token *token, t_sp_var *v, int ss)
 			{
 				write(fd, bib[j], ft_strlen(bib[j]));
 				write(fd, "\n", 1);
-				free(bib[j]);
+				// free(bib[j]);
 			}
 			free (bib);
     		close(fd);
