@@ -53,6 +53,7 @@ void init_v(t_sp_var *v)
 	(v)->cmds = NULL;
 	(v)->env = NULL;
 	(v)->allocs = NULL;
+	(v)->status = 0;
 }
 
 int	main(int argc, char **argv, char **envp)
