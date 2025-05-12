@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 10:55:49 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/10 15:11:13 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/12 11:37:31 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ void append_value(t_env **env, char *key, char *value, t_malloc **alloc)
 	{
 		old_val  = get_key_value(key, *env);
 		tmp = ft_strjoin(old_val, value, alloc);
-		update_var(*env, ft_strdup(tmp, alloc, P_ENVIRONMENT), key, alloc);
+		update_var(env, ft_strdup(tmp, alloc, P_ENVIRONMENT), key, alloc);
 		free_ptr(alloc, old_val);
 		free_ptr(alloc, tmp);
 	}
