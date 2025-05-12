@@ -61,11 +61,17 @@ int	main(int argc, char **argv, char **envp)
 	t_sp_var *v;
 	t_sp_var s;
 	v =  &s;
+	char *path;
 
 	init_v(v);
 	signals();
 
 	push_envp(&(v->env), envp, &(v->allocs));
+	path = get_key_value("PWD", s.env);
+	push_to_env(&(s.env), &(s.allocs), "p.a.t.h", path, 3);
+	path = get_key_value("OLDPWD", s.env);
+	update_var(&(s.env), NULL, "OLDPWD", &(s.allocs));
+	free_ptr(&(s.allocs), path);
 	while (1)
 	{
 		// if (g_signal_pid == -1)
