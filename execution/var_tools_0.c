@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/21 14:28:51 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/10 11:21:32 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/12 12:30:46 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,22 +51,28 @@ int is_var_exist(char *key, t_env *env)
 	return(0);
 }
 
-void update_var(t_env *env, char *new_value ,char *key, t_malloc **alloc)
+void update_var(t_env **env, char *new_value ,char *key, t_malloc **alloc)
 {
 	char *tmp;
 
+	t_env *ptr;
+	
+	ptr = *env;
 	tmp = NULL;
-	while(env)
+	while(ptr)
 	{
-		if(!ft_strcmp(env->key, key))
+		if(!ft_strcmp(ptr->key, key))
 		{
-			tmp	 = env->value;
-			env->value = new_value;
+			tmp	 = ptr->value;
+			ptr->value = new_value;
 			free_ptr(alloc, tmp);
-			break;
+			return;
 		}
-		env = env->next;
+		ptr = ptr->next;
 	}
+	if(!ft_strcmp(key, "PWD") || !ft_strcmp(key, "p.a.t.h") || !ft_strcmp(key, "OLDPWD"))
+		push_to_env(env, alloc, key, new_value, 0);
+	free_ptr(alloc, new_value);
 }
 
 void remove_variable(char *key, t_env **vars, t_malloc **alloc)

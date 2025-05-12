@@ -24,16 +24,16 @@ void	execve_error(char *cmd);
 
 void export_display(t_env **env, t_malloc **a);
 int		ft_echo(t_cmd *cmd);
-int		ft_pwd(t_env *env, t_malloc **a);
+int	ft_pwd(t_env **env, t_malloc **a);
 int		ft_export(t_cmd *cmd, t_malloc **aloc, t_env **env);
-int	ft_cd(t_cmd *cmd, t_malloc **aloc, t_env *env);
+int	ft_cd(t_cmd *cmd, t_malloc **aloc, t_env **env);
 int		ft_env(t_malloc **aloc, t_env **env, t_cmd *cmd);
 void	ft_exit(t_malloc **aloc, t_cmd *cmd, int *status);
 int		ft_unset(t_cmd *cmd, t_malloc **aloc, t_env **env);
 
 int		var_action(char *key ,char *value, t_env *env);
 int		is_var_exist(char *key, t_env *vars);
-void	update_var(t_env *env, char *new_value ,char *key, t_malloc **alloc);
+void	update_var(t_env **env, char *new_value ,char *key, t_malloc **alloc);
 int		is_key_valid(char *key);
 void remove_variable(char *key, t_env **vars, t_malloc **alloc);
 void append_value(t_env **env, char *key, char *value, t_malloc **alloc);

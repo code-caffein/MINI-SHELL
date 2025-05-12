@@ -6,13 +6,13 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 11:46:22 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/12 09:41:14 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/12 12:24:14 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "execution.h"
 
-int	ft_cd(t_cmd *cmd, t_malloc **aloc, t_env *env)
+int	ft_cd(t_cmd *cmd, t_malloc **aloc, t_env **env)
 {
 	struct stat st;
 	char *tmp;
@@ -70,7 +70,7 @@ int	ft_export(t_cmd *cmd, t_malloc **aloc, t_env **env)
 		if(check == 1)
 			push_to_env(env, aloc, key, value, 1);
 		if(check == 2)
-			update_var(*env, value, key, aloc);
+			update_var(env, value, key, aloc);
 		if(check == 4)
 			append_value(env, key, value, aloc);
 		if(check == 3)
@@ -99,7 +99,7 @@ int	ft_env(t_malloc **aloc, t_env **env, t_cmd *cmd)
 	}
 	while (ptr)
 	{
-		if (ptr->value)
+		if (ptr->value && (ptr->type == 0 || ptr->type == 1))
 			printf("%s=%s\n", ptr->key, ptr->value);
 		ptr = ptr->next;
 	}

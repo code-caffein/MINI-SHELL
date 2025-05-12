@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/05 10:22:11 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/12 09:50:30 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/12 11:52:30 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,9 +38,9 @@ void	execute_builtin(int i, t_cmd *cmd, t_malloc **allocs, t_env **env, int *g_e
 	if(i == 1)
 		*g_exit_status = ft_echo(cmd);
 	else if(i == 2)
-		*g_exit_status = ft_cd(cmd, allocs, *env);
+		*g_exit_status = ft_cd(cmd, allocs, env);
 	else if(i == 3)
-		*g_exit_status = ft_pwd(*env, NULL);
+		*g_exit_status = ft_pwd(env, NULL);
 	else if(i == 4)
 		*g_exit_status = ft_export(cmd, allocs, env);
 	else if(i == 5)

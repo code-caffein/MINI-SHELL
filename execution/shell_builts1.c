@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/27 16:23:42 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/12 11:03:58 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/12 12:43:32 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ int ft_echo(t_cmd *cmd)
 	return(0);
 }
 
-int	ft_pwd(t_env *env, t_malloc **a)
+int	ft_pwd(t_env **env, t_malloc **a)
 {
 	char *pwd;
 	char *oldpwd;
@@ -69,16 +69,17 @@ int	ft_pwd(t_env *env, t_malloc **a)
 	if(env && a)
 	{
 		pwd = getcwd(NULL, 0);
-		oldpwd = get_key_value("PWD", env);
-
-		update_var(env, ft_strdup(oldpwd, a, P_ENVIRONMENT), "OLDPWD", a);
+		oldpwd = get_key_value("PWD", *env);
+		if(oldpwd)
+			update_var(env, ft_strdup(oldpwd, a, P_ENVIRONMENT), "OLDPWD", a);
 		update_var(env, ft_strdup(pwd, a, P_ENVIRONMENT), "PWD", a);
+		update_var(env, ft_strdup(pwd, a, P_ENVIRONMENT), "p.a.t.h", a);
 		free(pwd);
 		return(0);
 	}
 	else
 	{
-		pwd = get_key_value("PWD", env);
+		pwd = get_key_value("p.a.t.h", *env);
 		if (pwd)
 		{
 			printf("%s\n", pwd);
@@ -107,7 +108,7 @@ void export_display(t_env **env, t_malloc **a)
         if (value)
             printf("declare -x %s=\"%s\"\n", arr[i], value);
         else
-            printf("declare -x %s=\n", arr[i]);
+            printf("declare -x %s\n", arr[i]);
         i++;
     }
     arr = keys_to_2darray(*env, 1, a);
