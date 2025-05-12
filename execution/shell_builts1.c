@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/27 16:23:42 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/10 15:23:40 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/12 11:03:58 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,23 +61,37 @@ int ft_echo(t_cmd *cmd)
 	return(0);
 }
 
-int ft_pwd()
+int	ft_pwd(t_env *env, t_malloc **a)
 {
 	char *pwd;
+	char *oldpwd;
 	
-	pwd = getcwd(NULL, 0);
-	if(pwd)
+	if(env && a)
 	{
-		printf("%s\n", pwd);
+		pwd = getcwd(NULL, 0);
+		oldpwd = get_key_value("PWD", env);
+
+		update_var(env, ft_strdup(oldpwd, a, P_ENVIRONMENT), "OLDPWD", a);
+		update_var(env, ft_strdup(pwd, a, P_ENVIRONMENT), "PWD", a);
+		free(pwd);
 		return(0);
 	}
 	else
 	{
-		write(2, "minishell: pwd: ", 16);
-		write(2, strerror(errno), ft_strlen(strerror(errno)));
-		write(2, "\n", 1);
-		return(1);
+		pwd = get_key_value("PWD", env);
+		if (pwd)
+		{
+			printf("%s\n", pwd);
+			return 0;
+		}
 	}
+	return 1;
+	// else
+	// {
+	// 	write(2, "minishell: pwd: ", 16);
+	// 	write(2, strerror(errno), ft_strlen(strerror(errno)));
+	// 	write(2, "\n", 1);
+	// }
 }
 
 void export_display(t_env **env, t_malloc **a)

@@ -6,15 +6,16 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 11:46:22 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/11 12:36:59 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/12 09:41:14 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "execution.h"
 
-int	ft_cd(t_cmd *cmd, t_malloc **aloc)
+int	ft_cd(t_cmd *cmd, t_malloc **aloc, t_env *env)
 {
 	struct stat st;
+	char *tmp;
 
 	if(cmd->args[1] == NULL || !ft_strcmp("~", cmd->args[1]))
 	{
@@ -22,6 +23,10 @@ int	ft_cd(t_cmd *cmd, t_malloc **aloc)
 		{
 			cd_error(cmd->args[1]);
 			return(1);
+		}
+		else
+		{
+			ft_pwd(env, aloc);
 		}
 	}
 	else if(stat(cmd->args[1], &st) != 0)
@@ -35,6 +40,10 @@ int	ft_cd(t_cmd *cmd, t_malloc **aloc)
 		{
 			cd_error(cmd->args[1]);
 			return(1);
+		}
+		else
+		{
+			ft_pwd(env, aloc);
 		}
 	}
 	return(0);

@@ -24,9 +24,9 @@ void	execve_error(char *cmd);
 
 void export_display(t_env **env, t_malloc **a);
 int		ft_echo(t_cmd *cmd);
-int		ft_pwd();
+int		ft_pwd(t_env *env, t_malloc **a);
 int		ft_export(t_cmd *cmd, t_malloc **aloc, t_env **env);
-int		ft_cd(t_cmd *cmd, t_malloc **aloc);
+int	ft_cd(t_cmd *cmd, t_malloc **aloc, t_env *env);
 int		ft_env(t_malloc **aloc, t_env **env, t_cmd *cmd);
 void	ft_exit(t_malloc **aloc, t_cmd *cmd, int *status);
 int		ft_unset(t_cmd *cmd, t_malloc **aloc, t_env **env);
