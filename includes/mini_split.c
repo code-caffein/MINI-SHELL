@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 15:52:56 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/13 11:47:45 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/13 14:31:10 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,19 +93,16 @@ char	**ft_split(char const *s, char c, t_malloc **alloc)
 	if (!s)
 		return (NULL);
 	cols = count_cols(s, c);
-	// arr = (char **)malloc((cols + 1) * sizeof(char *));
-
 	arr = (char **)mmallocc((cols + 1) * sizeof(char *), alloc, P_GARBAGE);
 	if (!arr)
 		return (NULL);
 	arr[cols] = NULL;
 	if (cols)
 	{
-			if (ft_store(arr, s, c, cols, alloc))
-				return (arr);
-			else
-				return (NULL);
-		}
-		return (arr);
+		if (ft_store(arr, s, c, cols, alloc))
+			return (arr);
+		else
+			return (NULL);
 	}
-	
+	return (arr);
+}

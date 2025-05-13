@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 10:36:58 by abel-had          #+#    #+#             */
-/*   Updated: 2025/05/13 12:07:12 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/13 12:29:12 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,24 +26,24 @@ char	*get_executable_path(char *str, t_malloc **alloc)
 	while (paths[++i])
 	{
 		check = ft_strjoin(paths[i], ft_strjoin("/", str, alloc), alloc);
-		// printf("path checked = %s\n", check);
 		if (!access(check, X_OK))
 			return (check);
 	}
 	return (NULL);
 }
+		// printf("path checked = %s\n", check);
 
 void	get_a_child(int *g_exit_status, t_cmd *cmd, t_malloc **allocs, t_env **env, char **envp)
 {
-	pid_t pid;
-	int status;
+	pid_t	pid;
+	int		status;
 
 	pid = fork();
-	if(pid == -1)
+	if (pid == -1)
 		perror("fork:");
-	if(pid > 0)
+	if (pid > 0)
 	{
-		if(waitpid(pid, &status, 0) == -1)
+		if (waitpid(pid, &status, 0) == -1)
 			perror("waitpid:");
 		else if (WIFEXITED(status))
 			*g_exit_status = WEXITSTATUS(status);
@@ -57,37 +57,35 @@ void	get_a_child(int *g_exit_status, t_cmd *cmd, t_malloc **allocs, t_env **env,
 	}
 }
 
-int file_error_handler(char *path, int *status)
+int	file_error_handler(char *path, int *status)
 {
 	struct stat	info;
 
 	if (stat(path, &info) == 0)
 	{
 		if (S_ISDIR(info.st_mode) == true)
-			cmd_file_error(path,"is a Directorie");
+			cmd_file_error(path, "is a Directorie");
 		else if (access(path, X_OK) == 0)
 			return (1);
 		else
-			cmd_file_error(path,"permission denied");
+			cmd_file_error(path, "permission denied");
 		*status = 126;
 	}
 	else
 	{
-		cmd_file_error(path,"No such file or directory");
+		cmd_file_error(path, "No such file or directory");
 		*status = 127;
 	}
 	return (0);
 }
 
-void ft_execute_simple_cmd(t_cmd *cmd, t_malloc **allocs, t_env **env, int *g_exit_status, char **envp)
+void	ft_execute_simple_cmd(t_cmd *cmd, t_malloc **allocs, t_env **env, int *g_exit_status, char **envp)
 {
 	int		i;
 	char	*path;
 
 	if (!(cmd->name))
-	{
-		return;
-	}
+		return ;
 	i = is_builtins(cmd->name);
 	if (i)
 		execute_builtin(i, cmd, allocs, env, g_exit_status);
@@ -118,7 +116,8 @@ void execute_piped_cmd(t_cmd *cmd, t_malloc **allocs, t_env **env, int *g_exit_s
 {
 	int		i;
 	char	*path;
-	if(!cmd->name)
+
+	if (!cmd->name)
 		exit(*g_exit_status);
 	i = is_builtins(cmd->name);
 	if (i)
@@ -131,7 +130,7 @@ void execute_piped_cmd(t_cmd *cmd, t_malloc **allocs, t_env **env, int *g_exit_s
 	}
 	else
 	{
-		path = get_executable_path(cmd->name, allocs); // printf("executable path = %s\n", path);
+		path = get_executable_path(cmd->name, allocs);
 		if (path)
 		{
 			cmd->name = path;
@@ -148,27 +147,28 @@ void execute_piped_cmd(t_cmd *cmd, t_malloc **allocs, t_env **env, int *g_exit_s
 
 void ft_execute(t_cmd *cmd, int *status, t_malloc **a, t_env **env, char **envp)
 {
-	int in_backup;
-	int out_backup;
+	int	in_backup;
+	int	out_backup;
 
-	if(cmd->next)
-		execute_pipeline(cmd, a, env , status, envp);
+	if (cmd->next)
+		execute_pipeline(cmd, a, env, status, envp);
 	else
 	{
-		if(cmd->in || cmd->out)
+		if (cmd->in || cmd->out)
 		{
 			in_backup = dup(STDIN_FILENO);
 			out_backup = dup(STDOUT_FILENO);
-			if(in_backup == -1 || out_backup == -1)
+			if (in_backup == -1 || out_backup == -1)
 				perror("dup");
 			redirect_command(cmd);
-			ft_execute_simple_cmd(cmd, a, env , status, envp);
-			if(dup2(in_backup, STDIN_FILENO) == -1 || dup2(out_backup, STDOUT_FILENO) == -1)
+			ft_execute_simple_cmd(cmd, a, env, status, envp);
+			if (dup2(in_backup, STDIN_FILENO) == -1
+				|| dup2(out_backup, STDOUT_FILENO) == -1)
 				perror("dup2:");
-			if(close(in_backup) == -1 || close(out_backup) == -1)
+			if (close(in_backup) == -1 || close(out_backup) == -1)
 				perror("close:");
 		}
 		else
-			ft_execute_simple_cmd(cmd, a, env , status, envp);
+			ft_execute_simple_cmd(cmd, a, env, status, envp);
 	}
 }

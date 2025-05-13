@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mini_lib1.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abel-had <abel-had@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 15:57:56 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/07 10:13:49 by abel-had         ###   ########.fr       */
+/*   Updated: 2025/05/13 14:28:04 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,13 +42,15 @@ int	ft_strcmp(const char *s1, const char *s2)
 
 int	count_list_size(void *head, size_t offset)
 {
-	int count = 0;
+	int	count;
+
+	count = 0;
 	while (head)
 	{
 		head = *(void **)((char *)head + offset);
 		count++;
 	}
-	return count;
+	return (count);
 }
 
 char	*ft_strchr(const char *s, int c)
@@ -64,7 +66,7 @@ char	*ft_strchr(const char *s, int c)
 	return (NULL);
 }
 
-int		ft_isspace(int c)
+int	ft_isspace(int c)
 {
 	c = (unsigned char)c;
 	if (c == '\t' || c == '\n' || c == '\v' || c == '\f' || c == '\r'

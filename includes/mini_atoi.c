@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 14:34:33 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/11 12:06:36 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/13 14:27:16 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ long long int	ft_atoi(const char *str)
 		t = (t * 10) + (str[i++] - '0');
 		if ((t / 10) != oldt && s < 0)
 		{
-			errno =  ERANGE;
+			errno = ERANGE;
 			return (255);
 		}
 		else if ((t / 10) != oldt && s > 0)
