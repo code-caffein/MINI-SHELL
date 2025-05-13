@@ -3,20 +3,20 @@
 
 
 
-char *get_var_value(char *var_name, t_env *env)
+char *get_var_value(char *var_name, t_env *env, t_sp_var *va)
 {
     if (!var_name)
         return NULL;
 
     char *env_value = get_key_value(var_name, env);
     if (env_value)
-        return ft_sttrdup(env_value);
+        return ft_strdup(env_value, &va->allocs, P_GARBAGE);
     
-    return ft_sttrdup("");
+    return ft_strdup("", &va->allocs, P_GARBAGE);
 }
+//t_quote_state *state, t_env *env, int status
 
-
-char *expand_env_vars(char *str, t_quote_state *state, t_env *env, int status)
+char *expand_env_vars(char *str, t_sp_var *va)
 {
     if (!str)
         return NULL;
@@ -29,7 +29,7 @@ char *expand_env_vars(char *str, t_quote_state *state, t_env *env, int status)
     // printf("[%d]\n",status);
     while (str[i])
     {
-        if (str[i] == '$' && str[i+1] && *state != SINGLE_QUOTED)
+        if (str[i] == '$' && str[i+1] && va->var->state != SINGLE_QUOTED)
         {
             i++;
             if (str[i] == '?')
@@ -37,7 +37,7 @@ char *expand_env_vars(char *str, t_quote_state *state, t_env *env, int status)
                 // if(!status)// exit status not a (a just for test)!!!!!!!
 				// {
 					m = 0;
-					tmp = ft_itoa(status);
+					tmp = ft_itoa(va->status);
 					if (!tmp)
 						return NULL;
                 	while (tmp[m] != '\0')
@@ -59,7 +59,7 @@ char *expand_env_vars(char *str, t_quote_state *state, t_env *env, int status)
             
             var_name[k] = '\0';
             
-            char *value = get_var_value(var_name, env);
+            char *value = get_var_value(var_name, va->env, va);
             if (value)
             {
                 int m = 0;

@@ -16,7 +16,7 @@ t_cmd *parse(t_sp_var *v)
 		return (NULL);
 	// if (commands)
 	    // printf("zzz2yfs2t1ssytzdftftwdowuwu.\n");
-	free_token_list(&tokens);
+	// free_token_list(&tokens);
 	return (commands);
 }
 

@@ -8,16 +8,16 @@ volatile sig_atomic_t g_signal_pid;
 
 
 
-t_cmd *create_new_command(void)
+t_cmd *create_new_command(t_sp_var *va)
 {
-    t_cmd *cmd = malloc(sizeof(t_cmd));
+    t_cmd *cmd = mmallocc(sizeof(t_cmd), &va->allocs, P_GARBAGE);
     if (!cmd)
         return NULL;
     
     cmd->name = NULL;
     cmd->arg_count = 0;
     cmd->arg_capacity = 10;
-    cmd->args = malloc(sizeof(char *) * (cmd->arg_capacity + 1));
+    cmd->args = mmallocc(sizeof(char *) * (cmd->arg_capacity + 1), &va->allocs, P_GARBAGE);
     
     if (!cmd->args) {
         free(cmd);
@@ -36,55 +36,39 @@ t_cmd *create_new_command(void)
 }
 
 
-void add_argument(t_cmd *cmd, char *arg)
+void add_argument(t_cmd *cmd, char *arg, t_sp_var *va)
 {
     if (!cmd || !arg)
         return;
 
     if (cmd->arg_count == 0)
-        cmd->name = ft_sttrdup(arg);
+        cmd->name = ft_strdup(arg, &va->allocs, P_GARBAGE);
 	if (!cmd->name)
-	{
-		perror("malloc");
 		return;
-	}
-	// printf("name: %s\n", cmd->name);
-	// printf("arg_count: %d\n", cmd->arg_count);
-	// printf("arg_capacity: %d\n", cmd->arg_capacity);
-	//
-	// printf("arg: %s\n", arg);
-
-    
     if (cmd->arg_count >= cmd->arg_capacity)
 	{
         cmd->arg_capacity *= 2;
-        char **new_args = malloc(sizeof(char *) * (cmd->arg_capacity + 1));
-        
+        char **new_args = mmallocc(sizeof(char *) * (cmd->arg_capacity + 1), &va->allocs, P_GARBAGE);
         if (!new_args)
             return;
-        
-
 		int i = -1;
         while (++i < cmd->arg_count)
             new_args[i] = cmd->args[i];
-        
-
 		i = cmd->arg_count - 1;
         while (++i <= cmd->arg_capacity)
             new_args[i] = NULL;
-        
         free(cmd->args);
         cmd->args = new_args;
     }
-    
-    cmd->args[cmd->arg_count] = ft_sttrdup(arg);
+    cmd->args[cmd->arg_count] = ft_strdup(arg, &va->allocs, P_GARBAGE);
     cmd->arg_count++;
     cmd->args[cmd->arg_count] = NULL;
 }
-ssize_t heredoc_readline(char **out)
+
+ssize_t heredoc_readline(char **out, t_sp_var *va)
 {
     size_t cap = 128, len = 0;
-    char *buf = malloc(cap);
+    char *buf = mmallocc(cap, &va->allocs, P_GARBAGE);
     if (!buf) return -1;
 	
     while (1)
@@ -109,11 +93,11 @@ ssize_t heredoc_readline(char **out)
                 }
 					rl_replace_line("", 0);
             		rl_redisplay();
-                    free(buf);
+                    // free(buf);
                     *out = NULL;
                     return -2;
             }
-        free(buf);
+        // free(buf);
         return -1;
     }
 
@@ -122,7 +106,10 @@ ssize_t heredoc_readline(char **out)
         {
             cap *= 2;
             char *t = realloc(buf, cap);
-            if (!t) { free(buf); return -1; }
+            if (!t) { 
+				// free(buf);
+				return -1; 
+			}
             buf = t;
         }
         buf[len++] = c;
@@ -136,14 +123,14 @@ ssize_t heredoc_readline(char **out)
     return (ssize_t)len;
 }
 
-t_redirection	*create_redirection(char *file, int type)
+t_redirection	*create_redirection(char *file, int type, t_sp_var *va)
 {
 	t_redirection	*redir;
 
-	redir = malloc(sizeof(t_redirection));
+	redir = mmallocc(sizeof(t_redirection), &va->allocs, P_GARBAGE);
 	if (!redir)
 		return NULL;
-	redir->file = ft_sttrdup(file);
+	redir->file = ft_strdup(file, &va->allocs, P_GARBAGE);
 	redir->type = type;
 	redir->fd = -1;
 	redir->next = NULL;
@@ -152,7 +139,7 @@ t_redirection	*create_redirection(char *file, int type)
 }
 
 
-int handle_redirection(t_cmd *cmd, t_token *token, t_sp_var *v, int ss)
+int handle_redirection(t_cmd *cmd, t_token *token, t_sp_var *va, int ss)
 {
 	// static int a = 0;
 	int i = 0;
@@ -173,7 +160,7 @@ int handle_redirection(t_cmd *cmd, t_token *token, t_sp_var *v, int ss)
         redir_type = REDIR_APPEND;
     else if (ft_strcmp(token->value, "<<") == 0)
         redir_type = REDIR_HEREDOC;
-    t_redirection *redir = create_redirection(file_token->value, redir_type);
+    t_redirection *redir = create_redirection(file_token->value, redir_type, va);
     t_redirection *current;
 
     if (redir_type == REDIR_IN || redir_type == REDIR_HEREDOC)
@@ -183,12 +170,12 @@ int handle_redirection(t_cmd *cmd, t_token *token, t_sp_var *v, int ss)
 			int in = 0;
 			int capacity = 10;
 			char **
-			bib = malloc(sizeof(char *) * capacity); // Allocate initial memory
+			bib = mmallocc(sizeof(char *) * capacity, &va->allocs, P_GARBAGE); // Allocate initial memory
 			if (!bib)
 			{
     			// perror("malloc");
-    			free(redir->file);
-    			free(redir);
+    			// free(redir->file);
+    			// free(redir);
     			return errno;
 			}
 			ssize_t n;
@@ -197,18 +184,9 @@ int handle_redirection(t_cmd *cmd, t_token *token, t_sp_var *v, int ss)
 			{
 				g_signal_pid = 2;
 				if (g_signal_pid == -1)
-				{
-					// g_signal_pid = 0;
-					// int j = -1;
-        			// while (++j < in)
-            		// 	free(bib[j]);
-					// printf("SSSSSSSSs");
-    				// dup2(saved_stdin, STDIN_FILENO);
-        			free(bib);
 					return -2;
-				}
-    			write(STDOUT_FILENO, "> ", 2);
-   				n = heredoc_readline(&line);
+    			write(1, "> ", 2);
+   				n = heredoc_readline(&line, va);
     			if (!line || n == -2 || n == 0)
         			return -2;
 				if (n > 0 && line[n-1] == '\n')
@@ -222,31 +200,24 @@ int handle_redirection(t_cmd *cmd, t_token *token, t_sp_var *v, int ss)
 				{
        				char *tmp;
         			t_quote_state state = UNQUOTED;
-        			tmp = expand2_env_vars(line, &state, v, &v->allocs);
-        			// free(line);
+        			tmp = expand_env_vars(line, va);
         			line = tmp;
     			}
-    // Check if we need to resize bib
     			if (in >= capacity - 1)
 				{
         			capacity *= 2;
-        			char **new_bib = malloc(sizeof(char *) * capacity);
+        			char **new_bib = mmallocc(sizeof(char *) * capacity, &va->allocs, P_GARBAGE);
         			if (!new_bib)
-					{
-            			// perror("malloc");
-
             			return errno;
-        			}
 					int j = -1;
 					while (++j < in)
 						new_bib[j] = bib[j];
-					free(bib);
         			bib = new_bib;
     			}
     			bib[in++] = line;
 			}
 			g_signal_pid = 0;
-			bib[in] = NULL; // Null-terminate the array
+			bib[in] = NULL;
 
 			int fd = open("t_m_p_f_i_l_e", O_WRONLY | O_CREAT | O_TRUNC, 0644);
    			if (fd < 0)
@@ -258,11 +229,8 @@ int handle_redirection(t_cmd *cmd, t_token *token, t_sp_var *v, int ss)
 			{
 				write(fd, bib[j], ft_strlen(bib[j]));
 				write(fd, "\n", 1);
-				// free(bib[j]);
 			}
-			free (bib);
     		close(fd);
-    
     		redir->fd = open("t_m_p_f_i_l_e", O_RDONLY);
 		}
 		else if (REDIR_IN && ss != 0)//input!!!
@@ -303,78 +271,10 @@ int handle_redirection(t_cmd *cmd, t_token *token, t_sp_var *v, int ss)
 	return 0;
 }
 
-void free_command(t_cmd *cmd)
-{
-    if (!cmd)
-        return;
-    
-    if (cmd->name)
-        free(cmd->name);
-    
-    if (cmd->args)
-	{
-		int i = -1;
-        while ( ++i < cmd->arg_count)
-		{
-            if (cmd->args[i])
-                free(cmd->args[i]);
-        }
-        free(cmd->args);
-    }
-    
-    t_redirection *in_current = cmd->in;
-    while (in_current) {
-        t_redirection *temp = in_current;
-        in_current = in_current->next;
-        if (temp->file)
-            free(temp->file);
-        free(temp);
-    }
-    
-    t_redirection *out_current = cmd->out;
-    while (out_current) {
-        t_redirection *temp = out_current;
-        out_current = out_current->next;
-        if (temp->file)
-            free(temp->file);
-        free(temp);
-    }
-    
-    free(cmd);
-}
-
-void	free_commands(t_cmd *commands)
-{
-	t_cmd *current;
-	t_cmd *temp;
-
-	current = commands;
-	while (current)
-	{
-		temp = current;
-		current = current->next;
-		free_command(temp);
-	}
-}
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-t_cmd *parse_tokens(t_token *tokens, t_sp_var *v)
+t_cmd *parse_tokens(t_token *tokens, t_sp_var *va)
 {
 	t_cmd *commands = NULL;
 	t_cmd *current_cmd = NULL;
@@ -395,15 +295,10 @@ t_cmd *parse_tokens(t_token *tokens, t_sp_var *v)
 		prev = current;
 		current = current->next;
 	}
-	// if (syn_err)
-	// 	printf("syntax error near unexpected token \"%s\"\n", prev->value);
 	current = tokens;
-	commands = create_new_command();
+	commands = create_new_command(va);
 	if (!commands)
-	{
-		free_commands(commands);
 		return NULL;
-	}
 	
 	current_cmd = commands;
 	while (current && !current->syn_err)
@@ -420,12 +315,9 @@ t_cmd *parse_tokens(t_token *tokens, t_sp_var *v)
 				write(2,"\n",1);
 				
 			}
-			current_cmd->next = create_new_command();
+			current_cmd->next = create_new_command(va);
 			if (!current_cmd->next)
-			{
-				free_commands(commands);
 				return NULL;
-			}
 			s = 1;
 			current_cmd = current_cmd->next;
 		}
@@ -434,12 +326,12 @@ t_cmd *parse_tokens(t_token *tokens, t_sp_var *v)
             if (!current->next || current->next->type != file)
 			{
         		printf("Syntax error: Missing filename after redirection\n");
-        		free_commands(commands);
+        		// free_commands(commands);
         		return NULL;
 			}
 			else if (current->next && current->next->type == file)
 			{
-				tmp_err = handle_redirection(current_cmd, current, v, s);
+				tmp_err = handle_redirection(current_cmd, current, va, s);
 				if (err == 0)
 				{
 					err = tmp_err;
@@ -464,10 +356,7 @@ t_cmd *parse_tokens(t_token *tokens, t_sp_var *v)
        		}
         }
         else if (current->type == text)
-        {
-			add_argument(current_cmd, current->value);
-			// printf("arg: %s\n", current->value);
-		}
+			add_argument(current_cmd, current->value, va);
         if (current)
             current = current->next;
     }
@@ -483,11 +372,6 @@ t_cmd *parse_tokens(t_token *tokens, t_sp_var *v)
 	}
 
 	if (syn_err)
-	{
-		//free cmds
 		return (NULL);
-	}
-	// if (current && current->syn_err)
-	// 	current_cmd->syn_err = true;
     return commands;
 }

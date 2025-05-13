@@ -1,21 +1,21 @@
 #include "he.h"
 
-char *remove_character(char *s, char c)
+char *remove_character(t_sp_var *va, char c)
 {
     char *new_str;
     int i = -1;
     int j = 0;
-	if (!s)
+	if (!va->var->buffer)
 		return NULL;
 
-    new_str = malloc(ft_strlen(s) + 1);
+    new_str = mmallocc(ft_strlen(va->var->buffer) + 1, &va->allocs, P_GARBAGE);
     if (!new_str)
         return NULL;
         
-    while (s[++i])
+    while (va->var->buffer[++i])
     {
-        if (s[i] != c)
-            new_str[j++] = s[i];
+        if (va->var->buffer[i] != c)
+            new_str[j++] = va->var->buffer[i];
     }
     new_str[j] = '\0';
     return new_str;
@@ -23,36 +23,32 @@ char *remove_character(char *s, char c)
 
 int check_operator_validity(char *buffer, t_quote_state *state)
 {
-    // Only treat as operators when unquoted 
     if (*state == UNQUOTED && buffer[0] == '>' && ft_strlen(buffer) <= 2)
         return 1;
     if (*state == UNQUOTED && buffer[0] == '<' && ft_strlen(buffer) <= 2)
         return 1;
     if (*state == UNQUOTED && buffer[0] == '|' && ft_strlen(buffer) == 1)
         return 1;
-    return 0; // Not a valid operator in this context
+    return 0;
 }
 
-void add_error_token(t_token **token, char *buffer)
+void add_error_token(t_token **token, t_sp_var *va)
 {
-    t_token *new_token = malloc(sizeof(t_token));
+    t_token *new_token = mmallocc(sizeof(t_token), &va->allocs, P_GARBAGE);
     if (!new_token)
         return;
 
-    // Initialize all fields
-	// printf("[%s]\n",buffer);
-    new_token->value = ft_sttrdup(buffer);
-    new_token->type = text;  // Default type instead of NULL
+    new_token->value = ft_strdup(va->var->buffer, &va->allocs, P_GARBAGE);
+    new_token->type = text;
     new_token->syn_err = true;
     new_token->heredoc = false;
-    // new_token->need_expand = false;
     new_token->wait_more_args = false;
     new_token->next = NULL;
 
     if (*token == NULL) {
         *token = new_token;
     } else {
-        t_token *current = *token;  // Dereference here
+        t_token *current = *token;
         while (current->next)
             current = current->next;
         current->next = new_token;
@@ -66,7 +62,6 @@ void detect_file_tokens(t_token **tokens)
 
     while (current != NULL)
     {
-        // A file token is a text token that follows a redirection operator
         if (current->type == text && previous != NULL && previous->type == red)
                 current->type = file;
         previous = current;
@@ -80,31 +75,6 @@ int is_token_separator(char c)
     return (ft_isspace(c) || c == '>' || c == '<' || c == '|');
 }
 
-/**
- * Frees tokens from a starting point
- * 
- * @param start Pointer to first token to free
- */
-void free_token_list(t_token **start)
-{
-    t_token *current;
-    t_token *next;
-
-	if (!start || !*start)
-		return;
-    current = *start;
-    while (current)
-    {
-        next = current->next;
-        if (current->value)
-			free(current->value);
-		if (current)
-        	free(current);
-        current = next;
-    }
-	*start = NULL;
-}
-
 int validate_syntax(t_token **tokens)
 {
     t_token *current = *tokens;
@@ -115,56 +85,37 @@ int validate_syntax(t_token **tokens)
         
     previous = current;
     current = current->next;
-    //|| (previous->type == red && ft_strcmp(previous->value,"<<")
-    // Validate first token: can't start with pipe or redirection
     if (previous->type == pip)
     {
-		// printf("llllllllllllllllll\n");
         previous->syn_err = true;
-        free_token_list(&previous->next);
         previous->next = NULL;
         return 0;
     }
-    
-    // Validate token pairs throughout the list
     while (current)
     {
-        // Cannot have pipe after pipe or redirection
         if (current->type == pip && (previous->type == pip || previous->type == red))
         {
             previous->syn_err = true;
-            free_token_list(&current);
             previous->next = NULL;
             return 0;
         }
-        
-        // Cannot have two redirections in a row
         if (current->type == red && previous->type == red)
         {
-			// printf("sgcsgcststcts:\n");
             previous->syn_err = true;
-            free_token_list(&current);
             previous->next = NULL;
             return 0;
         }
-        
-        // Redirection must be followed by a filename (file or text)
         if (previous->type == red && current->type != file)
         {
-			// printf("llllllllllllllllll\n");
             previous->syn_err = true;
-            free_token_list(&current);
             previous->next = NULL;
             return 0;
         }
-        
-        // Heredoc requires a delimiter
         if (previous->type == red && ft_strcmp(previous->value, "<<") == 0)
         {
             if (!current || (current->type != file && current->type != text))
             {
                 previous->syn_err = true;
-                free_token_list(&current);
                 previous->next = NULL;
                 return 0;
             }
@@ -174,14 +125,10 @@ int validate_syntax(t_token **tokens)
         current = current->next;
     }
     
-	// printf("[%s]\n\n",previous->value);
-    // Validate final token: can't end with pipe or redirection
     if (previous->type == pip || previous->type == red)
     {
         previous->syn_err = true;
-        free_token_list(&previous->next);
         previous->next = NULL;
-    // printf("!!!11!\n");
         return 0;
     }
     return 1;
