@@ -6,32 +6,34 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 10:36:58 by abel-had          #+#    #+#             */
-/*   Updated: 2025/05/12 12:21:43 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/13 10:57:30 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
 #include "execution.h"
 
-char *get_executable_path(char *str, t_malloc **alloc)
+char	*get_executable_path(char *str, t_malloc **alloc)
 {
-	int  i;
-	char *s = getenv("PATH");
-	char **paths = ft_split(s, ':', alloc);
-	char *check;
+	int		i;
+	char	*s;
+	char	**paths;
+	char	*check;
 
+	paths = ft_split(s, ':', alloc);
+	s = getenv("PATH");
 	i = -1;
-	while(paths[++i])
+	while (paths[++i])
 	{
 		check = ft_strjoin(paths[i], ft_strjoin("/", str, alloc), alloc);
 		// printf("path checked = %s\n", check);
-		if(!access(check, X_OK))
-			return(check);
+		if (!access(check, X_OK))
+			return (check);
 	}
-	return(NULL);
+	return (NULL);
 }
 
-void get_a_child(int *g_exit_status, t_cmd *cmd, t_malloc **allocs, t_env **env, char **envp)
+void	get_a_child(int *g_exit_status, t_cmd *cmd, t_malloc **allocs, t_env **env, char **envp)
 {
 	pid_t pid;
 	int status;
@@ -164,7 +166,7 @@ void ft_execute(t_cmd *cmd, int *status, t_malloc **a, t_env **env, char **envp)
 			ft_execute_simple_cmd(cmd, a, env , status, envp);
 			if(dup2(in_backup, STDIN_FILENO) == -1 || dup2(out_backup, STDOUT_FILENO) == -1)
 				perror("dup2:");
-			if(close(in_backup) == -1 || close(out_backup))
+			if(close(in_backup) == -1 || close(out_backup) == -1)
 				perror("close:");
 		}
 		else

@@ -16,6 +16,14 @@ typedef struct s_malloc t_malloc;
 
 #include "../includes/minishell.h"
 
+typedef struct s_tools {
+	t_cmd *cmd;
+	t_malloc **aloc;
+	t_env **env;
+	int *r_stat;
+	char **envp;
+} t_tools;
+
 t_env	*get_bef_node(t_env *lst, t_env *node);
 
 void	cd_error(char *path);
@@ -30,7 +38,6 @@ int	ft_cd(t_cmd *cmd, t_malloc **aloc, t_env **env);
 int		ft_env(t_malloc **aloc, t_env **env, t_cmd *cmd);
 void	ft_exit(t_malloc **aloc, t_cmd *cmd, int *status);
 int		ft_unset(t_cmd *cmd, t_malloc **aloc, t_env **env);
-
 int		var_action(char *key ,char *value, t_env *env);
 int		is_var_exist(char *key, t_env *vars);
 void	update_var(t_env **env, char *new_value ,char *key, t_malloc **alloc);
@@ -39,7 +46,6 @@ void remove_variable(char *key, t_env **vars, t_malloc **alloc);
 void append_value(t_env **env, char *key, char *value, t_malloc **alloc);
 char	**keys_to_2darray(t_env * env, int  type, t_malloc **alloc);
 char	**sort_2d_array(char **arr);
-
 void	execute_builtin(int i, t_cmd *cmd, t_malloc **allocs, t_env **env, int *g_exit_status);
 int		is_builtins(char *str);
 

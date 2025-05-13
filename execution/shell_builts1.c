@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/27 16:23:42 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/12 12:43:32 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/13 10:17:27 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,12 +87,6 @@ int	ft_pwd(t_env **env, t_malloc **a)
 		}
 	}
 	return 1;
-	// else
-	// {
-	// 	write(2, "minishell: pwd: ", 16);
-	// 	write(2, strerror(errno), ft_strlen(strerror(errno)));
-	// 	write(2, "\n", 1);
-	// }
 }
 
 void export_display(t_env **env, t_malloc **a)
