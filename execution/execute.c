@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 10:36:58 by abel-had          #+#    #+#             */
-/*   Updated: 2025/05/13 11:47:21 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/13 12:07:12 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,6 @@ void ft_execute_simple_cmd(t_cmd *cmd, t_malloc **allocs, t_env **env, int *g_ex
 	else
 	{
 		path = get_executable_path(cmd->name, allocs);
-		// printf("executable path = %s\n", path);
 		if (path)
 		{
 			cmd->name = path;
@@ -107,7 +106,9 @@ void ft_execute_simple_cmd(t_cmd *cmd, t_malloc **allocs, t_env **env, int *g_ex
 		}
 		else
 		{
-			printf("minishell: %s: command not found\n", cmd->name);
+			ft_putstr_fd("minishell: ", 2);
+			ft_putstr_fd(cmd->name, 2);
+			ft_putstr_fd(" : command not found\n", 2);
 			*g_exit_status = 127;
 		}
 	}
@@ -130,8 +131,7 @@ void execute_piped_cmd(t_cmd *cmd, t_malloc **allocs, t_env **env, int *g_exit_s
 	}
 	else
 	{
-		path = get_executable_path(cmd->name, allocs);
-		// printf("executable path = %s\n", path);
+		path = get_executable_path(cmd->name, allocs); // printf("executable path = %s\n", path);
 		if (path)
 		{
 			cmd->name = path;
