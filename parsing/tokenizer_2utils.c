@@ -302,12 +302,12 @@ int add_token_with_type(t_var *va, t_env *env, int status)
 			}
     	}	
 	}
-	if (v->buff)
-		free(v->buff);
-	if (v->new_buff)
-		free(v->new_buff);
-	if (v->joined)
-		free(v->joined);
+	// if (v->buff)
+	// 	free(v->buff);
+	// if (v->new_buff)
+	// 	free(v->new_buff);
+	// if (v->joined)
+	// 	free(v->joined);
 	free(v);	
 	return 1;
 }
