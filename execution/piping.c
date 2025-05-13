@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 15:11:23 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/13 12:46:39 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/13 15:08:54 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,7 +106,12 @@ void	execute_pipeline(t_cmd *cmd, t_malloc **a, t_env **env, int *last_status, c
 	close_fds(cmd_count - 1, arr);
 	num = waitpid(right_most, &status, 0);
 	if (num == -1)
-		perror("waitpid:");
+	{
+		if (errno == EINTR)
+			*last_status = 130;
+		else
+			perror("waitpid pipe");
+	}
 	else if (num == right_most)
 	{
 		if (WIFEXITED(status))

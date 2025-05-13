@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 10:36:58 by abel-had          #+#    #+#             */
-/*   Updated: 2025/05/13 12:29:12 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/13 15:02:27 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,14 @@ void	get_a_child(int *g_exit_status, t_cmd *cmd, t_malloc **allocs, t_env **env,
 	if (pid > 0)
 	{
 		if (waitpid(pid, &status, 0) == -1)
-			perror("waitpid:");
+		{
+			if (errno == EINTR)
+			{
+				*g_exit_status = 130;
+			}
+			else
+				perror("waitpid simple cmd");
+		}
 		else if (WIFEXITED(status))
 			*g_exit_status = WEXITSTATUS(status);
 		else if (WIFSIGNALED(status))
