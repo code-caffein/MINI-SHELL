@@ -1,6 +1,6 @@
 
 #include "he.h"
-
+#include <sys/ioctl.h>
 volatile sig_atomic_t g_signal_pid;
 
 
@@ -86,19 +86,33 @@ ssize_t heredoc_readline(char **out)
     size_t cap = 128, len = 0;
     char *buf = malloc(cap);
     if (!buf) return -1;
-
+	
     while (1)
     {
-        char c;
-        ssize_t r = read(STDIN_FILENO, &c, 1);
-        if (r == 0)       break;            // EOF
+		char c;
+		ssize_t r = read(0, &c, 1);   
+		if (r == 0)     // EOF
+			return 0;
         if (r < 0)
     {
         if (errno == EINTR) {
-            free(buf);
-            *out = NULL; // Set out to NULL on interrupt
-            return -2;
-        }
+                if (g_signal_pid == -1) {
+                    // Flush pending input using ioctl and read
+                    int bytes_available;
+                    while (1) {
+                        if (ioctl(0, FIONREAD, &bytes_available) == -1 || bytes_available <= 0)
+                            break;
+                        char dummy[256];
+                        if (read(0, dummy, sizeof(dummy)) <= 0)
+                            break;
+                    }
+                }
+					rl_replace_line("", 0);
+            		rl_redisplay();
+                    free(buf);
+                    *out = NULL;
+                    return -2;
+            }
         free(buf);
         return -1;
     }
@@ -114,9 +128,11 @@ ssize_t heredoc_readline(char **out)
         buf[len++] = c;
         if (c == '\n')   break;
     }
+	
 
     buf[len] = '\0';
     *out = buf;
+	// printf("[%s]\n",*out);
     return (ssize_t)len;
 }
 
@@ -142,7 +158,7 @@ int handle_redirection(t_cmd *cmd, t_token *token, t_sp_var *v, int ss)
 	int i = 0;
     if (!cmd || !token || !token->next)
         return 0;
-    
+    // int saved_stdin = dup(STDIN_FILENO);
     t_token *file_token = token->next;
     if (file_token->need_expand == true)
 		i = 1;
@@ -179,20 +195,22 @@ int handle_redirection(t_cmd *cmd, t_token *token, t_sp_var *v, int ss)
 			char *line;
 			while (1)
 			{
-
+				g_signal_pid = 2;
 				if (g_signal_pid == -1)
 				{
-					g_signal_pid = 0;
+					// g_signal_pid = 0;
 					// int j = -1;
         			// while (++j < in)
             		// 	free(bib[j]);
+					// printf("SSSSSSSSs");
+    				// dup2(saved_stdin, STDIN_FILENO);
         			free(bib);
 					return -2;
 				}
     			write(STDOUT_FILENO, "> ", 2);
    				n = heredoc_readline(&line);
     			if (!line || n == -2 || n == 0)
-        			break;
+        			return -2;
 				if (n > 0 && line[n-1] == '\n')
     				line[n-1] = '\0';
     			if (ft_strcmp(line, file_token->value) == 0)
@@ -227,6 +245,7 @@ int handle_redirection(t_cmd *cmd, t_token *token, t_sp_var *v, int ss)
     			}
     			bib[in++] = line;
 			}
+			g_signal_pid = 0;
 			bib[in] = NULL; // Null-terminate the array
 
 			int fd = open("t_m_p_f_i_l_e", O_WRONLY | O_CREAT | O_TRUNC, 0644);
@@ -426,11 +445,14 @@ t_cmd *parse_tokens(t_token *tokens, t_sp_var *v)
 					err = tmp_err;
 					err_file = current->next->value;
 				}
-				if (tmp_err == -2)
+				if (tmp_err == -2)//heredoc ctrl c return 
 				{
-    // user hit Ctrl+C — abort this entire pipeline/command silently
-    				free_commands(commands);   // or otherwise drop it
-    				return NULL;               // or set a flag so you just redisplay prompt
+    				if (current_cmd && current_cmd->name)
+					{
+						current_cmd->name = NULL;
+						return commands;
+					}	
+					
 				}
 				if (tmp_err != 0)
 				{
