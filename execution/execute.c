@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 10:36:58 by abel-had          #+#    #+#             */
-/*   Updated: 2025/05/13 10:57:30 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/13 11:47:21 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,8 @@ char	*get_executable_path(char *str, t_malloc **alloc)
 	char	**paths;
 	char	*check;
 
-	paths = ft_split(s, ':', alloc);
 	s = getenv("PATH");
+	paths = ft_split(s, ':', alloc);
 	i = -1;
 	while (paths[++i])
 	{
@@ -151,7 +151,6 @@ void ft_execute(t_cmd *cmd, int *status, t_malloc **a, t_env **env, char **envp)
 	int in_backup;
 	int out_backup;
 
-	
 	if(cmd->next)
 		execute_pipeline(cmd, a, env , status, envp);
 	else
