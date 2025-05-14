@@ -73,7 +73,7 @@ char *expand_env_vars(char *str, t_sp_var *va)
     }
     
     result[j] = '\0';
-    return ft_sttrdup(result);
+    return ft_strdup(result, &va->allocs, P_GARBAGE);
 }
 
 // int expand_variables(t_token *tokens, t_quote_state *state)

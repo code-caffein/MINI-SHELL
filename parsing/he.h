@@ -45,6 +45,7 @@ typedef struct s_token {
     bool syn_err;           // Syntax error flag
     bool heredoc;           // Is heredoc delimiter
     bool need_expand;       // heredoc expansion
+	bool  newline;
     bool wait_more_args; // Wait for more arguments
     struct s_token *next;   // Next token in the list
 } t_token;
@@ -53,10 +54,12 @@ typedef struct s_var
 {
     t_token *tokens;
     char *buffer;
+	char *tmp_err;
     int i;
     int j;
     char c;
-    
+	int a;
+	int *p;
     t_quote_state state;
     bool has_heredoc;
     bool wait_more_args;
@@ -172,13 +175,13 @@ void check_if_needs_expansion(t_token **tokens, t_quote_state state);
 /*
  * Memory management functions
  */
-void    free_token_list(t_token **start);
-void    free_command(t_cmd *cmd);
-void    free_commands(t_cmd *commands);
+// void    free_token_list(t_token **start);
+// void    free_command(t_cmd *cmd);
+// void    free_commands(t_cmd *commands);
 
 
 // int expand_variables(t_token *tokens, t_quote_state *state);
-char *expand2_env_vars(char *str, t_quote_state *state, t_sp_var *v, t_malloc **a);
+// char *expand2_env_vars(char *str, t_quote_state *state, t_sp_var *v, t_malloc **a);
 char *expand_env_vars(char *str, t_sp_var *va);
 
 // char     *handle_quotes(char *buffer, t_quote_state *state);
@@ -211,8 +214,35 @@ int sixth_condition(t_sp_var *va);
 //tkenizer utils
 
 
-char    *ft_sttrdup(const char *s1);
-char    *ft_sttrjoin(char const *s1, char const *s2);
-char    **ft_spplit(char const *s, char c);
+// char    *ft_sttrdup(const char *s1);
+// char    *ft_sttrjoin(char const *s1, char const *s2);
+// char    **ft_spplit(char const *s, char c);
+
+
+
+int first_if(t_sp_var *va);
+int second_if(t_sp_var *va);
+int third_if(t_sp_var *va);
+int fourth_if(t_sp_var *va);
+int while_part1(t_sp_var *va);
+
+
+void	init_var(t_sp_var *va);
+bool	fill_tken_part1(t_var *v);
+t_token *fill_tken_part2(t_var *v);
+t_token *fill_tken_part3(t_var *v);
+
+
+t_token *create_new_token(t_token **new_token, char *new_buff, t_sp_var *va);
+void init_variable(t_v *v);
+int ft_fill_2(t_v *v, t_sp_var *va);
+int ft_fill_1(t_sp_var *va);
+int need_expandd(char *str);
+
+int fill1_red_pip_txt(t_v *v, t_quote_state *state);
+void fill2_red_pip_txt(t_v *v, t_quote_state *state);
+void red_pip_txt(t_v *v , t_quote_state *state);
+void add_expanded_token(t_v *v, t_token **tokens, char *expanded, t_sp_var *va);
+void add_token(t_v *v, t_token **tokens);
 
 #endif /* HE_H */

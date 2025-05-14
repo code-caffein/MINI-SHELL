@@ -1,0 +1,61 @@
+#include "he.h"
+
+int ft_fill_1(t_sp_var *va)
+{
+	if (va->var->buffer[0] == '>' || va->var->buffer[0] == '<' || va->var->buffer[0] == '|')
+	{
+		if (!check_operator_validity(va->var->buffer, &va->var->state))
+		{
+			add_error_token(&va->var->tokens, va);
+			return 0;
+		}
+	}
+	return 1;
+}
+
+int ft_fill_2(t_v *v, t_sp_var *va)
+{
+
+	if (va->var->state == DOUBLE_QUOTED)
+		v->new_buff = remove_character(va, '\"');
+	else if (va->var->state == SINGLE_QUOTED)
+		v->new_buff = remove_character(va, '\'');
+	else if (va->var->state == UNQUOTED)
+		v->new_buff = ft_strdup(va->var->buffer, &va->allocs, P_GARBAGE);
+	if (!v->new_buff)
+		return 0;
+	return 1;
+}
+void init_variable(t_v *v)
+{
+    if (!v)
+        return;
+        
+    v->new_token = NULL;
+    v->current = NULL;
+    v->buff = NULL;
+    v->joined = NULL;
+    v->new_buff = NULL;
+	// v->quote = false;
+}
+t_token *create_new_token(t_token **new_token, char *new_buff, t_sp_var *va)
+{
+	*new_token = mmallocc(sizeof(t_token), &va->allocs, P_GARBAGE);
+	if (!*new_token)
+		return NULL;
+	(*new_token)->value = new_buff;
+	(*new_token)->next = NULL;
+	return *new_token;
+}
+
+int need_expandd(char *str)
+{
+	int i = 0;
+	while (str[i])
+	{
+		if (str[i] == '$')
+			return (1);
+		i++;
+	}
+	return (0);
+}

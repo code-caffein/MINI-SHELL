@@ -43,6 +43,7 @@ void add_error_token(t_token **token, t_sp_var *va)
     new_token->syn_err = true;
     new_token->heredoc = false;
     new_token->wait_more_args = false;
+	new_token->newline = true;
     new_token->next = NULL;
 
     if (*token == NULL) {
@@ -96,18 +97,21 @@ int validate_syntax(t_token **tokens)
         if (current->type == pip && (previous->type == pip || previous->type == red))
         {
             previous->syn_err = true;
+			previous->newline = true;
             previous->next = NULL;
             return 0;
         }
         if (current->type == red && previous->type == red)
         {
             previous->syn_err = true;
+			previous->newline = true;
             previous->next = NULL;
             return 0;
         }
         if (previous->type == red && current->type != file)
         {
             previous->syn_err = true;
+			previous->newline = true;
             previous->next = NULL;
             return 0;
         }
@@ -116,6 +120,7 @@ int validate_syntax(t_token **tokens)
             if (!current || (current->type != file && current->type != text))
             {
                 previous->syn_err = true;
+				previous->newline = true;
                 previous->next = NULL;
                 return 0;
             }
