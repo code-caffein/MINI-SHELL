@@ -55,8 +55,11 @@ void add_expanded_token(t_v *v, t_token **tokens, char *expanded, t_sp_var *va)
 	t_token *new_token;
 	char *tmp = ft_strdup(expanded, &va->allocs, P_GARBAGE);
 	new_token = create_new_token(&new_token, tmp, va);
+
 	if (new_token) {
         new_token->type = text; // Set the token type to text
+		if (!v->quote)
+			new_token->need_expand = true;
     }
 	v->new_token = new_token;
 	if (*tokens == NULL)

@@ -71,7 +71,7 @@ typedef struct s_v
     t_token *current;
     char    *buff;
     char    *joined;
-    // bool quote;
+    bool quote;
     char    *new_buff;
 } t_v;
 /**
