@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/13 12:34:10 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/13 12:41:01 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/13 15:13:34 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,9 @@ typedef struct s_tools
 	t_env		**env;
 	int			*r_stat;
 	char		**envp;
+	char		*random_str;
+	int			rendom_num;
+	void		*rendom_ptr;
 }	t_tools;
 
 t_env	*get_bef_node(t_env *lst, t_env *node);

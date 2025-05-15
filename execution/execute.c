@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 10:36:58 by abel-had          #+#    #+#             */
-/*   Updated: 2025/05/13 15:02:27 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/15 11:45:05 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,8 @@ char	*get_executable_path(char *str, t_malloc **alloc)
 	char	**paths;
 	char	*check;
 
+	if(!str || !str[0])
+		return (NULL);
 	s = getenv("PATH");
 	paths = ft_split(s, ':', alloc);
 	i = -1;
@@ -59,6 +61,8 @@ void	get_a_child(int *g_exit_status, t_cmd *cmd, t_malloc **allocs, t_env **env,
 	}
 	else
 	{
+		ft_putstr_fd("\n here \n", 2);
+		printf("cmd-name [%s] \ncmd-arg 0 [%s] \n", cmd->name, cmd->args[0]);
 		if (execve(cmd->name, cmd->args, envp) == -1)
 			execve_error(cmd->name);
 	}
@@ -113,7 +117,7 @@ void	ft_execute_simple_cmd(t_cmd *cmd, t_malloc **allocs, t_env **env, int *g_ex
 		{
 			ft_putstr_fd("minishell: ", 2);
 			ft_putstr_fd(cmd->name, 2);
-			ft_putstr_fd(" : command not found\n", 2);
+			ft_putstr_fd(": command not found\n", 2);
 			*g_exit_status = 127;
 		}
 	}
@@ -146,7 +150,9 @@ void execute_piped_cmd(t_cmd *cmd, t_malloc **allocs, t_env **env, int *g_exit_s
 		}
 		else
 		{
-			printf("minishell: %s: command not found\n", cmd->name);
+			ft_putstr_fd("minishell: ", 2);
+			ft_putstr_fd(cmd->name, 2);
+			ft_putstr_fd(": command not found\n", 2);
 			*g_exit_status = 127;
 		}
 	}

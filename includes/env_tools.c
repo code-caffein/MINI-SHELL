@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 09:39:29 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/13 14:26:53 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/13 15:30:25 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ void	*push_to_env(t_env **head, t_malloc **alloc, char *key, char *value, int ty
 	pointer = NULL;
 	new = mmallocc(sizeof(t_env), alloc, P_ENVIRONMENT);
 	if (!new)
-		return (ft_putstr_fd("var allocation error!", 2), exit(1), NULL);
+		return (perror("malloc"), exit(1), NULL);
 	new->next = NULL;
 	new->key = ft_strdup(key, alloc, P_ENVIRONMENT);
 	new->type = type;
