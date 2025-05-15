@@ -192,10 +192,7 @@ int handle_redirection(t_cmd *cmd, t_token *token, t_sp_var *va, int ss)
 				if (n > 0 && line[n-1] == '\n')
     				line[n-1] = '\0';
     			if (ft_strcmp(line, file_token->value) == 0)
-				{
-        			free(line);
        				break;
-    			}
     			if (i == 1)
 				{
        				char *tmp;

@@ -13,7 +13,6 @@ int add_token_with_type(t_sp_var *va)
 		return 0;
 	int a = -1;
 
-	// printf("[      [%s]    ]\n",va->var->buffer);
 
 	init_variable(v);
 	if (va->var->buffer[0] == '\0')
@@ -55,6 +54,8 @@ int add_token_with_type(t_sp_var *va)
 
 	char first;
 	char last;
+	if (!QUOTE)
+		v->new_token->need_expand = true;
 	if(v->buff)
 	{
 		char *tmp;
@@ -68,10 +69,11 @@ int add_token_with_type(t_sp_var *va)
 
 			if (!ft_isspace(first))
 			{
-				printf("Sssss");
 				static_buffer = ft_strjoin(v->buff, bib[i++], &va->allocs);
 				add_expanded_token(v, &va->var->tokens, static_buffer, va);
 			}
+			else
+				add_expanded_token(v, &va->var->tokens, v->buff, va);
 			int s = i;
 			if (va->var->wait_more_args)
 			{
@@ -83,6 +85,8 @@ int add_token_with_type(t_sp_var *va)
 				{
 					if (i != t)
 						add_expanded_token(v, &va->var->tokens, bib[i++], va);
+					else
+						break;
 				}
 				if (ft_isspace(last))
 					add_expanded_token(v, &va->var->tokens, bib[t], va);
@@ -92,14 +96,9 @@ int add_token_with_type(t_sp_var *va)
 			else
 			{
 				while (bib[i])
-				{
-
-					add_expanded_token(v, &va->var->tokens, bib[i], va);
-					
-					i++;
-				}
+					add_expanded_token(v, &va->var->tokens, bib[i++], va);
 				static_buffer = NULL;
-				v->quote = false;
+				// QUOTE = false;
 			}
 		}
 		else
@@ -109,9 +108,10 @@ int add_token_with_type(t_sp_var *va)
 			else 
 			{
 				static_buffer = ft_strjoin(v->buff, v->new_buff, &va->allocs);
-				add_expanded_token(v, &va->var->tokens, static_buffer, va);
+				v->buff = static_buffer;
+				add_token(v,  &va->var->tokens);
 				static_buffer = NULL;
-				v->quote = false;
+				QUOTE = false;
 			}
 		}
 	}
@@ -133,12 +133,14 @@ int add_token_with_type(t_sp_var *va)
 				{
 					if (i != t)
 						add_expanded_token(v, &va->var->tokens, bib[i++], va);
-					if (ft_isspace(last))
-						add_expanded_token(v, &va->var->tokens, bib[t], va);
 					else
-						static_buffer = bib[t];
+						break;
 				}
-				v->quote = false;
+				if (ft_isspace(last))
+					add_expanded_token(v, &va->var->tokens, bib[t], va);
+				else
+					static_buffer = bib[t];
+				// v->quote = false;
 			}
 			else
 			{
@@ -146,18 +148,18 @@ int add_token_with_type(t_sp_var *va)
 				while (bib[++s])
 					add_expanded_token(v, &va->var->tokens, bib[s], va);
 				static_buffer = NULL;
-				v->quote = false;
+				// v->quote = false;
 			}
 		}
 		else
 		{
-			if (va->var->wait_more_args){
-
+			if (va->var->wait_more_args)
 				static_buffer = ft_strdup(v->new_buff, &va->allocs, P_GARBAGE);
+			else{
+				v->buff = v->new_buff;
+				add_token(v,  &va->var->tokens);
 			}
-			else
-				add_expanded_token(v, &va->var->tokens, v->new_buff, va);
-			v->quote = false;
+			QUOTE = false;
 		}
 	}
 

@@ -26,6 +26,7 @@ bool	fill_tken_part1(t_var *v)
 	detect_file_tokens(&v->tokens);
 	validate_syntax(&v->tokens);
 	curr = v->tokens;
+	v->has_heredoc = false;
 	while (curr)
 	{
 		if (curr->syn_err)

@@ -6,7 +6,7 @@
 /*   By: abel-had <abel-had@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 10:35:35 by abel-had          #+#    #+#             */
-/*   Updated: 2025/05/14 12:46:07 by abel-had         ###   ########.fr       */
+/*   Updated: 2025/05/15 12:03:24 by abel-had         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,9 +21,11 @@ t_token	*fill_tokenize(t_var *v)
 	has_syntax_error = fill_tken_part1(v);
 	if (has_syntax_error && v->has_heredoc)
 		return (fill_tken_part2(v));
-
+	
 	if (has_syntax_error && !v->has_heredoc)
+	{
 		return (fill_tken_part3(v));
+	}
 	if (v->state != UNQUOTED)
 	{
 		ft_putstr_fd("minishell: unexpected EOF while looking for matching `", 2);
