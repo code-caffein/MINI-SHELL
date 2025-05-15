@@ -65,16 +65,16 @@ void add_argument(t_cmd *cmd, char *arg, t_sp_var *va)
     cmd->args[cmd->arg_count] = NULL;
 }
 
-ssize_t heredoc_readline(char **out, t_sp_var *va)
+int heredoc_readline(char **out, t_sp_var *va)
 {
-    size_t cap = 128, len = 0;
+    int cap = 128, len = 0;
     char *buf = mmallocc(cap, &va->allocs, P_GARBAGE);
     if (!buf) return -1;
 	
     while (1)
     {
 		char c;
-		ssize_t r = read(0, &c, 1);   
+		int r = read(0, &c, 1);   
 		if (r == 0)     // EOF
 			return 0;
         if (r < 0)
