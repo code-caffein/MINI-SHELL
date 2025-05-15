@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
+/*   By: abel-had <abel-had@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 10:36:58 by abel-had          #+#    #+#             */
-/*   Updated: 2025/05/15 11:45:05 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/15 12:33:44 by abel-had         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,8 +61,8 @@ void	get_a_child(int *g_exit_status, t_cmd *cmd, t_malloc **allocs, t_env **env,
 	}
 	else
 	{
-		ft_putstr_fd("\n here \n", 2);
-		printf("cmd-name [%s] \ncmd-arg 0 [%s] \n", cmd->name, cmd->args[0]);
+		// ft_putstr_fd("\n here \n", 2);
+		// printf("cmd-name [%s] \ncmd-arg 0 [%s] \n", cmd->name, cmd->args[0]);
 		if (execve(cmd->name, cmd->args, envp) == -1)
 			execve_error(cmd->name);
 	}
