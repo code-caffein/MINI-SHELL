@@ -18,6 +18,7 @@ t_token	*fill_tokenize(t_var *v)
 {
 	bool has_syntax_error;
 
+	
 	has_syntax_error = fill_tken_part1(v);
 	if (has_syntax_error && v->has_heredoc)
 		return (fill_tken_part2(v));

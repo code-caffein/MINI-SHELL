@@ -1,6 +1,6 @@
 #include "./includes/minishell.h"
 #include "./execution/execution.h"
-volatile sig_atomic_t g_signal_pid = 0;
+int g_signal_pid = 0;
 
 void print_redirections(t_redirection *redir, const char *type) {
     while (redir != NULL) {

@@ -86,7 +86,7 @@ int validate_syntax(t_token **tokens)
         
     previous = current;
     current = current->next;
-    if (previous->type == pip || (previous->type == red && previous->next == NULL))
+    if (previous->type == pip || (previous->type == red && (previous->next == NULL || previous->next->type != file )))
     {
         previous->syn_err = true;
         previous->next = NULL;

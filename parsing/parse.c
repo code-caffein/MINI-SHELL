@@ -1,7 +1,7 @@
 
 #include "he.h"
 #include <sys/ioctl.h>
-volatile sig_atomic_t g_signal_pid;
+int g_signal_pid;
 
 
 

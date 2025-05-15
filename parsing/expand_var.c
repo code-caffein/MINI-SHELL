@@ -65,7 +65,7 @@ char *expand_env_vars(char *str, t_sp_var *va)
                 int m = 0;
                 while (value[m])
                     result[j++] = value[m++];
-                free(value);
+                // free(value);
             }
         }
         else

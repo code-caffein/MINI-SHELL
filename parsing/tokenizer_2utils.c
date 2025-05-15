@@ -17,13 +17,15 @@ int add_token_with_type(t_sp_var *va)
 	init_variable(v);
 	if (va->var->buffer[0] == '\0')
 		return (0);
-	if (va->var->state == UNQUOTED && !QUOTE)
-		QUOTE = false; 
-	else
+	if (va->var->state != UNQUOTED && (!QUOTE || QUOTE))
+		QUOTE = true; 
+	else if(va->var->state == UNQUOTED && !QUOTE)
+		QUOTE = false;
+	else if(va->var->state == UNQUOTED && QUOTE)
 		QUOTE = true;
 	
 	v->quote = QUOTE;
-	// printf("[      [%s]    ]\n",static_buffer);
+	// printf("[      [%s]    ]\n",va->var->buffer);
 	if (static_buffer)
 	{
 		v->buff = static_buffer;
@@ -39,6 +41,7 @@ int add_token_with_type(t_sp_var *va)
 	
 	if (!v->new_token)
 		return (0);//malloc failed
+	v->new_token->need_expand = false;
 
 	red_pip_txt(v, &va->var->state);
 	t_token *prev_token = NULL;
@@ -54,12 +57,10 @@ int add_token_with_type(t_sp_var *va)
 
 	char first;
 	char last;
-	if (!QUOTE)
-		v->new_token->need_expand = true;
 	if(v->buff)
 	{
 		char *tmp;
-		if (!(prev_token && ft_strcmp(prev_token->value, "<<") == 0) && need_expandd(v->new_buff))
+		if (!(prev_token && ft_strcmp(prev_token->value, "<<") == 0) && need_expandd(v->new_buff, &va->var->state))
 		{
 			char *expanded_value = expand_env_vars(v->new_buff, va);
 			first = expanded_value[0];
@@ -107,6 +108,8 @@ int add_token_with_type(t_sp_var *va)
 				static_buffer = ft_strjoin(v->buff, v->new_buff, &va->allocs);
 			else 
 			{
+				if (!QUOTE)
+					v->new_token->need_expand = true;
 				static_buffer = ft_strjoin(v->buff, v->new_buff, &va->allocs);
 				v->buff = static_buffer;
 				add_token(v,  &va->var->tokens);
@@ -117,7 +120,7 @@ int add_token_with_type(t_sp_var *va)
 	}
 	else
 	{
-		if (!(prev_token && ft_strcmp(prev_token->value, "<<") == 0) && need_expandd(v->new_buff))
+		if (!(prev_token && ft_strcmp(prev_token->value, "<<") == 0) && need_expandd(v->new_buff, &va->var->state))
 		{
 			char *expanded_value = expand_env_vars(v->new_buff, va);
 			last = expanded_value[ft_strlen(expanded_value) - 1];
@@ -156,8 +159,11 @@ int add_token_with_type(t_sp_var *va)
 			if (va->var->wait_more_args)
 				static_buffer = ft_strdup(v->new_buff, &va->allocs, P_GARBAGE);
 			else{
+				if (!QUOTE)
+					v->new_token->need_expand = true;
 				v->buff = v->new_buff;
 				add_token(v,  &va->var->tokens);
+				v->buff = NULL;
 			}
 			QUOTE = false;
 		}
@@ -168,8 +174,7 @@ int add_token_with_type(t_sp_var *va)
 
 
 
-
-
+	
 
 
 

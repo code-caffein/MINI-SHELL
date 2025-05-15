@@ -237,7 +237,7 @@ t_token *create_new_token(t_token **new_token, char *new_buff, t_sp_var *va);
 void init_variable(t_v *v);
 int ft_fill_2(t_v *v, t_sp_var *va);
 int ft_fill_1(t_sp_var *va);
-int need_expandd(char *str);
+int need_expandd(char *str, t_quote_state *state);
 
 int fill1_red_pip_txt(t_v *v, t_quote_state *state);
 void fill2_red_pip_txt(t_v *v, t_quote_state *state);

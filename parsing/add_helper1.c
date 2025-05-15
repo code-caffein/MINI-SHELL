@@ -48,14 +48,17 @@ t_token *create_new_token(t_token **new_token, char *new_buff, t_sp_var *va)
 	return *new_token;
 }
 
-int need_expandd(char *str)
+int need_expandd(char *str, t_quote_state *state)
 {
 	int i = 0;
-	while (str[i])
+	if (*state != SINGLE_QUOTED)
 	{
-		if (str[i] == '$')
-			return (1);
-		i++;
+		while (str[i])
+		{
+			if (str[i] == '$')
+				return (1);
+			i++;
+		}
 	}
 	return (0);
 }
