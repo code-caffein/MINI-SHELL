@@ -26,16 +26,16 @@ int ft_fill_2(t_v *v, t_sp_var *va)
 		return 0;
 	return 1;
 }
-void init_variable(t_v *v)
+void init_variable(t_v *v, t_token *tokens)
 {
     if (!v)
         return;
-        
     v->new_token = NULL;
     v->current = NULL;
     v->buff = NULL;
     v->joined = NULL;
     v->new_buff = NULL;
+	v->prev_token = last_token(tokens);
 	// v->quote = false;
 }
 t_token *create_new_token(t_token **new_token, char *new_buff, t_sp_var *va)
@@ -61,4 +61,19 @@ int need_expandd(char *str, t_quote_state *state)
 		}
 	}
 	return (0);
+}
+
+t_token *last_token(t_token *token)
+{
+	t_token	*curr;
+
+	if (!token)
+		return (NULL);
+	else
+	{
+		curr = token;
+		while (curr->next)
+			curr = curr->next;
+		return (curr);
+	}
 }

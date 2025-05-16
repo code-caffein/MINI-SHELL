@@ -70,6 +70,7 @@ typedef struct s_v
 {
     t_token *new_token;
     t_token *current;
+	t_token *prev_token ;
     char    *buff;
     char    *joined;
     bool quote;
@@ -139,6 +140,7 @@ typedef struct s_h_red_v
 	int j;
 	int fd;
 	int ss;
+	int result;
 	t_token *file_token;
 	t_redirection *redir;
 	t_redirection *current;
@@ -153,6 +155,7 @@ typedef struct s_sp_var{
     t_var *var;
 	t_pt *vpt;
 	t_h_red_v *hrv;
+	t_v *v;
 } t_sp_var;
 // typedef struct s_env {
 //  char *key;
@@ -270,7 +273,7 @@ t_token *fill_tken_part3(t_var *v);
 
 
 t_token *create_new_token(t_token **new_token, char *new_buff, t_sp_var *va);
-void init_variable(t_v *v);
+void init_variable(t_v *v, t_token *tokens);
 int ft_fill_2(t_v *v, t_sp_var *va);
 int ft_fill_1(t_sp_var *va);
 int need_expandd(char *str, t_quote_state *state);
@@ -307,8 +310,15 @@ int read_heredoc_line(t_sp_var *va);
 void expand_heredoc_line(t_sp_var *va);
 int resize_heredoc_buffer(t_sp_var *va);
 int heredoc_to_temp_file(t_sp_var *va);
+int handle_red_if1(t_cmd *cmd, t_sp_var *va);
+int handle_red_if2(t_cmd *cmd, t_sp_var *va);
+int open_outfile(t_sp_var *va);
+void add_red_file(t_cmd *cmd, t_sp_var *va);
 
 
+
+
+t_token *last_token(t_token *token);
 
 
 #endif /* HE_H */
