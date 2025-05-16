@@ -6,30 +6,30 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 09:39:29 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/13 15:30:25 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/16 15:09:07 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	*push_to_env(t_env **head, t_malloc **alloc, char *key, char *value, int type)
+void	*push_to_env(t_tools *tools, char *key, char *value, int type)
 {
 	t_env	*pointer;
 	t_env	*new;
 
 	pointer = NULL;
-	new = mmallocc(sizeof(t_env), alloc, P_ENVIRONMENT);
+	new = mmallocc(sizeof(t_env), tools->aloc, P_ENVIRONMENT);
 	if (!new)
 		return (perror("malloc"), exit(1), NULL);
 	new->next = NULL;
-	new->key = ft_strdup(key, alloc, P_ENVIRONMENT);
+	new->key = ft_strdup(key, tools->aloc, P_ENVIRONMENT);
 	new->type = type;
-	new->value = ft_strdup(value, alloc, P_ENVIRONMENT);
-	if (!(*head))
-		(*head) = new;
+	new->value = ft_strdup(value, tools->aloc, P_ENVIRONMENT);
+	if (!(*(tools->env)))
+		(*(tools->env)) = new;
 	else
 	{
-		pointer = (*head);
+		pointer = (*(tools->env));
 		while (pointer->next)
 			pointer = pointer->next;
 		pointer->next = new;
@@ -37,18 +37,18 @@ void	*push_to_env(t_env **head, t_malloc **alloc, char *key, char *value, int ty
 	return (pointer);
 }
 
-void	push_envp(t_env **head, char **envp, t_malloc **a)
+void	push_envp(t_tools *tools)
 {
 	char	*key;
 	char	*value;
 	int		i;
 
 	i = -1;
-	while (envp[++i])
+	while (tools->envp[++i])
 	{
-		key = ft_split(envp[i], '=', a)[0];
-		value = ft_strchr(envp[i], '=') + 1;
-		push_to_env(head, a, key, value, 0);
+		key = ft_split(tools->envp[i], '=', tools->aloc)[0];
+		value = ft_strchr(tools->envp[i], '=') + 1;
+		push_to_env(tools, key, value, 0);
 	}
 }
 

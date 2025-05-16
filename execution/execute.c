@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 10:36:58 by abel-had          #+#    #+#             */
-/*   Updated: 2025/05/16 09:57:42 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/16 15:20:33 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,7 +96,7 @@ void	ft_execute_simple_cmd(t_tools *tools)
 		execute_builtin(i,tools);
 	else if (ft_strchr(tools->cmd->name, '/'))
 	{
-		if (file_error_handler(tools->cmd->name, *(tools->r_stat)))
+		if (file_error_handler(tools->cmd->name, (tools->r_stat)))
 			get_a_child(tools);
 	}
 	else

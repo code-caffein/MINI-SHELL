@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/05 10:22:11 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/13 10:35:32 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/16 15:43:45 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,20 +34,20 @@ int	is_builtins(char *str)
 	return (0);
 }
 
-void	execute_builtin(int i, t_cmd *cmd, t_malloc **allocs, t_env **env, int *g_exit_status)
+void	execute_builtin(int i, t_tools *tools)
 {
 	if (i == 1)
-		*g_exit_status = ft_echo(cmd);
+		*(tools->r_stat) = ft_echo(tools->cmd);
 	else if (i == 2)
-		*g_exit_status = ft_cd(cmd, allocs, env);
+		*(tools->r_stat) = ft_cd(tools);
 	else if (i == 3)
-		*g_exit_status = ft_pwd(env, NULL, NULL);
+		*(tools->r_stat) = ft_pwd(tools->env, NULL, NULL, tools);
 	else if (i == 4)
-		*g_exit_status = ft_export(cmd, allocs, env);
+		*(tools->r_stat) = ft_export(tools);
 	else if (i == 5)
-		*g_exit_status = ft_unset(cmd, allocs, env);
+		*(tools->r_stat) = ft_unset(tools->cmd, tools->aloc, tools->env);
 	else if (i == 6)
-		*g_exit_status = ft_env(allocs, env, cmd);
+		*(tools->r_stat) = ft_env(tools->aloc, tools->env, tools->cmd);
 	else if (i == 7)
-		ft_exit(allocs, cmd, g_exit_status);
+		ft_exit(tools->aloc, tools->cmd, (tools->r_stat));
 }

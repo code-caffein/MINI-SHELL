@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 10:55:49 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/12 11:37:31 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/16 15:40:35 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,23 +45,23 @@ char	**keys_to_2darray(t_env * env, int  type, t_malloc **alloc)
 	return (arr);
 }
 
-void append_value(t_env **env, char *key, char *value, t_malloc **alloc)
+void append_value(t_tools *tools, char *key, char *value)
 {
 	char *old_val;
 	char *tmp;
 
 	tmp = NULL;
 	key[ft_strlen(key) -1] = 0;
-	if(!is_var_exist(key, *env))
+	if(!is_var_exist(key, *(tools->env)))
 	{
-		push_to_env(env, alloc, key, value, 1);
+		push_to_env(tools, key, value, 1);
 	}
 	else
 	{
-		old_val  = get_key_value(key, *env);
-		tmp = ft_strjoin(old_val, value, alloc);
-		update_var(env, ft_strdup(tmp, alloc, P_ENVIRONMENT), key, alloc);
-		free_ptr(alloc, old_val);
-		free_ptr(alloc, tmp);
+		old_val  = get_key_value(key, *(tools->env));
+		tmp = ft_strjoin(old_val, value, tools->aloc);
+		update_var(tools, ft_strdup(tmp, tools->aloc, P_ENVIRONMENT), key);
+		free_ptr(tools->aloc, old_val);
+		free_ptr(tools->aloc, tmp);
 	}
 }

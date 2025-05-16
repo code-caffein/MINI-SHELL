@@ -54,6 +54,7 @@ void init_v(t_sp_var *v)
 	(v)->env = NULL;
 	(v)->allocs = NULL;
 	(v)->status = 0;
+	v -> vpt = NULL;
 }
 
 int	main(int argc, char **argv, char **envp)
@@ -62,16 +63,26 @@ int	main(int argc, char **argv, char **envp)
 	t_sp_var s;
 	v =  &s;
 	char *path;
+	t_tools tools;
+
 
 	init_v(v);
 	signals();
+	tools.cmd = NULL;
+	tools.aloc = &(v->allocs);
+	tools.r_stat = &(v->status);
+	tools.env = &(v->env);
+	tools.envp = envp;
 
-	push_envp(&(v->env), envp, &(v->allocs));
+	push_envp(&tools);
 	path = get_key_value("PWD", s.env);
-	push_to_env(&(s.env), &(s.allocs), "p.a.t.h", path, 3);
+	push_to_env(&tools , "p.a.t.h", path, 3);
 	path = get_key_value("OLDPWD", s.env);
-	update_var(&(s.env), NULL, "OLDPWD", &(s.allocs));
+	update_var(&tools,NULL, "OLDPWD");
 	free_ptr(&(s.allocs), path);
+
+
+
 	while (1)
 	{
 		if (g_signal_pid == -1)
@@ -109,7 +120,8 @@ int	main(int argc, char **argv, char **envp)
 				// printf("hh\n");
         		// free_commands(cmds);
 				// printf("---------------------\n");
-				ft_execute(v->cmds, &v->status, &v->allocs, &v->env, envp);
+				tools.cmd = v->cmds;
+				ft_execute(&tools);
 			}
 			else
 				v->status = 258;

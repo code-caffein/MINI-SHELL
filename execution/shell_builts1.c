@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/27 16:23:42 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/13 12:56:01 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/16 15:39:36 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ int ft_echo(t_cmd *cmd)
 }
 
 
-int	ft_pwd(t_env **env, t_malloc **a, char *to_path)
+int	ft_pwd(t_env **env, t_malloc **a, char *to_path, t_tools *tools)
 {
 	char	*pwd;
 	char	*oldpwd;
@@ -77,17 +77,17 @@ int	ft_pwd(t_env **env, t_malloc **a, char *to_path)
 			oldpwd = get_key_value("PWD", *env);
 			if(oldpwd)
 			{
-				update_var(env, ft_strdup(oldpwd, a, P_ENVIRONMENT), "OLDPWD", a);
-				update_var(env, ft_strdup(ft_strjoin(ft_strjoin(oldpwd, "/", a), to_path, a), a, P_ENVIRONMENT), "p.a.t.h", a);
-				update_var(env, ft_strdup(ft_strjoin(ft_strjoin(oldpwd, "/", a), to_path, a), a, P_ENVIRONMENT), "PWD", a);
+				update_var(tools, ft_strdup(oldpwd, a, P_ENVIRONMENT), "OLDPWD");
+				update_var(tools, ft_strdup(ft_strjoin(ft_strjoin(oldpwd, "/", a), to_path, a), a, P_ENVIRONMENT), "p.a.t.h");
+				update_var(tools, ft_strdup(ft_strjoin(ft_strjoin(oldpwd, "/", a), to_path, a), a, P_ENVIRONMENT), "PWD");
 			}
 			return 0;
 		}
 		oldpwd = get_key_value("PWD", *env);
 		if (oldpwd)
-			update_var(env, ft_strdup(oldpwd, a, P_ENVIRONMENT), "OLDPWD", a);
-			update_var(env, ft_strdup(pwd, a, P_ENVIRONMENT), "p.a.t.h", a);
-			update_var(env, ft_strdup(pwd, a, P_ENVIRONMENT), "PWD", a);
+			update_var(tools, ft_strdup(oldpwd, a, P_ENVIRONMENT), "OLDPWD");
+			update_var(tools, ft_strdup(pwd, a, P_ENVIRONMENT), "p.a.t.h");
+			update_var(tools, ft_strdup(pwd, a, P_ENVIRONMENT), "PWD");
 		free(pwd);
 		return (0);
 	}

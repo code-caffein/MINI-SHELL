@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 15:34:46 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/13 14:33:21 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/16 15:19:41 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@
 typedef struct s_env		t_env;
 typedef struct s_cmd		t_cmd;
 typedef struct s_malloc		t_malloc;
+typedef struct s_tools		t_tools;
 
 enum
 {
@@ -68,17 +69,15 @@ int	ft_isalpha(int c);
 int	ft_isdigit(int c);
 void	ft_putstr_fd(char *s, int fd);
 void swap_string(char **s1, char **s2);
-void *push_to_env(t_env **head, t_malloc **alloc, char *key, char *value, int type);
-int count_env_nodes(t_env *env, int type);
-void push_envp(t_env **head ,char **envp, t_malloc **a);
+void			*push_to_env(t_tools *tools, char *key, char *value, int type);
+int				count_env_nodes(t_env *env, int type);
+void			push_envp(t_tools *tools);
 long long int	ft_atoi(const char *str);
-char	*get_key_value(char *key, t_env *env);
-void free_ptr(t_malloc **head, void *addr);
-size_t	ft_strlcat(char *dst, const char *src, size_t dstsize);
-
-
-int		ft_isspace(int c);
-char		*ft_itoa(int n);
-void	signals(void);
+char			*get_key_value(char *key, t_env *env);
+void			free_ptr(t_malloc **head, void *addr);
+size_t			ft_strlcat(char *dst, const char *src, size_t dstsize);
+int				ft_isspace(int c);
+char			*ft_itoa(int n);
+void			signals(void);
 
 #endif

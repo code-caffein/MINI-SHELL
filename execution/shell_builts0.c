@@ -6,50 +6,50 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 11:46:22 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/13 12:55:00 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/16 15:42:24 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "execution.h"
 
-int	ft_cd(t_cmd *cmd, t_malloc **aloc, t_env **env)
+int	ft_cd(t_tools *tools)
 {
 	struct stat	st;
 	char		*tmp;
 
-	if (cmd->args[1] == NULL || !ft_strcmp("~", cmd->args[1]))
+	if (tools->cmd->args[1] == NULL || !ft_strcmp("~", tools->cmd->args[1]))
 	{
 		if (chdir(getenv("HOME")) == -1)
 		{
-			cd_error(cmd->args[1]);
+			cd_error(tools->cmd->args[1]);
 			return (1);
 		}
 		else
 		{
-			ft_pwd(env, aloc, cmd->args[1]);
+			ft_pwd(tools->env, tools->aloc, tools->cmd->args[1], tools);
 		}
 	}
-	else if (stat(cmd->args[1], &st) != 0)
+	else if (stat(tools->cmd->args[1], &st) != 0)
 	{
-		cd_error(cmd->args[1]);
+		cd_error(tools->cmd->args[1]);
 		return (1);
 	}
 	else
 	{
-		if (chdir(cmd->args[1]) == -1)
+		if (chdir(tools->cmd->args[1]) == -1)
 		{
-			cd_error(cmd->args[1]);
+			cd_error(tools->cmd->args[1]);
 			return (1);
 		}
 		else
 		{
-			ft_pwd(env, aloc, cmd->args[1]);
+			ft_pwd(tools->env, tools->aloc, tools->cmd->args[1], tools);
 		}
 	}
 	return (0);
 }
 
-int	ft_export(t_cmd *cmd, t_malloc **aloc, t_env **env)
+int	ft_export(t_tools *tools)
 {
 	int		i;
 	int		check;
@@ -58,22 +58,22 @@ int	ft_export(t_cmd *cmd, t_malloc **aloc, t_env **env)
 	char	*key;
 	t_env	*ptr; 
 
-	ptr = *env;
+	ptr = *(tools->env);
 	i = 0;
 	status = 0;
-	while (cmd->args[++i])
+	while (tools->cmd->args[++i])
 	{
-		key = ft_split(cmd->args[i], '=', aloc)[0];
-		value = ft_strchr(cmd->args[i], '=');
+		key = ft_split(tools->cmd->args[i], '=', tools->aloc)[0];
+		value = ft_strchr(tools->cmd->args[i], '=');
 		if (value)
 			value++;
-		check = var_action(key, value, *env);
+		check = var_action(key, value, *(tools->env));
 		if (check == 1)
-			push_to_env(env, aloc, key, value, 1);
+			push_to_env(tools, key, value, 1);
 		if (check == 2)
-			update_var(env, value, key, aloc);
+			update_var(tools, value, key);
 		if (check == 4)
-			append_value(env, key, value, aloc);
+			append_value(tools, key, value);
 		if (check == 3)
 		{
 			status = 1;
@@ -83,7 +83,7 @@ int	ft_export(t_cmd *cmd, t_malloc **aloc, t_env **env)
 		}
 	}
 	if (i == 1)
-		export_display(env, aloc);
+		export_display(tools->env, tools->aloc);
 	return (status);
 }
 
