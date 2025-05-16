@@ -63,8 +63,11 @@ int add_token_with_type(t_sp_var *va)
 		if (!(prev_token && ft_strcmp(prev_token->value, "<<") == 0) && need_expandd(v->new_buff, &va->var->state))
 		{
 			char *expanded_value = expand_env_vars(v->new_buff, va);
-			first = expanded_value[0];
-			last = expanded_value[ft_strlen(expanded_value) - 1];
+			if (ft_strcmp(expanded_value, "") != 0)
+			{
+				first = expanded_value[0];
+				last = expanded_value[ft_strlen(expanded_value) - 1];
+			}
 			char **bib = ft_split(expanded_value,' ', &va->allocs);
 			int i = 0;
 
@@ -123,7 +126,8 @@ int add_token_with_type(t_sp_var *va)
 		if (!(prev_token && ft_strcmp(prev_token->value, "<<") == 0) && need_expandd(v->new_buff, &va->var->state))
 		{
 			char *expanded_value = expand_env_vars(v->new_buff, va);
-			last = expanded_value[ft_strlen(expanded_value) - 1];
+			if (ft_strcmp(expanded_value, "") != 0)
+				last = expanded_value[ft_strlen(expanded_value) - 1];
 			char **bib = ft_split(expanded_value,' ', &va->allocs);
 			if (va->var->wait_more_args)
 			{

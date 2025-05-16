@@ -9,6 +9,7 @@
 #include <readline/history.h>
 #include <fcntl.h>
 #include <signal.h>
+#include <sys/ioctl.h>
 #include "../includes/minishell.h"
 
 
@@ -110,6 +111,20 @@ typedef struct s_cmd {
     struct s_cmd *next; // Next command in pipeline
 } t_cmd;
 
+typedef struct s_pt{
+	t_cmd *commands;
+	t_cmd *current_cmd;
+	t_token *current;
+	t_token *prev;
+	int s;
+	int tmp_err;
+	int err;
+	bool syn_err;
+	char *err_file;
+	int result;
+	int a;
+} t_pt;
+
 typedef struct s_sp_var{
     char *line;
     t_cmd *cmds;
@@ -117,6 +132,7 @@ typedef struct s_sp_var{
     t_malloc *allocs;
     int status;
     t_var *var;
+	t_pt *vpt;
 } t_sp_var;
 // typedef struct s_env {
 //  char *key;
@@ -244,5 +260,29 @@ void fill2_red_pip_txt(t_v *v, t_quote_state *state);
 void red_pip_txt(t_v *v , t_quote_state *state);
 void add_expanded_token(t_v *v, t_token **tokens, char *expanded, t_sp_var *va);
 void add_token(t_v *v, t_token **tokens);
+
+
+// parse fts
+t_cmd *create_new_command(t_sp_var *va);
+void add_argument(t_cmd *cmd, char *arg, t_sp_var *va);
+t_redirection	*create_redirection(char *file, int type, t_sp_var *va);
+void init_vpt(t_token *tokens, t_pt *vpt);
+int ft_detect_syn_err(t_token *tokens, t_sp_var *va);
+
+
+int while_part_if_1(t_sp_var *va);
+int while_part_if_2_fill(t_sp_var *va);
+int while_part_if_2(t_sp_var *va);
+void	while_part_print_err(t_sp_var *va);
+int	while_part(t_sp_var *va);
+
+int handle_redirection(t_cmd *cmd, t_token *token, t_sp_var *va, int ss);
+
+
+
+int heredoc_readline(char **out, t_sp_var *va);
+
+
+
 
 #endif /* HE_H */
