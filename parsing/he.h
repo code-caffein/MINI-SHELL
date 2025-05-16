@@ -125,6 +125,25 @@ typedef struct s_pt{
 	int a;
 } t_pt;
 
+typedef struct s_h_red_v 
+{
+	int i;
+	int redir_type;
+	int in;
+	int capacity;
+	char **bib;
+	int n;
+	char *line;
+	char *tmp;
+	char **new_bib;
+	int j;
+	int fd;
+	int ss;
+	t_token *file_token;
+	t_redirection *redir;
+	t_redirection *current;
+} t_h_red_v;
+
 typedef struct s_sp_var{
     char *line;
     t_cmd *cmds;
@@ -133,6 +152,7 @@ typedef struct s_sp_var{
     int status;
     t_var *var;
 	t_pt *vpt;
+	t_h_red_v *hrv;
 } t_sp_var;
 // typedef struct s_env {
 //  char *key;
@@ -281,6 +301,12 @@ int handle_redirection(t_cmd *cmd, t_token *token, t_sp_var *va, int ss);
 
 
 int heredoc_readline(char **out, t_sp_var *va);
+int process_heredoc(t_sp_var *va);
+int init_heredoc_buffer(t_sp_var *va);
+int read_heredoc_line(t_sp_var *va);
+void expand_heredoc_line(t_sp_var *va);
+int resize_heredoc_buffer(t_sp_var *va);
+int heredoc_to_temp_file(t_sp_var *va);
 
 
 
