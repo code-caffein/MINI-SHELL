@@ -61,19 +61,32 @@ int ft_echo(t_cmd *cmd)
 	return (0);
 }
 
-int	ft_pwd(t_env **env, t_malloc **a)
+int	ft_pwd(t_env **env, t_malloc **a, char *to_path)
 {
 	char	*pwd;
 	char	*oldpwd;
 
-	if (env && a)
+	if (env && a && to_path)
 	{
 		pwd = getcwd(NULL, 0);
+		if(!pwd)
+		{
+			ft_putstr_fd("cd: error retrieving current directory: ", 2);
+			perror("getwcd");
+			oldpwd = get_key_value("PWD", *env);
+			if(oldpwd)
+			{
+				update_var(env, ft_strdup(oldpwd, a, P_ENVIRONMENT), "OLDPWD", a);
+				update_var(env, ft_strdup(ft_strjoin(ft_strjoin(oldpwd, "/", a), to_path, a), a, P_ENVIRONMENT), "p.a.t.h", a);
+				update_var(env, ft_strdup(ft_strjoin(ft_strjoin(oldpwd, "/", a), to_path, a), a, P_ENVIRONMENT), "PWD", a);
+			}
+			return 0;
+		}
 		oldpwd = get_key_value("PWD", *env);
 		if (oldpwd)
 			update_var(env, ft_strdup(oldpwd, a, P_ENVIRONMENT), "OLDPWD", a);
-		update_var(env, ft_strdup(pwd, a, P_ENVIRONMENT), "PWD", a);
-		update_var(env, ft_strdup(pwd, a, P_ENVIRONMENT), "p.a.t.h", a);
+			update_var(env, ft_strdup(pwd, a, P_ENVIRONMENT), "p.a.t.h", a);
+			update_var(env, ft_strdup(pwd, a, P_ENVIRONMENT), "PWD", a);
 		free(pwd);
 		return (0);
 	}

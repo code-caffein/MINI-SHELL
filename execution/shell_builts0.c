@@ -26,7 +26,7 @@ int	ft_cd(t_cmd *cmd, t_malloc **aloc, t_env **env)
 		}
 		else
 		{
-			ft_pwd(env, aloc);
+			ft_pwd(env, aloc, cmd->args[1]);
 		}
 	}
 	else if (stat(cmd->args[1], &st) != 0)
@@ -43,7 +43,7 @@ int	ft_cd(t_cmd *cmd, t_malloc **aloc, t_env **env)
 		}
 		else
 		{
-			ft_pwd(env, aloc);
+			ft_pwd(env, aloc, cmd->args[1]);
 		}
 	}
 	return (0);

@@ -41,7 +41,7 @@ void	execute_builtin(int i, t_cmd *cmd, t_malloc **allocs, t_env **env, int *g_e
 	else if (i == 2)
 		*g_exit_status = ft_cd(cmd, allocs, env);
 	else if (i == 3)
-		*g_exit_status = ft_pwd(env, NULL);
+		*g_exit_status = ft_pwd(env, NULL, NULL);
 	else if (i == 4)
 		*g_exit_status = ft_export(cmd, allocs, env);
 	else if (i == 5)

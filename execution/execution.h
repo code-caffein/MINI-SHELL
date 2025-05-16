@@ -44,7 +44,7 @@ void	cmd_file_error(char *path, char *msg);
 void	execve_error(char *cmd);
 void	export_display(t_env **env, t_malloc **a);
 int		ft_echo(t_cmd *cmd);
-int		ft_pwd(t_env **env, t_malloc **a);
+int		ft_pwd(t_env **env, t_malloc **a, char *to_path);
 int		ft_export(t_cmd *cmd, t_malloc **aloc, t_env **env);
 int		ft_cd(t_cmd *cmd, t_malloc **aloc, t_env **env);
 int		ft_env(t_malloc **aloc, t_env **env, t_cmd *cmd);
