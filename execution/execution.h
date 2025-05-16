@@ -34,8 +34,8 @@ typedef struct s_tools
 	int			*r_stat;
 	char		**envp;
 	char		*random_str;
-	int			rendom_num;
-	void		*rendom_ptr;
+	int			random_num;
+	void		*random_ptr;
 }	t_tools;
 
 t_env	*get_bef_node(t_env *lst, t_env *node);

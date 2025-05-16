@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 15:11:23 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/13 15:08:54 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/16 09:45:33 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ void	close_fds(int pipe_count, int **arr)
 	}
 }
 
-void	execute_pipeline(t_cmd *cmd, t_malloc **a, t_env **env, int *last_status, char **envp)
+void	execute_pipeline(t_tools *tools)
 {
 	pid_t	pid;
 	pid_t	right_most;
@@ -72,35 +72,35 @@ void	execute_pipeline(t_cmd *cmd, t_malloc **a, t_env **env, int *last_status, c
 	int		**arr;
 	int		cmd_count;
 
-	cmd_count = count_cmd_list(cmd);
+	cmd_count = count_cmd_list(tools->cmd);
 	num = 0;
 	right_most = -1;
-	arr = get_pipe_buff(cmd, a);
+	arr = get_pipe_buff(tools->cmd, tools->aloc);
 	if (!arr)
 	{
-		*last_status = EXIT_FAILURE;
+		*(tools->r_stat) = EXIT_FAILURE;
 		return ;
 	}
-	while (cmd)
+	while (tools->cmd)
 	{
 		pid = fork();
 		if (pid == -1)
 			perror("fork:");
 		else if (pid == 0)
 		{
-			if (cmd->next)
+			if (tools->cmd->next)
 				if (dup2(arr[num][1], STDOUT_FILENO) == -1)
 					return (printf("an error in fd[%i][1]\n", num), perror("dup2:"), exit(EXIT_FAILURE));
 			if (num)
 				if (dup2(arr[num - 1][0], STDIN_FILENO) == -1)
 					return (printf("an error in fd[%i][0]\n", num), perror("dup2:"), exit(EXIT_FAILURE));
 			close_fds(cmd_count - 1, arr);
-			redirect_command(cmd);
-			execute_piped_cmd(cmd, a, env, last_status, envp);
-			exit(*last_status);
+			redirect_command(tools->cmd);
+			execute_piped_cmd(tools);
+			exit(*(tools->r_stat));
 		}
 		right_most = pid;
-		cmd = cmd->next;
+		tools->cmd = tools->cmd->next;
 		num++;
 	}
 	close_fds(cmd_count - 1, arr);
@@ -108,18 +108,17 @@ void	execute_pipeline(t_cmd *cmd, t_malloc **a, t_env **env, int *last_status, c
 	if (num == -1)
 	{
 		if (errno == EINTR)
-			*last_status = 130;
+			*(tools->r_stat) = 130;
 		else
 			perror("waitpid pipe");
 	}
 	else if (num == right_most)
 	{
 		if (WIFEXITED(status))
-			*last_status = WEXITSTATUS(status);
+			*(tools->r_stat) = WEXITSTATUS(status);
 		else if (WIFSIGNALED(status))
-			*last_status = 128 + WTERMSIG(status);		
+			*(tools->r_stat) = 128 + WTERMSIG(status);		
 	}
 	while (waitpid(-1, &status, 0) > 0)
 		;
 }
-

@@ -61,6 +61,7 @@ int ft_echo(t_cmd *cmd)
 	return (0);
 }
 
+
 int	ft_pwd(t_env **env, t_malloc **a, char *to_path)
 {
 	char	*pwd;

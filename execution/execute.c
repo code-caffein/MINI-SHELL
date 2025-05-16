@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abel-had <abel-had@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 10:36:58 by abel-had          #+#    #+#             */
-/*   Updated: 2025/05/15 12:33:44 by abel-had         ###   ########.fr       */
+/*   Updated: 2025/05/16 09:57:42 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,37 +35,31 @@ char	*get_executable_path(char *str, t_malloc **alloc)
 }
 		// printf("path checked = %s\n", check);
 
-void	get_a_child(int *g_exit_status, t_cmd *cmd, t_malloc **allocs, t_env **env, char **envp)
+void	get_a_child(t_tools *tools)
 {
 	pid_t	pid;
 	int		status;
 
 	pid = fork();
 	if (pid == -1)
-		perror("fork:");
+		perror("fork");
 	if (pid > 0)
 	{
 		if (waitpid(pid, &status, 0) == -1)
 		{
 			if (errno == EINTR)
-			{
-				*g_exit_status = 130;
-			}
+				*(tools->r_stat) = 130;
 			else
-				perror("waitpid simple cmd");
+				perror("waitpid");
 		}
 		else if (WIFEXITED(status))
-			*g_exit_status = WEXITSTATUS(status);
+			*(tools->r_stat) = WEXITSTATUS(status);
 		else if (WIFSIGNALED(status))
-			*g_exit_status = 128 + WTERMSIG(status);
+			*(tools->r_stat) = 128 + WTERMSIG(status);
 	}
 	else
-	{
-		// ft_putstr_fd("\n here \n", 2);
-		// printf("cmd-name [%s] \ncmd-arg 0 [%s] \n", cmd->name, cmd->args[0]);
-		if (execve(cmd->name, cmd->args, envp) == -1)
-			execve_error(cmd->name);
-	}
+		if (execve(tools->cmd->name, tools->cmd->args, tools->envp) == -1)
+			execve_error(tools->cmd->name);
 }
 
 int	file_error_handler(char *path, int *status)
@@ -90,91 +84,91 @@ int	file_error_handler(char *path, int *status)
 	return (0);
 }
 
-void	ft_execute_simple_cmd(t_cmd *cmd, t_malloc **allocs, t_env **env, int *g_exit_status, char **envp)
+void	ft_execute_simple_cmd(t_tools *tools)
 {
 	int		i;
 	char	*path;
 
-	if (!(cmd->name))
+	if (!(tools->cmd->name))
 		return ;
-	i = is_builtins(cmd->name);
+	i = is_builtins(tools->cmd->name);
 	if (i)
-		execute_builtin(i, cmd, allocs, env, g_exit_status);
-	else if (ft_strchr(cmd->name, '/'))
+		execute_builtin(i,tools);
+	else if (ft_strchr(tools->cmd->name, '/'))
 	{
-		if (file_error_handler(cmd->name, g_exit_status))
-			get_a_child(g_exit_status ,cmd, allocs, env, envp);
+		if (file_error_handler(tools->cmd->name, *(tools->r_stat)))
+			get_a_child(tools);
 	}
 	else
 	{
-		path = get_executable_path(cmd->name, allocs);
+		path = get_executable_path(tools->cmd->name, tools->aloc);
 		if (path)
 		{
-			cmd->name = path;
-			get_a_child(g_exit_status, cmd, allocs, env, envp);
+			tools->cmd->name = path;
+			get_a_child(tools);
 		}
 		else
 		{
 			ft_putstr_fd("minishell: ", 2);
-			ft_putstr_fd(cmd->name, 2);
+			ft_putstr_fd(tools->cmd->name, 2);
 			ft_putstr_fd(": command not found\n", 2);
-			*g_exit_status = 127;
+			*(tools->r_stat) = 127;
 		}
 	}
 }
 
-void execute_piped_cmd(t_cmd *cmd, t_malloc **allocs, t_env **env, int *g_exit_status, char **envp)
+void execute_piped_cmd(t_tools *tools)
 {
 	int		i;
 	char	*path;
 
-	if (!cmd->name)
-		exit(*g_exit_status);
-	i = is_builtins(cmd->name);
+	if (!tools->cmd->name)
+		exit(*(tools->r_stat));
+	i = is_builtins(tools->cmd->name);
 	if (i)
-		execute_builtin(i, cmd, allocs, env, g_exit_status);
-	else if (ft_strchr(cmd->name, '/'))
+		execute_builtin(i, tools);
+	else if (ft_strchr(tools->cmd->name, '/'))
 	{
-		if (file_error_handler(cmd->name, g_exit_status))
-			if (execve(cmd->name, cmd->args, envp) == -1)
-				execve_error(cmd->name);
+		if (file_error_handler(tools->cmd->name, tools->r_stat))
+			if (execve(tools->cmd->name, tools->cmd->args, tools->envp) == -1)
+				execve_error(tools->cmd->name);
 	}
 	else
 	{
-		path = get_executable_path(cmd->name, allocs);
+		path = get_executable_path(tools->cmd->name, tools->aloc);
 		if (path)
 		{
-			cmd->name = path;
-			if (execve(cmd->name, cmd->args, envp) == -1)
-				execve_error(cmd->name);
+			tools->cmd->name = path;
+			if (execve(tools->cmd->name, tools->cmd->args, tools->envp) == -1)
+				execve_error(tools->cmd->name);
 		}
 		else
 		{
 			ft_putstr_fd("minishell: ", 2);
-			ft_putstr_fd(cmd->name, 2);
+			ft_putstr_fd(tools->cmd->name, 2);
 			ft_putstr_fd(": command not found\n", 2);
-			*g_exit_status = 127;
+			*(tools->r_stat) = 127;
 		}
 	}
 }
 
-void ft_execute(t_cmd *cmd, int *status, t_malloc **a, t_env **env, char **envp)
+void ft_execute(t_tools *tools)
 {
 	int	in_backup;
 	int	out_backup;
 
-	if (cmd->next)
-		execute_pipeline(cmd, a, env, status, envp);
+	if (tools->cmd->next)
+		execute_pipeline(tools);
 	else
 	{
-		if (cmd->in || cmd->out)
+		if (tools->cmd->in || tools->cmd->out)
 		{
 			in_backup = dup(STDIN_FILENO);
 			out_backup = dup(STDOUT_FILENO);
 			if (in_backup == -1 || out_backup == -1)
 				perror("dup");
-			redirect_command(cmd);
-			ft_execute_simple_cmd(cmd, a, env, status, envp);
+			redirect_command(tools->cmd);
+			ft_execute_simple_cmd(tools);
 			if (dup2(in_backup, STDIN_FILENO) == -1
 				|| dup2(out_backup, STDOUT_FILENO) == -1)
 				perror("dup2:");
@@ -182,6 +176,6 @@ void ft_execute(t_cmd *cmd, int *status, t_malloc **a, t_env **env, char **envp)
 				perror("close:");
 		}
 		else
-			ft_execute_simple_cmd(cmd, a, env, status, envp);
+			ft_execute_simple_cmd(tools);
 	}
 }
