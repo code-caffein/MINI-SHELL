@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/13 12:34:10 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/16 15:43:18 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/17 10:49:21 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,10 +21,12 @@
 # include <sys/wait.h>
 # include <errno.h>
 # include "../includes/minishell.h"
-
 typedef struct s_env		t_env;
 typedef struct s_cmd		t_cmd;
 typedef struct s_malloc		t_malloc;
+
+#define PWD_ERROR "pwd: error retrieving current directory:\
+getcwd: cannot access parent directories: No such file or directory"
 
 typedef struct s_tools
 {

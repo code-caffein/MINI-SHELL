@@ -6,7 +6,11 @@
 /*   By: abel-had <abel-had@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 10:36:58 by abel-had          #+#    #+#             */
+<<<<<<< HEAD
 /*   Updated: 2025/05/17 15:00:48 by abel-had         ###   ########.fr       */
+=======
+/*   Updated: 2025/05/17 11:56:34 by aelbour          ###   ########.fr       */
+>>>>>>> e3a1e854fc3ad9409d83510d55c20ab884862142
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,9 +52,9 @@ void	get_a_child(t_tools *tools)
 	{
 		if (waitpid(pid, &status, 0) == -1)
 		{
-			if (errno == EINTR)
-				*(tools->r_stat) = 130;
-			else
+			// if (errno == EINTR)
+			// // 	*(tools->r_stat) = 130;
+			// else
 				perror("waitpid");
 		}
 		else if (WIFEXITED(status))

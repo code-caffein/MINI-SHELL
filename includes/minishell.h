@@ -6,7 +6,7 @@
 /*   By: abel-had <abel-had@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 15:34:46 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/17 14:26:47 by abel-had         ###   ########.fr       */
+/*   Updated: 2025/05/17 15:08:35 by abel-had         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,10 +34,24 @@ typedef struct s_malloc		t_malloc;
 typedef struct s_tools		t_tools;
 typedef struct s_sp_var		t_sp_var;	
 
+#define SECURE_PATH "/mnt/homes/aelbour/tools/\
+cmake-4.0.0-macos-universal/CMake.app/Contents/bi\
+:/usr/local/bin:/usr/bin:/bin:\
+/usr/sbin:/sbin:/usr/local/munki:\
+/Library/Apple/usr/bin:\
+/Library/Frameworks/Mono.framework/Versions/Current/Commands:\
+/mnt/homes/aelbour/tools/cmake-4.0.0-macos-universal/CMake.app/Contents/bin" 
+
 enum
 {
 	P_ENVIRONMENT,
-	P_GARBAGE,
+	P_GARBAGE
+};
+
+enum
+{
+	ENV_VAR,
+	CUSTOM_VAR
 };
 
 typedef struct s_malloc {
