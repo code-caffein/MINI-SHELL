@@ -2,50 +2,51 @@
 #include "./execution/execution.h"
 int g_signal_pid = 0;
 
-void print_redirections(t_redirection *redir, const char *type) {
-    while (redir != NULL) {
-        printf("  %s: ", type);
-        switch (redir->type) {
-            case REDIR_IN:
-                printf("INPUT <%s (fd=%d)\n", redir->file, redir->fd);
-                break;
-            case REDIR_OUT:
-                printf("OUTPUT >%s (fd=%d)\n", redir->file, redir->fd);
-                break;
-            case REDIR_APPEND:
-                printf("APPEND >>%s (fd=%d)\n", redir->file, redir->fd);
-                break;
-            case REDIR_HEREDOC:
-                printf("HEREDOC <<%s (fd=%d)\n", redir->file, redir->fd);
-                break;
-            default:
-                printf("UNKNOWN REDIRECTION\n");
-        }
-        redir = redir->next;
-    }
-}
+// void print_redirections(t_redirection *redir, const char *type) {
+//     while (redir != NULL) {
+//         printf("  %s: ", type);
+//         switch (redir->type) {
+//             case REDIR_IN:
+//                 printf("INPUT <%s (fd=%d)\n", redir->file, redir->fd);
+//                 break;
+//             case REDIR_OUT:
+//                 printf("OUTPUT >%s (fd=%d)\n", redir->file, redir->fd);
+//                 break;
+//             case REDIR_APPEND:
+//                 printf("APPEND >>%s (fd=%d)\n", redir->file, redir->fd);
+//                 break;
+//             case REDIR_HEREDOC:
+//                 printf("HEREDOC <<%s (fd=%d)\n", redir->file, redir->fd);
+//                 break;
+//             default:
+//                 printf("UNKNOWN REDIRECTION\n");
+//         }
+//         redir = redir->next;
+//     }
+// }
 
-void print_commands(t_cmd *cmds) {
-    int cmd_num = 1;
-    while (cmds != NULL) {
-        printf("Command #%d:\n", cmd_num++);
-        // if (cmds->syn_err) {
-        //     printf("  [Syntax Error]\n");
-        //     cmds = cmds->next;
-        //     continue;
-        // }
-		printf("\nname :%s\n\n", cmds->name);
-        // printf("  Name: %s\n", cmds->name ? cmds->name : "(null)");
-        printf("  Arguments:");
-        for (int i = 0; cmds->args && cmds->args[i]; i++) {
-            printf(" [%s]", cmds->args[i]);
-        }
-        printf("\n");
-        print_redirections(cmds->in, "Input Redirection");
-        print_redirections(cmds->out, "Output Redirection");
-        cmds = cmds->next;
-    }
-}
+// void print_commands(t_cmd *cmds) {
+//     int cmd_num = 1;
+//     while (cmds != NULL) {
+//         printf("Command #%d:\n", cmd_num++);
+//         // if (cmds->syn_err) {
+//         //     printf("  [Syntax Error]\n");
+//         //     cmds = cmds->next;
+//         //     continue;
+//         // }
+// 		printf("\nname :%s\n\n", cmds->name);
+//         // printf("  Name: %s\n", cmds->name ? cmds->name : "(null)");
+//         printf("  Arguments:");
+//         for (int i = 0; cmds->args && cmds->args[i]; i++) {
+//             printf(" [%s]", cmds->args[i]);
+//         }
+//         printf("\n");
+//         print_redirections(cmds->in, "Input Redirection");
+//         print_redirections(cmds->out, "Output Redirection");
+//         cmds = cmds->next;
+//     }
+// }
+
 
 void init_v(t_sp_var *v)
 {
@@ -57,14 +58,38 @@ void init_v(t_sp_var *v)
 	v -> vpt = NULL;
 }
 
+void	init_env_variables(t_tools *tools)
+{
+	char	*path;
+	char	*shlvl;
+
+	path = getcwd(NULL, 0);
+	if (!path)
+		perror("shell-init: error retrieving current directory: getcwd");
+	else if (path)
+	{
+		push_to_env(tools, "p.a.t.h", path, 3);
+		push_to_env(tools, "PWD", path, 3);
+	}
+	path = get_key_value("OLDPWD", *(tools->env));
+	update_var(tools, NULL, "OLDPWD");
+	free_ptr((tools->aloc), path);
+	shlvl = get_key_value("SHLVL", *(tools->env));
+	if (shlvl)
+		update_var(tools, ft_strdup(ft_itoa(ft_atoi(shlvl) + 1), tools->aloc, P_ENVIRONMENT), "SHLVL");
+	else
+		push_to_env(tools, "SHLVL", "1", 0);
+	path = get_key_value("PATH", *tools->env);
+	if (!path)
+		push_to_env(tools, "PATH", SECURE_PATH, 0);
+}
+
 int	main(int argc, char **argv, char **envp)
 {
 	t_sp_var *v;
 	t_sp_var s;
 	v =  &s;
-	char *path;
 	t_tools tools;
-
 
 	init_v(v);
 	signals();
@@ -75,11 +100,7 @@ int	main(int argc, char **argv, char **envp)
 	tools.envp = envp;
 
 	push_envp(&tools);
-	path = get_key_value("PWD", s.env);
-	push_to_env(&tools , "p.a.t.h", path, 3);
-	path = get_key_value("OLDPWD", s.env);
-	update_var(&tools,NULL, "OLDPWD");
-	free_ptr(&(s.allocs), path);
+	init_env_variables(&tools);
 
 
 

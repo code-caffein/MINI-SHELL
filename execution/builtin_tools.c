@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/05 10:22:11 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/16 15:43:45 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/17 09:13:36 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,6 @@ void	execute_builtin(int i, t_tools *tools)
 		*(tools->r_stat) = ft_unset(tools->cmd, tools->aloc, tools->env);
 	else if (i == 6)
 		*(tools->r_stat) = ft_env(tools->aloc, tools->env, tools->cmd);
-	else if (i == 7)
+	else if (i == 7) 
 		ft_exit(tools->aloc, tools->cmd, (tools->r_stat));
 }

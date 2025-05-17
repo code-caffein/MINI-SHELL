@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/27 16:23:42 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/16 15:39:36 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/17 11:01:48 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,16 +70,22 @@ int	ft_pwd(t_env **env, t_malloc **a, char *to_path, t_tools *tools)
 	if (env && a && to_path)
 	{
 		pwd = getcwd(NULL, 0);
-		if(!pwd)
+		if (!pwd)
 		{
 			ft_putstr_fd("cd: error retrieving current directory: ", 2);
 			perror("getwcd");
 			oldpwd = get_key_value("PWD", *env);
-			if(oldpwd)
+			if(oldpwd && ft_strlen(oldpwd))
 			{
 				update_var(tools, ft_strdup(oldpwd, a, P_ENVIRONMENT), "OLDPWD");
 				update_var(tools, ft_strdup(ft_strjoin(ft_strjoin(oldpwd, "/", a), to_path, a), a, P_ENVIRONMENT), "p.a.t.h");
-				update_var(tools, ft_strdup(ft_strjoin(ft_strjoin(oldpwd, "/", a), to_path, a), a, P_ENVIRONMENT), "PWD");
+				update_var(tools, ft_strdup(ft_strjoin(ft_strjoin(oldpwd, "/", a), to_path, a), a,P_ENVIRONMENT), "PWD");
+			}
+			else if(oldpwd)
+			{
+				update_var(tools, ft_strdup(oldpwd, a, P_ENVIRONMENT), "OLDPWD");
+				update_var(tools, ft_strdup(ft_strjoin(oldpwd, to_path, a), a, P_ENVIRONMENT), "p.a.t.h");
+				update_var(tools, ft_strdup(ft_strjoin(oldpwd, to_path, a), a, P_ENVIRONMENT), "PWD");
 			}
 			return 0;
 		}
@@ -100,6 +106,7 @@ int	ft_pwd(t_env **env, t_malloc **a, char *to_path, t_tools *tools)
 			return (0);
 		}
 	}
+	ft_putstr_fd(PWD_ERROR, 2);
 	return (1);
 }
 

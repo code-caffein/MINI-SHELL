@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 10:36:58 by abel-had          #+#    #+#             */
-/*   Updated: 2025/05/16 15:20:33 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/17 11:56:34 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,9 +47,9 @@ void	get_a_child(t_tools *tools)
 	{
 		if (waitpid(pid, &status, 0) == -1)
 		{
-			if (errno == EINTR)
-				*(tools->r_stat) = 130;
-			else
+			// if (errno == EINTR)
+			// // 	*(tools->r_stat) = 130;
+			// else
 				perror("waitpid");
 		}
 		else if (WIFEXITED(status))
