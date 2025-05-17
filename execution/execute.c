@@ -3,15 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
+/*   By: abel-had <abel-had@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 10:36:58 by abel-had          #+#    #+#             */
-/*   Updated: 2025/05/16 15:20:33 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/17 15:00:48 by abel-had         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
 #include "execution.h"
+int g_signal_pid;
 
 char	*get_executable_path(char *str, t_malloc **alloc)
 {
@@ -154,6 +155,9 @@ void execute_piped_cmd(t_tools *tools)
 
 void ft_execute(t_tools *tools)
 {
+	int a;
+	a = g_signal_pid;
+	g_signal_pid = 4;
 	int	in_backup;
 	int	out_backup;
 
@@ -178,4 +182,5 @@ void ft_execute(t_tools *tools)
 		else
 			ft_execute_simple_cmd(tools);
 	}
+	g_signal_pid = a;
 }

@@ -67,7 +67,6 @@ int	main(int argc, char **argv, char **envp)
 
 
 	init_v(v);
-	signals();
 	tools.cmd = NULL;
 	tools.aloc = &(v->allocs);
 	tools.r_stat = &(v->status);
@@ -85,6 +84,7 @@ int	main(int argc, char **argv, char **envp)
 
 	while (1)
 	{
+		signals();
 		if (g_signal_pid == -1)
     	{
         	v->status = 1;

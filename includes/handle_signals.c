@@ -9,15 +9,13 @@ static void	handle_sigint(int n)
 	(void)n;
 	int status = 0;
     
-	if (g_signal_pid == 2) {
-		write(STDOUT_FILENO, "\n", 1);
-		g_signal_pid = -1;  // Signal heredoc termination
-		return;
-	}
+    // Non-volatile status for waitpid
     if (waitpid(-1, &status, WNOHANG) == 0)
         return;
 
     // Set the global signal status based on the waitpid result
+	if (g_signal_pid == 4)
+		return ;
     if (status != 0)
         g_signal_pid = -1;
     else
@@ -41,16 +39,15 @@ static void	handle_sigint(int n)
 #include <stdio.h>
 #include <termios.h>
 
-void signals(void) {
-    struct sigaction sa_int;
-
-    sa_int.sa_handler = &handle_sigint; // Your existing handler
-    sigemptyset(&sa_int.sa_mask);
-    sa_int.sa_flags = 0; // Disable SA_RESTART to interrupt `read`
-    sigaction(SIGINT, &sa_int, NULL); // Use sigaction instead of signal()
-
-    signal(SIGQUIT, SIG_IGN);
+void	signals(void)
+{
+	
+		signal(SIGINT, &handle_sigint);  // handle Ctrl+C
+		signal(SIGQUIT, SIG_IGN);        // ignore Ctrl+\l
+	
 }
 
+
+// ctrl + D : when redline return null (generate a function that clean and exit)!!!!!!!!!!!!!!!
 
 // ctrl + D : when redline return null (generate a function that clean and exit)!!!!!!!!!!!!!!!
