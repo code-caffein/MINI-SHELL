@@ -69,6 +69,7 @@ int resize_heredoc_buffer(t_sp_var *va)
 int heredoc_to_temp_file(t_sp_var *va)
 {
 	g_signal_pid = 0;
+
 	va->hrv->bib[va->hrv->in] = NULL;
 
 	va->hrv->fd = open("t_m_p_f_i_l_e", O_WRONLY | O_CREAT | O_TRUNC, 0644);
@@ -84,5 +85,13 @@ int heredoc_to_temp_file(t_sp_var *va)
 	
 	close(va->hrv->fd);
 	va->hrv->redir->fd = open("t_m_p_f_i_l_e", O_RDONLY);
+	int a = unlink("t_m_p_f_i_l_e");
+	if (a)
+		perror("minishell: unlink");
+	// if (unlink("t_m_p_f_i_l_e") == 0) {
+    //     void;
+    // } else {
+    //     perror("unlink");
+    // }
 	return 0;
 }

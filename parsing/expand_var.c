@@ -14,7 +14,7 @@ char *get_var_value(char *var_name, t_env *env, t_sp_var *va)
     
     return ft_strdup("", &va->allocs, P_GARBAGE);
 }
-//t_quote_state *state, t_env *env, int status
+
 
 char *expand_env_vars(char *str, t_sp_var *va)
 {
@@ -34,18 +34,14 @@ char *expand_env_vars(char *str, t_sp_var *va)
             i++;
             if (str[i] == '?')
             {
-                // if(!status)// exit status not a (a just for test)!!!!!!!
-				// {
-					m = 0;
-					tmp = ft_itoa(va->status);
-					if (!tmp)
-						return NULL;
-                	while (tmp[m] != '\0')
-                    	result[j++] = tmp[m++];
-                	free(tmp);
-                	i++;
-                	continue;
-				// }
+				m = 0;
+				tmp = ft_itoa(va->status, va);
+				if (!tmp)
+					return NULL;
+            	while (tmp[m] != '\0')
+                	result[j++] = tmp[m++];
+            	i++;
+            	continue;
             }
             
             char var_name[256] = {0};
@@ -75,23 +71,3 @@ char *expand_env_vars(char *str, t_sp_var *va)
     result[j] = '\0';
     return ft_strdup(result, &va->allocs, P_GARBAGE);
 }
-
-// int expand_variables(t_token *tokens, t_quote_state *state)
-// {
-// 	t_token *current = tokens;
-
-// 	while (current)
-// 	{
-//         if (current->type == text)
-//         {
-//             char *expanded = expand_env_vars(current->value, state);
-//             if (!expanded)
-//                 return 0; 
-//             free(current->value);
-//             current->value = expanded;
-//         }
-//         current = current->next;
-//     }
-//     return (1);
-// }
-

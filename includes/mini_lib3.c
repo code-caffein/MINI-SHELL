@@ -19,11 +19,11 @@ static int	ft_digit_count(long int i)
 	return count;
 }
 
-char	*ft_itoa(int n)
+char	*ft_itoa(int n, t_sp_var *va)
 {
 	long int	nb = n;
 	int			len = ft_digit_count(nb);
-	char		*str = malloc(len + 1);
+	char		*str = mmallocc(len + 1, &va->allocs, P_GARBAGE);
 
 	if (!str)
 		return (NULL);

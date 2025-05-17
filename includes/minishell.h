@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
+/*   By: abel-had <abel-had@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 15:34:46 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/16 15:19:41 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/17 14:26:47 by abel-had         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ typedef struct s_env		t_env;
 typedef struct s_cmd		t_cmd;
 typedef struct s_malloc		t_malloc;
 typedef struct s_tools		t_tools;
+typedef struct s_sp_var		t_sp_var;	
 
 enum
 {
@@ -77,7 +78,7 @@ char			*get_key_value(char *key, t_env *env);
 void			free_ptr(t_malloc **head, void *addr);
 size_t			ft_strlcat(char *dst, const char *src, size_t dstsize);
 int				ft_isspace(int c);
-char			*ft_itoa(int n);
+char	*ft_itoa(int n, t_sp_var *va);
 void			signals(void);
 
 #endif
