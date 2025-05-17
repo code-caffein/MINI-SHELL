@@ -75,6 +75,15 @@ typedef struct s_v
     char    *joined;
     bool quote;
     char    *new_buff;
+	char first;
+	char last;
+	char *tmp;
+	char *expanded_value;
+	char **bib;
+	int i;
+	int s;
+	int t;
+
 } t_v;
 /**
  * Redirection types
@@ -319,6 +328,12 @@ void add_red_file(t_cmd *cmd, t_sp_var *va);
 
 
 t_token *last_token(t_token *token);
-
+bool should_expand_token(t_v *v, t_sp_var *va);
+void init_first_last(t_v *v, t_sp_var *va, char **static_buffer);
+void p_ex_with_buffer(t_v *v, t_sp_var *va, char **static_buffer);
+void	p_with_buffer(t_v *v, t_sp_var *va, char **static_buffer, bool *QUOTE);
+void update_quote_state(t_sp_var *va, bool *QUOTE);
+t_v *init_token_vars(t_sp_var *va, bool *quote);
+int prepare_token(t_sp_var *va, t_v *v);
 
 #endif /* HE_H */

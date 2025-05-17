@@ -32,12 +32,21 @@ void init_variable(t_v *v, t_token *tokens)
         return;
     v->new_token = NULL;
     v->current = NULL;
+    v->prev_token = last_token(tokens);
     v->buff = NULL;
     v->joined = NULL;
+    v->quote = false;
     v->new_buff = NULL;
-	v->prev_token = last_token(tokens);
-	// v->quote = false;
+    v->first = '\0';
+    v->last = '\0';
+    v->tmp = NULL;
+    v->expanded_value = NULL;
+    v->bib = NULL;
+    v->i = 0;
+    v->s = 0;
+    v->t = 0;
 }
+
 t_token *create_new_token(t_token **new_token, char *new_buff, t_sp_var *va)
 {
 	*new_token = mmallocc(sizeof(t_token), &va->allocs, P_GARBAGE);

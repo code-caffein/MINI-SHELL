@@ -76,6 +76,7 @@ int sixth_condition(t_sp_var *va)
 {
 	if (va->var->i > 0)
 	{
+		va->var->wait_more_args = false;
 		va->var->buffer[va->var->i] = '\0';
 		if (!add_token_with_type(va))
 			return (0);
