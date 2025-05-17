@@ -58,7 +58,7 @@ void init_v(t_sp_var *v)
 	v -> vpt = NULL;
 }
 
-void	init_env_variables(t_tools *tools)
+void	init_env_variables(t_tools *tools, t_sp_var *v)
 {
 	char	*path;
 	char	*shlvl;
@@ -76,7 +76,7 @@ void	init_env_variables(t_tools *tools)
 	free_ptr((tools->aloc), path);
 	shlvl = get_key_value("SHLVL", *(tools->env));
 	if (shlvl)
-		update_var(tools, ft_strdup(ft_itoa(ft_atoi(shlvl) + 1), tools->aloc, P_ENVIRONMENT), "SHLVL");
+		update_var(tools, ft_strdup(ft_itoa(ft_atoi(shlvl) + 1, v), tools->aloc, P_ENVIRONMENT), "SHLVL");
 	else
 		push_to_env(tools, "SHLVL", "1", 0);
 	path = get_key_value("PATH", *tools->env);
@@ -99,7 +99,7 @@ int	main(int argc, char **argv, char **envp)
 	tools.envp = envp;
 
 	push_envp(&tools);
-	init_env_variables(&tools);
+	init_env_variables(&tools, v);
 
 
 

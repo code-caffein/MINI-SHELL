@@ -6,14 +6,9 @@
 /*   By: abel-had <abel-had@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 10:36:58 by abel-had          #+#    #+#             */
-<<<<<<< HEAD
-/*   Updated: 2025/05/17 15:00:48 by abel-had         ###   ########.fr       */
-=======
-/*   Updated: 2025/05/17 11:56:34 by aelbour          ###   ########.fr       */
->>>>>>> e3a1e854fc3ad9409d83510d55c20ab884862142
+/*   Updated: 2025/05/17 15:40:59 by abel-had         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
 
 #include "execution.h"
 int g_signal_pid;
@@ -60,13 +55,21 @@ void	get_a_child(t_tools *tools)
 		else if (WIFEXITED(status))
 			*(tools->r_stat) = WEXITSTATUS(status);
 		else if (WIFSIGNALED(status))
-			*(tools->r_stat) = 128 + WTERMSIG(status);
+		{
+			int sig = WTERMSIG(status);
+			if (sig == SIGQUIT)
+				write(2, "Quit: 3\n", 8);
+			*(tools->r_stat) = 128 + sig;
+		}
 	}
 	else
-		if (execve(tools->cmd->name, tools->cmd->args, tools->envp) == -1)
-			execve_error(tools->cmd->name);
+	{
+		signal(SIGQUIT, SIG_DFL);  // Allow Ctrl+\ to kill child
+		signal(SIGINT, SIG_DFL);   // Allow Ctrl+C to kill child
+	if (execve(tools->cmd->name, tools->cmd->args, tools->envp) == -1)
+		execve_error(tools->cmd->name);
+	}
 }
-
 int	file_error_handler(char *path, int *status)
 {
 	struct stat	info;

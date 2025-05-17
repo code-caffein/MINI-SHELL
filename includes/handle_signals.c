@@ -7,19 +7,17 @@ extern int g_signal_pid;
 static void	handle_sigint(int n)
 {
 	(void)n;
-	int status = 0;
-    
-    // Non-volatile status for waitpid
-    if (waitpid(-1, &status, WNOHANG) == 0)
-        return;
+	int status;
 
-    // Set the global signal status based on the waitpid result
+	status = 0;
 	if (g_signal_pid == 4)
 		return ;
-    if (status != 0)
-        g_signal_pid = -1;
-    else
-        g_signal_pid = 0;
+	if (waitpid(-1, &status, WNOHANG) == 0)
+		return;
+	if (status != 0)
+		g_signal_pid = -1;
+	else
+		g_signal_pid = 0;
 	printf("\n");
 	rl_replace_line("", 0);
 	rl_on_new_line();
@@ -33,12 +31,6 @@ static void	handle_sigint(int n)
 }
 
 
-
-#include <unistd.h>
-#include <signal.h>
-#include <stdio.h>
-#include <termios.h>
-
 void	signals(void)
 {
 	
@@ -46,8 +38,3 @@ void	signals(void)
 		signal(SIGQUIT, SIG_IGN);        // ignore Ctrl+\l
 	
 }
-
-
-// ctrl + D : when redline return null (generate a function that clean and exit)!!!!!!!!!!!!!!!
-
-// ctrl + D : when redline return null (generate a function that clean and exit)!!!!!!!!!!!!!!!
