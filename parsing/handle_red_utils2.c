@@ -1,17 +1,20 @@
-#include "he.h"
+#include "parsing.h"
 
+int g_signal_pid;
 int process_heredoc(t_sp_var *va)
 {
 	int result;
+	// int tmp;
 	
 	result = init_heredoc_buffer(va);
 	if (result != 0)
 		return result;
+	g_signal_pid = 2;
 	while (1)
 	{
 		result = read_heredoc_line(va);
 		if (result != 0)
-			break; // Either error or found delimiter
+			break;
 		
 		expand_heredoc_line(va);
 		
@@ -35,7 +38,7 @@ int handle_red_if1(t_cmd *cmd, t_sp_var *va)
 {
 	int result = 0;
 	
-	(void)cmd;
+	(void) cmd;
 	if (va->hrv->redir_type == REDIR_HEREDOC)
 		result = process_heredoc(va);
 	else if (va->hrv->redir_type == REDIR_IN && va->hrv->ss != 0)

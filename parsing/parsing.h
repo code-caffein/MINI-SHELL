@@ -1,5 +1,5 @@
-#ifndef HE_H
-#define HE_H
+#ifndef PARSING_H
+#define PARSING_H
 
 #include <stdio.h>
 #include <unistd.h>
@@ -166,44 +166,9 @@ typedef struct s_sp_var{
 	t_h_red_v *hrv;
 	t_v *v;
 } t_sp_var;
-// typedef struct s_env {
-//  char *key;
-//  char *value;
-//  int type;               // 0 for envp // 1 for my vars
-//  struct s_env *next;
-// } t_env;
 
 
-/*
- * String manipulation functions
- */
-// int  ft_strcmp(const char *s1, const char *s2);//
-// size_t  ft_strlcpy(char *dst, const char *src, size_t dstsize);
-// size_t  ft_strlen(const char *s);//
-// char    **ft_split(char const *s, char c);
-// char    *ft_strdup(const char *s);
-// char    *ft_strchr(const char *s, int c);
-// int      ft_isspace(int c);
-// char *ft_strjoin(const char *s1, const char *s2);//
-// int      ft_isspace(int c);
-// void     ft_bzero(void *s, size_t n);
 
-/*
- * Variable expansion functions
- */
-// int     expand_variables(t_token *tokens, t_quote_state *state, int exit_*status);
-// char    *expand_env_vars(char *str, t_quote_state *state, int exit_*status);
-// char    *get_var_value(char *var_name);
-
-/*
- * Token and parsing functions
- */
-
-// typedef struct s_arr
-// {
-//     char *str;
-//     struct s_arr *next;
-// } t_arr;
 
 t_token *tokenize_input(t_sp_var *v);
 void    detect_file_tokens(t_token **tokens);
@@ -336,4 +301,15 @@ void update_quote_state(t_sp_var *va, bool *QUOTE);
 t_v *init_token_vars(t_sp_var *va, bool *quote);
 int prepare_token(t_sp_var *va, t_v *v);
 
-#endif /* HE_H */
+void	*ft_memcpy(void *dst, const void *src, size_t n);
+void	*f_realloc(void *ptr, size_t new_size, t_sp_var *va);
+int	flush_input_buffer(void);
+int	handle_interrupted_read(char **out);
+int	handle_read_error(char **out);
+int	heredoc_read_loop(char **buf, int *len, int *cap, t_sp_var *va);
+int	read_single_char(char *c);
+int	process_character(char c, char **buf, int *len, int *cap, t_sp_var *va);
+int	resize_buffer(char **buf, int *cap, t_sp_var *va);
+
+
+#endif 

@@ -1,4 +1,4 @@
-#include "he.h"
+#include "parsing.h"
 
 int g_signal_pid;
 
@@ -13,13 +13,13 @@ int init_heredoc_buffer(t_sp_var *va)
 
 int read_heredoc_line(t_sp_var *va)
 {
-	g_signal_pid = 2;
 	if (g_signal_pid == -1)
 		return -2;
 	
 	write(1, "> ", 2);
-	va->hrv->n = heredoc_readline(&va->hrv->line, va);
-	
+
+		va->hrv->n = heredoc_readline(&va->hrv->line, va);
+
 	if (!va->hrv->line || va->hrv->n == -2 || va->hrv->n == 0)
 		return -2;
 		

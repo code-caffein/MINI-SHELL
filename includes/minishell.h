@@ -6,7 +6,7 @@
 /*   By: abel-had <abel-had@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 15:34:46 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/17 15:08:35 by abel-had         ###   ########.fr       */
+/*   Updated: 2025/05/18 15:16:05 by abel-had         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@
 #include <readline/history.h>
 #include <signal.h>
 #include "../execution/execution.h"
-#include "../parsing/he.h"
+#include "../parsing/parsing.h"
 
 typedef struct s_env		t_env;
 typedef struct s_cmd		t_cmd;
