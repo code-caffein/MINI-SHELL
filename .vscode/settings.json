@@ -20,6 +20,8 @@
 		"type_traits": "c",
 		"vector": "c",
 		"readline.h": "c",
-		"string": "c"
+		"string": "c",
+		"__locale": "c",
+		"ios": "c"
 	}
 }

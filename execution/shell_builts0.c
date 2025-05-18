@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   shell_builts0.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
+/*   By: abel-had <abel-had@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 11:46:22 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/16 15:42:24 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/18 12:27:44 by abel-had         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 int	ft_cd(t_tools *tools)
 {
 	struct stat	st;
-	char		*tmp;
+	// char		*tmp;
 
 	if (tools->cmd->args[1] == NULL || !ft_strcmp("~", tools->cmd->args[1]))
 	{
@@ -91,6 +91,7 @@ int	ft_env(t_malloc **aloc, t_env **env, t_cmd *cmd)
 {
 	t_env	*ptr;
 
+	(void)aloc;
 	ptr = *env;
 	if (cmd->args[1])
 	{

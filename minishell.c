@@ -88,21 +88,19 @@ int	main(int argc, char **argv, char **envp)
 {
 	t_sp_var *v;
 	t_sp_var s;
-	v =  &s;
 	t_tools tools;
 
+	(void)argc;
+	(void)argv;
+	v =  &s;
 	init_v(v);
 	tools.cmd = NULL;
 	tools.aloc = &(v->allocs);
 	tools.r_stat = &(v->status);
 	tools.env = &(v->env);
 	tools.envp = envp;
-
 	push_envp(&tools);
 	init_env_variables(&tools, v);
-
-
-
 	while (1)
 	{
 		signals();

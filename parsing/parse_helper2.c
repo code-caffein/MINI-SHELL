@@ -41,7 +41,7 @@ int while_part_if_2(t_sp_var *va)
 {
 	if (!va->vpt->current->next || va->vpt->current->next->type != file)
 	{
-		ft_putstr_fd("Syntax error: Missing filename after redirection\n", 2);
+		ft_putstr_fd("minishell: syntax error: Missing filename after redirection\n", 2);
 		return (0);
 	}
 	else if (va->vpt->current->next && va->vpt->current->next->type == file)

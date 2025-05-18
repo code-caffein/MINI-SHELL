@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   allocs.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
+/*   By: abel-had <abel-had@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 15:33:05 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/13 15:34:56 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/18 12:26:55 by abel-had         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ void	clean_up(t_malloc **head, int t_type)
 {
 	t_malloc	*nxt;
 
+	(void)t_type;
 	if (!(head) || !(*head))
 		return ;
 	while ((*head))

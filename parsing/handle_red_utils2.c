@@ -35,6 +35,7 @@ int handle_red_if1(t_cmd *cmd, t_sp_var *va)
 {
 	int result = 0;
 	
+	(void)cmd;
 	if (va->hrv->redir_type == REDIR_HEREDOC)
 		result = process_heredoc(va);
 	else if (va->hrv->redir_type == REDIR_IN && va->hrv->ss != 0)
