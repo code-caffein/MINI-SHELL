@@ -1,8 +1,8 @@
 CC = cc
 CFLAGS = -Wall -Wextra -Werror -g -fsanitize=address \
-   -I$(shell brew --prefix readline)/include
+   -I$(HOME)/.local/include
 #remove fsanitize
-LDFLAGS = -L$(shell brew --prefix readline)/lib -lreadline
+LDFLAGS = -L$(HOME)/.local/lib -lreadline
 
 AR = ar
 ARFLAGS = rc
