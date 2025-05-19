@@ -3,26 +3,26 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abel-had <abel-had@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 10:36:58 by abel-had          #+#    #+#             */
-/*   Updated: 2025/05/17 16:46:55 by abel-had         ###   ########.fr       */
+/*   Updated: 2025/05/19 11:55:24 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "execution.h"
 int g_signal_pid;
 
-char	*get_executable_path(char *str, t_malloc **alloc)
+char	*get_executable_path(char *str, t_malloc **alloc, t_env *env)
 {
 	int		i;
 	char	*s;
 	char	**paths;
 	char	*check;
 
-	if(!str || !str[0])
+	if (!str || !str[0])
 		return (NULL);
-	s = getenv("PATH");
+	s = get_key_value("PATH", env);
 	paths = ft_split(s, ':', alloc);
 	i = -1;
 	while (paths[++i])
@@ -47,10 +47,7 @@ void	get_a_child(t_tools *tools)
 	{
 		if (waitpid(pid, &status, 0) == -1)
 		{
-			// if (errno == EINTR)
-			// // 	*(tools->r_stat) = 130;
-			// else
-				perror("waitpid");
+			perror("waitpid");
 		}
 		else if (WIFEXITED(status))
 			*(tools->r_stat) = WEXITSTATUS(status);
@@ -64,10 +61,11 @@ void	get_a_child(t_tools *tools)
 	}
 	else
 	{
-		signal(SIGQUIT, SIG_DFL);  // Allow Ctrl+\ to kill child
-		signal(SIGINT, SIG_DFL);   // Allow Ctrl+C to kill child
-	if (execve(tools->cmd->name, tools->cmd->args, tools->envp) == -1)
-		execve_error(tools->cmd->name);
+		signal(SIGQUIT, SIG_DFL);
+		signal(SIGINT, SIG_DFL);
+		tools->envp = vars_to_envp(tools);
+		if (execve(tools->cmd->name, tools->cmd->args, (tools->envp)) == -1)
+			execve_error(tools->cmd->name);
 	}
 }
 int	file_error_handler(char *path, int *status)
@@ -109,7 +107,7 @@ void	ft_execute_simple_cmd(t_tools *tools)
 	}
 	else
 	{
-		path = get_executable_path(tools->cmd->name, tools->aloc);
+		path = get_executable_path(tools->cmd->name, tools->aloc, *(tools->env));
 		if (path)
 		{
 			tools->cmd->name = path;
@@ -137,15 +135,17 @@ void execute_piped_cmd(t_tools *tools)
 		execute_builtin(i, tools);
 	else if (ft_strchr(tools->cmd->name, '/'))
 	{
+		tools->envp = vars_to_envp(tools);
 		if (file_error_handler(tools->cmd->name, tools->r_stat))
 			if (execve(tools->cmd->name, tools->cmd->args, tools->envp) == -1)
 				execve_error(tools->cmd->name);
 	}
 	else
 	{
-		path = get_executable_path(tools->cmd->name, tools->aloc);
+		path = get_executable_path(tools->cmd->name, tools->aloc, *(tools->env));
 		if (path)
 		{
+			tools->envp = vars_to_envp(tools);
 			tools->cmd->name = path;
 			if (execve(tools->cmd->name, tools->cmd->args, tools->envp) == -1)
 				execve_error(tools->cmd->name);
@@ -160,14 +160,14 @@ void execute_piped_cmd(t_tools *tools)
 	}
 }
 
-void ft_execute(t_tools *tools)
+void	ft_execute(t_tools *tools)
 {
-	int a;
-	a = g_signal_pid;
-	g_signal_pid = 4;
+	int	a;
 	int	in_backup;
 	int	out_backup;
 
+	a = g_signal_pid;
+	g_signal_pid = 4;
 	if (tools->cmd->next)
 		execute_pipeline(tools);
 	else

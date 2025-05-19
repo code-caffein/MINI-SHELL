@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 15:11:23 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/16 09:45:33 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/19 10:07:07 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,7 @@ int	**get_pipe_buff(t_cmd *cmd, t_malloc **alloc)
 	return (arr);
 }
 
+
 void	close_fds(int pipe_count, int **arr)
 {
 	int	i;
@@ -63,24 +64,13 @@ void	close_fds(int pipe_count, int **arr)
 	}
 }
 
-void	execute_pipeline(t_tools *tools)
+int	manage_pipes_rediretion(t_tools *tools, int cmd_count, int **arr, pid_t pid)
 {
-	pid_t	pid;
-	pid_t	right_most;
-	int		num;
-	int		status;
-	int		**arr;
-	int		cmd_count;
+	int	num;
 
-	cmd_count = count_cmd_list(tools->cmd);
 	num = 0;
-	right_most = -1;
+	cmd_count = count_cmd_list(tools->cmd);
 	arr = get_pipe_buff(tools->cmd, tools->aloc);
-	if (!arr)
-	{
-		*(tools->r_stat) = EXIT_FAILURE;
-		return ;
-	}
 	while (tools->cmd)
 	{
 		pid = fork();
@@ -90,20 +80,30 @@ void	execute_pipeline(t_tools *tools)
 		{
 			if (tools->cmd->next)
 				if (dup2(arr[num][1], STDOUT_FILENO) == -1)
-					return (printf("an error in fd[%i][1]\n", num), perror("dup2:"), exit(EXIT_FAILURE));
+					return (perror("dup2:"), exit(EXIT_FAILURE), 0);
 			if (num)
 				if (dup2(arr[num - 1][0], STDIN_FILENO) == -1)
-					return (printf("an error in fd[%i][0]\n", num), perror("dup2:"), exit(EXIT_FAILURE));
+					return (perror("dup2:"), exit(EXIT_FAILURE), 0);
 			close_fds(cmd_count - 1, arr);
 			redirect_command(tools->cmd);
 			execute_piped_cmd(tools);
 			exit(*(tools->r_stat));
 		}
-		right_most = pid;
 		tools->cmd = tools->cmd->next;
 		num++;
 	}
 	close_fds(cmd_count - 1, arr);
+	return (pid);
+}
+
+void	execute_pipeline(t_tools *tools)
+{
+	int		status;
+	int		**arr;
+	int		num;
+	int		right_most;
+
+	right_most = manage_pipes_rediretion(tools, 0, NULL, -1);
 	num = waitpid(right_most, &status, 0);
 	if (num == -1)
 	{

@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/21 14:28:51 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/17 11:24:40 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/19 11:00:54 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ void	update_var(t_tools *tools, char *new_value ,char *key)
 	if (!ft_strcmp(key, "PWD") || !ft_strcmp(key, "p.a.t.h")
 		|| !ft_strcmp(key, "OLDPWD") || !ft_strcmp(key, "SHLVL"))
 	{
-		push_to_env(tools, key, new_value, 0);
+		push_to_env(tools, key, new_value);
 		free_ptr(tools->aloc, new_value);
 	}
 }

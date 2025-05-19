@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   shell_builts0.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abel-had <abel-had@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 11:46:22 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/18 12:27:44 by abel-had         ###   ########.fr       */
+/*   Updated: 2025/05/19 11:59:42 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,11 +15,14 @@
 int	ft_cd(t_tools *tools)
 {
 	struct stat	st;
-	// char		*tmp;
+	char		*home;
 
 	if (tools->cmd->args[1] == NULL || !ft_strcmp("~", tools->cmd->args[1]))
 	{
-		if (chdir(getenv("HOME")) == -1)
+		home = get_key_value("HOME", *(tools->env));
+		if (!home)
+			return (ft_putstr_fd("minishell: cd: HOME not set", 2), 1);
+		if (chdir(home) == -1)
 		{
 			cd_error(tools->cmd->args[1]);
 			return (1);
@@ -69,7 +72,7 @@ int	ft_export(t_tools *tools)
 			value++;
 		check = var_action(key, value, *(tools->env));
 		if (check == 1)
-			push_to_env(tools, key, value, 1);
+			push_to_env(tools, key, value);
 		if (check == 2)
 			update_var(tools, value, key);
 		if (check == 4)
@@ -102,7 +105,7 @@ int	ft_env(t_malloc **aloc, t_env **env, t_cmd *cmd)
 	}
 	while (ptr)
 	{
-		if (ptr->value && (ptr->type == 0 || ptr->type == 1))
+		if (ptr->value && is_key_valid(ptr->key))
 			printf("%s=%s\n", ptr->key, ptr->value);
 		ptr = ptr->next;
 	}

@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/27 16:23:42 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/17 11:01:48 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/19 11:09:45 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,27 +116,15 @@ void	export_display(t_env **env, t_malloc **a)
 	char	*value;
 	int		i;
 
-	arr = keys_to_2darray(*env, 0, a);
+	arr = keys_to_2darray(*env, a);
 	i = 0;
 	arr = sort_2d_array(arr);
 	while (arr[i])
 	{
 		value = get_key_value(arr[i], *env);
-		if (value)
+		if (value && is_key_valid(arr[i]))
 			printf("declare -x %s=\"%s\"\n", arr[i], value);
-		else
-			printf("declare -x %s\n", arr[i]);
-		i++;
-	}
-	arr = keys_to_2darray(*env, 1, a);
-	arr = sort_2d_array(arr);
-	i = 0;
-	while (arr[i])
-	{
-		value = get_key_value(arr[i], *env);
-		if (value)
-			printf("declare -x %s=\"%s\"\n", arr[i], value);
-		else
+		else if(is_key_valid(arr[i]))
 			printf("declare -x %s\n", arr[i]);
 		i++;
 	}

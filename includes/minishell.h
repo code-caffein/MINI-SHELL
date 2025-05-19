@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abel-had <abel-had@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 15:34:46 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/18 15:16:05 by abel-had         ###   ########.fr       */
+/*   Updated: 2025/05/19 10:50:04 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,8 +62,7 @@ typedef struct s_malloc {
 
 typedef struct s_env {
 	char *key;
-	char *value;
-	int type;				// 0 for envp // 1 for my vars
+	char *value;			// 0 for envp // 1 for my vars
 	struct s_env *next;
 } t_env;
 
@@ -84,8 +83,8 @@ int	ft_isalpha(int c);
 int	ft_isdigit(int c);
 void	ft_putstr_fd(char *s, int fd);
 void swap_string(char **s1, char **s2);
-void			*push_to_env(t_tools *tools, char *key, char *value, int type);
-int				count_env_nodes(t_env *env, int type);
+void			*push_to_env(t_tools *tools, char *key, char *value);
+int				count_env_nodes(t_env *env);
 void			push_envp(t_tools *tools);
 long long int	ft_atoi(const char *str);
 char			*get_key_value(char *key, t_env *env);

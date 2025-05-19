@@ -6,13 +6,13 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 09:39:29 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/17 10:31:27 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/19 10:49:41 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	*push_to_env(t_tools *tools, char *key, char *value, int type)
+void	*push_to_env(t_tools *tools, char *key, char *value)
 {
 	t_env	*pointer;
 	t_env	*new;
@@ -23,7 +23,6 @@ void	*push_to_env(t_tools *tools, char *key, char *value, int type)
 		return (perror("malloc"), exit(1), NULL);
 	new->next = NULL;
 	new->key = ft_strdup(key, tools->aloc, P_ENVIRONMENT);
-	new->type = type;
 	new->value = ft_strdup(value, tools->aloc, P_ENVIRONMENT);
 	if (!(*(tools->env)))
 		(*(tools->env)) = new;
@@ -48,19 +47,18 @@ void	push_envp(t_tools *tools)
 	{
 		key = ft_split(tools->envp[i], '=', tools->aloc)[0];
 		value = ft_strchr(tools->envp[i], '=') + 1;
-		push_to_env(tools, key, value, 0);
+		push_to_env(tools, key, value);
 	}
 }
 
-int	count_env_nodes(t_env *env, int type)
+int	count_env_nodes(t_env *env)
 {
 	int	count;
 
 	count = 0;
 	while (env)
 	{
-		if (env->type == type)
-			count++;
+		count++;
 		env = env->next;
 	}
 	return (count);

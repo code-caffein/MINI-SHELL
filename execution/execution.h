@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/13 12:34:10 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/17 10:49:21 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/19 11:55:08 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,16 +55,17 @@ void	update_var(t_tools *tools, char *new_value, char *key);
 int		is_key_valid(char *key);
 void	remove_variable(char *key, t_env **vars, t_malloc **alloc);
 void	append_value(t_tools *tools, char *key, char *value);
-char	**keys_to_2darray(t_env *env, int type, t_malloc **alloc);
+char	**keys_to_2darray(t_env *env, t_malloc **alloc);
 char	**sort_2d_array(char **arr);
 void	execute_builtin(int i, t_tools *tools);
 int		is_builtins(char *str);
-char	*get_executable_path(char *str, t_malloc **alloc);
+char	*get_executable_path(char *str, t_malloc **alloc, t_env *env);
 void	ft_execute_simple_cmd(t_tools *tools);
 void	execute_pipeline(t_tools *tools);
 void	execute_piped_cmd(t_tools *tools);
 void	redirect_command(t_cmd *cmd);
 void	ft_execute(t_tools *tools);
+char	**vars_to_envp(t_tools *tools);
 
 #endif
 
