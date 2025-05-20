@@ -89,6 +89,10 @@ int validate_syntax(t_token **tokens)
     if (previous->type == pip || (previous->type == red && (previous->next == NULL || previous->next->type != file )))
     {
         previous->syn_err = true;
+		if (current)
+			previous->newline = true;
+		else
+			previous->newline = false;
         previous->next = NULL;
         return 0;
     }

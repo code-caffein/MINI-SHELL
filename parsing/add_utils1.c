@@ -20,6 +20,7 @@ void init_first_last(t_v *v, t_sp_var *va, char **static_buffer)
 	{
 		*static_buffer = ft_strjoin(v->buff, v->bib[v->i++], &va->allocs);
 		add_expanded_token(v, &va->var->tokens, *static_buffer, va);
+		*static_buffer = NULL;
 	}
 	else
 		add_expanded_token(v, &va->var->tokens, v->buff, va);
@@ -42,9 +43,9 @@ void p_ex_with_buffer(t_v *v, t_sp_var *va, char **static_buffer)
 			else
 				break;
 		}
-		if (ft_isspace(v->last))
+		if (ft_isspace(v->last) && v->t != 0)
 			add_expanded_token(v, &va->var->tokens, v->bib[v->t], va);
-		else
+		else if (v->t != 0)
 			*static_buffer = v->bib[v->t];
 	}
 	else

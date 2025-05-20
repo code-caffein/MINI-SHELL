@@ -77,7 +77,12 @@ t_cmd *parse_tokens(t_token *tokens, t_sp_var *va)
 	if (!ft_detect_syn_err(tokens, va))
 		return NULL;
 	va->vpt->a = while_part(va);
-	if (va->vpt->a == 0 || va->vpt->a == 10)
+	if (va->vpt->a == 0)
 		return (NULL);
+	if (va->vpt->a == 10)
+	{
+		va->status = 999;
+		return (NULL);
+	}
 	return (va->vpt->commands);
 }
