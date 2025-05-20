@@ -76,9 +76,9 @@ void	init_env_variables(t_tools *tools, t_sp_var *v)
 	update_var(tools, NULL, "OLDPWD");
 	free_ptr((tools->aloc), path);
 	shlvl = get_key_value("SHLVL", *(tools->env));
-	// printf("shell level = %s\n", shlvl);
 	if (shlvl)
-		update_var(tools, ft_strdup(ft_itoa(ft_atoi(shlvl) + 1, v), tools->aloc, P_ENV), "SHLVL");
+		update_var(tools, ft_strdup(ft_itoa(ft_atoi(shlvl) + 1, v) \
+		, tools->aloc, P_ENV), "SHLVL");
 	else
 		push_to_env(tools, "SHLVL", "1");
 	path = get_key_value("PATH", *tools->env);
@@ -91,9 +91,7 @@ int	main(int argc, char **argv, char **envp)
 	t_sp_var	*v;
 	t_sp_var	s;
 	t_tools		tools;
-	// int i = 0;
-	// while(envp[i])
-	// 	printf("%s\n",envp[i++]);
+
 	(void)argc;
 	(void)argv;
 	v = &s;
@@ -116,10 +114,8 @@ int	main(int argc, char **argv, char **envp)
 		if (!isatty(0) || !isatty(1))
 			return (1);
 		v->line = readline("minishell> ");
-		// printf("[%s]\n",v->line);
 		if (!v->line)
 			v->line = ft_strdup("exit", &v->allocs, P_GARBAGE);
-		// printf("[%d]\n",status);
 		if (v->line[0] != '\0')
 			add_history(v->line);
 		if (g_signal_pid == -1)
@@ -150,7 +146,7 @@ int	main(int argc, char **argv, char **envp)
 				v->status = 258;
 			else if (v->status == 999)
 				v->status = 1;
-			
+			clean_garbage(tools.aloc);
 		}
 		//-----------
 		//hna ktb li bghayti :(

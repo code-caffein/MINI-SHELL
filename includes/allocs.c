@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   allocs.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abel-had <abel-had@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 15:33:05 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/18 12:26:55 by abel-had         ###   ########.fr       */
+/*   Updated: 2025/05/20 12:13:29 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,14 +17,14 @@ void	*mmallocc(size_t size, t_malloc **head, int p_type)
 	void		*pointer;
 	t_malloc	*new;
 
-
+	pointer = NULL;
 	pointer = malloc(size);
 	if (!pointer)
-		return (perror("malloc"), exit(1), NULL);
+		return (critical_error("malloc", head), NULL);
 	new = malloc(sizeof(t_malloc));
 	if (!new)
 	{
-		return (perror("malloc"), exit(1), free(pointer), NULL);
+		return (free(pointer), critical_error("malloc", head), NULL);
 	}
 	new->next = (*head);
 	new->ptr = pointer;
@@ -33,11 +33,25 @@ void	*mmallocc(size_t size, t_malloc **head, int p_type)
 	return (pointer);
 }
 
-void	clean_up(t_malloc **head, int t_type)
+void clean_garbage(t_malloc **aloc)
+{
+	t_malloc	*cursor;
+	t_malloc	*next;
+
+	cursor = *aloc;
+	while (cursor)
+	{
+		next = cursor->next;
+		if (cursor->p_type == P_GARBAGE)
+			free_ptr(aloc, cursor->ptr);
+		cursor = next;
+	}
+}
+
+void	clean_up(t_malloc **head)
 {
 	t_malloc	*nxt;
 
-	(void)t_type;
 	if (!(head) || !(*head))
 		return ;
 	while ((*head))

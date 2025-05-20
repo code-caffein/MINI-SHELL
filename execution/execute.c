@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 10:36:58 by abel-had          #+#    #+#             */
-/*   Updated: 2025/05/20 11:07:27 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/20 11:34:37 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -162,6 +162,14 @@ void	execute_piped_cmd(t_tools *tools)
 	}
 }
 
+void	fds_backup(int in_backup, int out_backup)
+{
+	if (dup2(in_backup, 0) == -1 || dup2(out_backup, 1) == -1)
+		perror("dup2:");
+	if (close(in_backup) == -1 || close(out_backup) == -1)
+		perror("close:");
+}
+
 void	ft_execute(t_tools *tools)
 {
 	int	a;
@@ -170,7 +178,6 @@ void	ft_execute(t_tools *tools)
 
 	a = g_signal_pid;
 	g_signal_pid = 4;
-	// printf("reeach execution process \n");
 	if (tools->cmd->next)
 		execute_pipeline(tools);
 	else
@@ -183,11 +190,7 @@ void	ft_execute(t_tools *tools)
 				perror("dup");
 			redirect_command(tools->cmd);
 			ft_execute_simple_cmd(tools);
-			if (dup2(in_backup, STDIN_FILENO) == -1
-				|| dup2(out_backup, STDOUT_FILENO) == -1)
-				perror("dup2:");
-			if (close(in_backup) == -1 || close(out_backup) == -1)
-				perror("close:");
+			fds_backup(in_backup, out_backup);
 		}
 		else
 			ft_execute_simple_cmd(tools);

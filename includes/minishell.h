@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abel-had <abel-had@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 15:34:46 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/20 10:42:38 by abel-had         ###   ########.fr       */
+/*   Updated: 2025/05/20 11:59:23 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ char			*ft_substr(char const *s, unsigned int start, \
 							size_t len, t_malloc **a);
 int				count_list_size(void *head, size_t offset);
 int				ft_strcmp(const char *s1, const char *s2);
-void			clean_up(t_malloc **head, int p_type);
+void			clean_up(t_malloc **head);
 void			*mmallocc(size_t size, t_malloc **head, int p_type);
 int				ft_isalnum(unsigned char c);
 int				ft_isalpha(int c);
@@ -89,6 +89,8 @@ void			free_ptr(t_malloc **head, void *addr);
 size_t			ft_strlcat(char *dst, const char *src, size_t dstsize);
 int				ft_isspace(int c);
 char			*ft_itoa(int n, t_sp_var *va);
-void signals(int heredoc_mode);
+void			signals(int heredoc_mode);
+void			critical_error(char *syscall, t_malloc **aloc);
+void			clean_garbage(t_malloc **aloc);
 
 #endif
