@@ -16,7 +16,21 @@ void init_first_last(t_v *v, t_sp_var *va, char **static_buffer)
 	}
 	v->bib = ft_split(v->expanded_value, ' ', &va->allocs);
 	v->i = 0;
-	if (!ft_isspace(v->first))
+	int l = 0;
+	while (v->bib[l])
+			l++;
+	if (!ft_isspace(v->first) && l != 1)
+	{
+		*static_buffer = ft_strjoin(v->buff, v->bib[v->i++], &va->allocs);
+		add_expanded_token(v, &va->var->tokens, *static_buffer, va);
+		*static_buffer = NULL;
+	}
+	else if (!ft_isspace(v->first) && l == 1 && va->var->wait_more_args)
+	{
+		*static_buffer = ft_strjoin(v->buff, v->bib[v->i++], &va->allocs);
+		v->i = -10;
+	}
+	else if (!ft_isspace(v->first) && l == 1 && !va->var->wait_more_args)
 	{
 		*static_buffer = ft_strjoin(v->buff, v->bib[v->i++], &va->allocs);
 		add_expanded_token(v, &va->var->tokens, *static_buffer, va);
@@ -32,6 +46,8 @@ void p_ex_with_buffer(t_v *v, t_sp_var *va, char **static_buffer)
 	init_first_last(v, va, static_buffer);
 	if (va->var->wait_more_args)
 	{
+		if (v->i != -10){
+
 		while (v->bib[v->i])
 			v->i++;
 		v->t = v->i - 1;
@@ -47,6 +63,7 @@ void p_ex_with_buffer(t_v *v, t_sp_var *va, char **static_buffer)
 			add_expanded_token(v, &va->var->tokens, v->bib[v->t], va);
 		else if (v->t != 0)
 			*static_buffer = v->bib[v->t];
+		}
 	}
 	else
 	{

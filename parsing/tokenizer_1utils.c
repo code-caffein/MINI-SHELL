@@ -68,7 +68,7 @@ t_token *fill_tken_part3(t_var *v)
 	{
 		ft_putstr_fd("minishell: syntax error near unexpected token `", 2);
 		write(2, &v->tmp_err[0], 1);
-		// write(2, &v->tmp_err[1], 1);
+		write(2, &v->tmp_err[1], 1);
 		ft_putstr_fd("'\n", 2);
 	}
 	return (NULL);

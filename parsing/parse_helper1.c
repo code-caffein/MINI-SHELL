@@ -50,7 +50,6 @@ void add_argument(t_cmd *cmd, char *arg, t_sp_var *va)
 		i = cmd->arg_count - 1;
         while (++i <= cmd->arg_capacity)
             new_args[i] = NULL;
-        free(cmd->args);
         cmd->args = new_args;
     }
     cmd->args[cmd->arg_count] = ft_strdup(arg, &va->allocs, P_GARBAGE);
