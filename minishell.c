@@ -108,7 +108,7 @@ int	main(int argc, char **argv, char **envp)
 	while (1)
 	{
 		signals(0);
-		if (g_signal_pid == -1)
+		if (g_signal_pid == -1 || g_signal_pid == 4 || g_signal_pid == 5)
 		{
 			v->status = 1;
 			g_signal_pid = 0;
@@ -146,8 +146,10 @@ int	main(int argc, char **argv, char **envp)
 				tools.cmd = v->cmds;
 				ft_execute(&tools);
 			}
-			else
+			else if (v->status != 999)
 				v->status = 258;
+			else if (v->status == 999)
+				v->status = 1;
 			
 		}
 		//-----------
