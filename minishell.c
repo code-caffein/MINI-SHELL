@@ -65,7 +65,7 @@ void	init_env_variables(t_tools *tools, t_sp_var *v)
 
 	path = getcwd(NULL, 0);
 	if (!path)
-		perror("shell-init: error retrieving current directory: getcwd");
+		perror("minshell-init: error retrieving current directory: getcwd");
 	else if (path)
 	{
 		update_var(tools, ft_strdup(path, tools->aloc, 0), "p.a.t.h");
@@ -75,6 +75,7 @@ void	init_env_variables(t_tools *tools, t_sp_var *v)
 	update_var(tools, NULL, "OLDPWD");
 	free_ptr((tools->aloc), path);
 	shlvl = get_key_value("SHLVL", *(tools->env));
+	// printf("shell level = %s\n", shlvl);
 	if (shlvl)
 		update_var(tools, ft_strdup(ft_itoa(ft_atoi(shlvl) + 1, v), tools->aloc, P_ENV), "SHLVL");
 	else
@@ -86,13 +87,15 @@ void	init_env_variables(t_tools *tools, t_sp_var *v)
 
 int	main(int argc, char **argv, char **envp)
 {
-	t_sp_var *v;
-	t_sp_var s;
-	t_tools tools;
-
+	t_sp_var	*v;
+	t_sp_var	s;
+	t_tools		tools;
+	// int i = 0;
+	// while(envp[i])
+	// 	printf("%s\n",envp[i++]);
 	(void)argc;
 	(void)argv;
-	v =  &s;
+	v = &s;
 	init_v(v);
 	tools.cmd = NULL;
 	tools.aloc = &(v->allocs);
@@ -103,41 +106,41 @@ int	main(int argc, char **argv, char **envp)
 	init_env_variables(&tools, v);
 	while (1)
 	{
-		 signals(0); 
-		if (g_signal_pid == -1 || g_signal_pid == 5)
-    	{
-        	v->status = 1;
-        	g_signal_pid = 0;
-    	}
+		signals();
+		if (g_signal_pid == -1)
+		{
+			v->status = 1;
+			g_signal_pid = 0;
+		}
 		if (!isatty(0) || !isatty(1))
 			return (1);
 		v->line = readline("minishell> ");
 		// printf("[%s]\n",v->line);
 		if (!v->line)
-        	v->line = ft_strdup("exit", &v->allocs, P_GARBAGE);
+			v->line = ft_strdup("exit", &v->allocs, P_GARBAGE);
 		// printf("[%d]\n",status);
 		if (v->line[0] != '\0')
 			add_history(v->line);
 		if (g_signal_pid == -1)
-    	{
-        	v->status = 1;
-        	g_signal_pid = 0;
-        	// free(v->line);
-        	// continue;
-    	}
+		{
+			v->status = 1;
+			g_signal_pid = 0;
+			// free(v->line);
+			// continue;
+		}
 		if (*v->line != '\0')
 		{
 			// printf("\n[%c]\n",*input);
 			// printf("dddddd\n");
 			v->cmds = parse(v);
 		// print_commands(cmds);
-        // free_commands(cmds);
+		// free_commands(cmds);
 		//check 
 			if (v->cmds )
 			{
 				// print_commands(v->cmds);
 				// printf("hh\n");
-        		// free_commands(cmds);
+				// free_commands(cmds);
 				// printf("---------------------\n");
 				tools.cmd = v->cmds;
 				ft_execute(&tools);
@@ -151,7 +154,7 @@ int	main(int argc, char **argv, char **envp)
 			// printf("parse failed\n");
 		//----------
 		free(v->line);
-    }
+	}
 
     return 0;
 }
