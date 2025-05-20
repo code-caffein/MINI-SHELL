@@ -106,7 +106,7 @@ int	main(int argc, char **argv, char **envp)
 	init_env_variables(&tools, v);
 	while (1)
 	{
-		signals();
+		signals(0);
 		if (g_signal_pid == -1)
 		{
 			v->status = 1;

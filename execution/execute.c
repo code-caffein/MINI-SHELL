@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 10:36:58 by abel-had          #+#    #+#             */
-/*   Updated: 2025/05/20 10:43:44 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/20 11:07:27 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -170,7 +170,7 @@ void	ft_execute(t_tools *tools)
 
 	a = g_signal_pid;
 	g_signal_pid = 4;
-	printf("reeach execution process \n");
+	// printf("reeach execution process \n");
 	if (tools->cmd->next)
 		execute_pipeline(tools);
 	else
