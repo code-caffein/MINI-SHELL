@@ -13,7 +13,7 @@ int init_heredoc_buffer(t_sp_var *va)
 
 int read_heredoc_line(t_sp_var *va)
 {
-	if (g_signal_pid == -1)
+	if (g_signal_pid == -2)
 		return -2;
 	
 	write(1, "> ", 2);

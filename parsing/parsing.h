@@ -288,6 +288,7 @@ int handle_red_if1(t_cmd *cmd, t_sp_var *va);
 int handle_red_if2(t_cmd *cmd, t_sp_var *va);
 int open_outfile(t_sp_var *va);
 void add_red_file(t_cmd *cmd, t_sp_var *va);
+int	red_type(char *value);
 
 
 
@@ -310,6 +311,8 @@ int	heredoc_read_loop(char **buf, int *len, int *cap, t_sp_var *va);
 int	read_single_char(char *c);
 int	process_character(char c, char **buf, int *len, int *cap, t_sp_var *va);
 int	resize_buffer(char **buf, int *cap, t_sp_var *va);
+
+
 
 
 #endif 

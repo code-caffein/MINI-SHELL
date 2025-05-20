@@ -47,6 +47,18 @@ int while_part_if_2(t_sp_var *va)
 	else if (va->vpt->current->next && va->vpt->current->next->type == file)
 	{
 		va->vpt->tmp_err = handle_redirection(va->vpt->current_cmd, va->vpt->current, va, va->vpt->s);
+		if (va->vpt->tmp_err == -2)  // Heredoc was interrupted
+        {
+            // Skip remaining heredocs in this command
+            while (va->vpt->current && va->vpt->current->type == red && 
+                   va->vpt->current->next && va->vpt->current->next->type == file)
+            {
+                if (red_type(va->vpt->current->value) == REDIR_HEREDOC)
+                    va->vpt->current = va->vpt->current->next;  // Skip the delimiter
+                va->vpt->current = va->vpt->current->next;
+            }
+            return 10;  // Special code for interrupted heredoc
+        }
 		if (va->vpt->err == 0)
 		{
 			va->vpt->err = va->vpt->tmp_err;
@@ -86,7 +98,13 @@ int	while_part(t_sp_var *va)
 			if (va->vpt->result == 0)
 				return 0;
 			else if (va->vpt->result == 2) 
-				return va->vpt->result; 
+				return va->vpt->result;
+			else if (va->vpt->result == 10)  // Heredoc was interrupted
+            {
+                // Clean up and return to prompt
+                while_part_print_err(va);
+                return 10;
+            }
 		}
 		else if (va->vpt->current->type == text)
 			add_argument(va->vpt->current_cmd, va->vpt->current->value, va);

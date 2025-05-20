@@ -27,7 +27,7 @@ static void	init_handle_red_var(t_h_red_v *hrv, t_token *token, int ss)
 	hrv->current = NULL;
 }
 
-static int	red_type(char *value)
+int	red_type(char *value)
 {
 	if (ft_strcmp(value, "<") == 0)
 		return (REDIR_IN);
@@ -77,7 +77,7 @@ t_cmd *parse_tokens(t_token *tokens, t_sp_var *va)
 	if (!ft_detect_syn_err(tokens, va))
 		return NULL;
 	va->vpt->a = while_part(va);
-	if (va->vpt->a == 0)
+	if (va->vpt->a == 0 || va->vpt->a == 10)
 		return (NULL);
 	return (va->vpt->commands);
 }

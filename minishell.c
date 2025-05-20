@@ -103,8 +103,8 @@ int	main(int argc, char **argv, char **envp)
 	init_env_variables(&tools, v);
 	while (1)
 	{
-		signals();
-		if (g_signal_pid == -1)
+		 signals(0); 
+		if (g_signal_pid == -1 || g_signal_pid == 5)
     	{
         	v->status = 1;
         	g_signal_pid = 0;
