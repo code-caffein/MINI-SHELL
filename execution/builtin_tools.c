@@ -14,9 +14,6 @@
 
 int	is_builtins(char *str)
 {
-	int	i;
-
-	i = 0;
 	if (!ft_strcmp(str, "echo"))
 		return (1);
 	else if (!ft_strcmp(str, "cd"))

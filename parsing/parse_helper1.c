@@ -33,7 +33,9 @@ void add_argument(t_cmd *cmd, char *arg, t_sp_var *va)
         return;
 
     if (cmd->arg_count == 0)
+	{
         cmd->name = ft_strdup(arg, &va->allocs, P_GARBAGE);
+	}
 	if (!cmd->name)
 		return;
     if (cmd->arg_count >= cmd->arg_capacity)

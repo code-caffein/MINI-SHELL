@@ -50,13 +50,11 @@ size_t	ft_strlcat(char *dst, const char *src, size_t dstsize)
 char	*ft_strdup(const char *s1, t_malloc **alloc, int p_type)
 {
 	char	*c;
-	size_t	i;
 	size_t	l;
 
 	if (!s1)
 		return (NULL);
 	l = ft_strlen((char *) s1);
-	i = 0;
 	c = (char *) mmallocc(l + 1, alloc, p_type);
 	if (!c)
 		return (NULL);

@@ -91,9 +91,11 @@ int	ft_pwd(t_env **env, t_malloc **a, char *to_path, t_tools *tools)
 		}
 		oldpwd = get_key_value("PWD", *env);
 		if (oldpwd)
+		{
 			update_var(tools, ft_strdup(oldpwd, a, P_ENV), "OLDPWD");
 			update_var(tools, ft_strdup(pwd, a, P_ENV), "p.a.t.h");
 			update_var(tools, ft_strdup(pwd, a, P_ENV), "PWD");
+		}
 		free(pwd);
 		return (0);
 	}

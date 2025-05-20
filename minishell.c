@@ -71,6 +71,7 @@ void	init_env_variables(t_tools *tools, t_sp_var *v)
 		update_var(tools, ft_strdup(path, tools->aloc, 0), "p.a.t.h");
 		update_var(tools, ft_strdup(path, tools->aloc, 0), "PWD");
 	}
+	free(path);
 	path = get_key_value("OLDPWD", *(tools->env));
 	update_var(tools, NULL, "OLDPWD");
 	free_ptr((tools->aloc), path);

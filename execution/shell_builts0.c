@@ -59,9 +59,7 @@ int	ft_export(t_tools *tools)
 	int		status;
 	char	*value;
 	char	*key;
-	t_env	*ptr; 
 
-	ptr = *(tools->env);
 	i = 0;
 	status = 0;
 	while (tools->cmd->args[++i])
@@ -116,11 +114,9 @@ int	ft_unset(t_cmd *cmd, t_malloc **aloc, t_env **env)
 {
 	int		i;
 	int		status;
-	t_env	*ptr;
 
 	i = 0;
 	status = 0;
-	ptr = *env;
 	while (cmd->args[++i])
 	{
 		if (is_var_exist(cmd->args[i], *env))

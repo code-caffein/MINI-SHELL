@@ -7,7 +7,9 @@ void	init_var(t_sp_var *va)
 	va->var->a = -1;
 	va->var->p = mmallocc(sizeof(int), &va->allocs, P_GARBAGE);
     if (!va->var->p)
+	{
         return;
+	}
 	*va->var->p = 0;
 	va->var->state = UNQUOTED;
 	va->var->has_heredoc = false;
