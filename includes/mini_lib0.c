@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 15:55:09 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/15 11:46:02 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/20 10:24:15 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,14 +95,11 @@ char	*ft_strjoin(char const *s1, char const *s2, t_malloc **a)
 		s1 = "";
 	if (!s2)
 		s2 = "";
-	else
-	{
-		siz = ft_strlen((char *) s1) + ft_strlen((char *) s2) + 1;
-		c = (char *) mmallocc(siz, a, P_GARBAGE);
-		if (!c)
-			return (NULL);
-		ft_strlcpy(c, s1, ft_strlen((char *) s1) + 1);
-		ft_strlcat(c, s2, siz);
-	}
+	siz = ft_strlen((char *) s1) + ft_strlen((char *) s2) + 1;
+	c = (char *) mmallocc(siz, a, P_GARBAGE);
+	if (!c)
+		return (NULL);
+	ft_strlcpy(c, s1, ft_strlen((char *) s1) + 1);
+	ft_strlcat(c, s2, siz);
 	return (c);
 }

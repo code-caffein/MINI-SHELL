@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 10:55:49 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/20 09:51:19 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/20 10:26:06 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,13 +79,14 @@ char	**vars_to_envp(t_tools *tools)
 	i = count_env_nodes(*(tools->env));
 	cursor = *(tools->env);
 	envp = mmallocc((i + 1) * sizeof(char *), tools->aloc, P_GARBAGE);
-	envp[i] = NULL;
 	i = 0;
 	while (cursor)
 	{
 		envp[i] = ft_strdup((ft_strjoin(ft_strjoin(cursor->key,"=", tools->aloc), cursor->value, tools->aloc)), tools->aloc, P_GARBAGE);
+		// printf("env var pushed to execve = %s\n", envp[i]);
 		cursor = cursor->next;
 		i++;
 	}
+	envp[i] = NULL;
 	return (envp);
 }

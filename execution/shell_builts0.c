@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 11:46:22 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/20 09:51:19 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/20 10:28:32 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ int	ft_cd(t_tools *tools)
 	{
 		home = get_key_value("HOME", *(tools->env));
 		if (!home)
-			return (ft_putstr_fd("minishell: cd: HOME not set", 2), 1);
+			return (ft_putstr_fd("minishell: cd: HOME not set\n", 2), 1);
 		if (chdir(home) == -1)
 		{
 			cd_error(tools->cmd->args[1]);

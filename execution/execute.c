@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 10:36:58 by abel-had          #+#    #+#             */
-/*   Updated: 2025/05/20 09:27:26 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/20 10:43:44 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ void	get_a_child(t_tools *tools)
 		signal(SIGQUIT, SIG_DFL);
 		signal(SIGINT, SIG_DFL);
 		tools->envp = vars_to_envp(tools);
-		if (execve(tools->cmd->name, tools->cmd->args, (tools->envp)) == -1)
+		if (execve(tools->cmd->name, tools->cmd->args, tools->envp) == -1)
 			execve_error(tools->cmd->name);
 	}
 }
@@ -170,6 +170,7 @@ void	ft_execute(t_tools *tools)
 
 	a = g_signal_pid;
 	g_signal_pid = 4;
+	printf("reeach execution process \n");
 	if (tools->cmd->next)
 		execute_pipeline(tools);
 	else

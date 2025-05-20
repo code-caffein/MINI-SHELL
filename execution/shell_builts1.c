@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/27 16:23:42 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/20 09:51:19 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/20 10:29:51 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,7 +124,7 @@ void	export_display(t_env **env, t_malloc **a)
 		value = get_key_value(arr[i], *env);
 		if (value && is_key_valid(arr[i]))
 			printf("declare -x %s=\"%s\"\n", arr[i], value);
-		else if(is_key_valid(arr[i]))
+		else if (is_key_valid(arr[i]))
 			printf("declare -x %s\n", arr[i]);
 		i++;
 	}
