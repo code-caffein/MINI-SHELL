@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 11:46:22 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/19 11:59:42 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/20 09:51:19 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -163,7 +163,7 @@ void	ft_exit(t_malloc **aloc, t_cmd *cmd, int *status)
 					ft_putstr_fd(": numeric argument required\n", 2);
 					if (aloc)
 					{
-						clean_up(aloc, P_ENVIRONMENT);
+						clean_up(aloc, P_ENV);
 						clean_up(aloc, P_GARBAGE);
 					}
 					errno = 0;
@@ -171,7 +171,7 @@ void	ft_exit(t_malloc **aloc, t_cmd *cmd, int *status)
 				}
 				if (aloc)
 				{
-					clean_up(aloc, P_ENVIRONMENT);
+					clean_up(aloc, P_ENV);
 					clean_up(aloc, P_GARBAGE);
 				}
 				exit(i % 256);
@@ -184,7 +184,7 @@ void	ft_exit(t_malloc **aloc, t_cmd *cmd, int *status)
 				ft_putstr_fd(": numeric argument required\n", 2);
 				if (aloc)
 				{
-					clean_up(aloc, P_ENVIRONMENT);
+					clean_up(aloc, P_ENV);
 					clean_up(aloc, P_GARBAGE);
 				}
 				exit(255);
@@ -195,7 +195,7 @@ void	ft_exit(t_malloc **aloc, t_cmd *cmd, int *status)
 	{
 		if (aloc)
 		{
-			clean_up(aloc, P_ENVIRONMENT);
+			clean_up(aloc, P_ENV);
 			clean_up(aloc, P_GARBAGE);
 		}
 		printf("exit\n");

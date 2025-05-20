@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/13 12:34:10 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/19 11:55:08 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/20 09:27:52 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ typedef struct s_env		t_env;
 typedef struct s_cmd		t_cmd;
 typedef struct s_malloc		t_malloc;
 
-#define PWD_ERROR "pwd: error retrieving current directory:\
+# define PWD_ERROR "pwd: error retrieving current directory:\
 getcwd: cannot access parent directories: No such file or directory"
 
 typedef struct s_tools
@@ -68,4 +68,3 @@ void	ft_execute(t_tools *tools);
 char	**vars_to_envp(t_tools *tools);
 
 #endif
-

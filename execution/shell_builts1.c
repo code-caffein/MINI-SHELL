@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/27 16:23:42 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/19 11:09:45 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/20 09:51:19 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,23 +77,23 @@ int	ft_pwd(t_env **env, t_malloc **a, char *to_path, t_tools *tools)
 			oldpwd = get_key_value("PWD", *env);
 			if(oldpwd && ft_strlen(oldpwd))
 			{
-				update_var(tools, ft_strdup(oldpwd, a, P_ENVIRONMENT), "OLDPWD");
-				update_var(tools, ft_strdup(ft_strjoin(ft_strjoin(oldpwd, "/", a), to_path, a), a, P_ENVIRONMENT), "p.a.t.h");
-				update_var(tools, ft_strdup(ft_strjoin(ft_strjoin(oldpwd, "/", a), to_path, a), a,P_ENVIRONMENT), "PWD");
+				update_var(tools, ft_strdup(oldpwd, a, P_ENV), "OLDPWD");
+				update_var(tools, ft_strdup(ft_strjoin(ft_strjoin(oldpwd, "/", a), to_path, a), a, P_ENV), "p.a.t.h");
+				update_var(tools, ft_strdup(ft_strjoin(ft_strjoin(oldpwd, "/", a), to_path, a), a,P_ENV), "PWD");
 			}
 			else if(oldpwd)
 			{
-				update_var(tools, ft_strdup(oldpwd, a, P_ENVIRONMENT), "OLDPWD");
-				update_var(tools, ft_strdup(ft_strjoin(oldpwd, to_path, a), a, P_ENVIRONMENT), "p.a.t.h");
-				update_var(tools, ft_strdup(ft_strjoin(oldpwd, to_path, a), a, P_ENVIRONMENT), "PWD");
+				update_var(tools, ft_strdup(oldpwd, a, P_ENV), "OLDPWD");
+				update_var(tools, ft_strdup(ft_strjoin(oldpwd, to_path, a), a, P_ENV), "p.a.t.h");
+				update_var(tools, ft_strdup(ft_strjoin(oldpwd, to_path, a), a, P_ENV), "PWD");
 			}
 			return 0;
 		}
 		oldpwd = get_key_value("PWD", *env);
 		if (oldpwd)
-			update_var(tools, ft_strdup(oldpwd, a, P_ENVIRONMENT), "OLDPWD");
-			update_var(tools, ft_strdup(pwd, a, P_ENVIRONMENT), "p.a.t.h");
-			update_var(tools, ft_strdup(pwd, a, P_ENVIRONMENT), "PWD");
+			update_var(tools, ft_strdup(oldpwd, a, P_ENV), "OLDPWD");
+			update_var(tools, ft_strdup(pwd, a, P_ENV), "p.a.t.h");
+			update_var(tools, ft_strdup(pwd, a, P_ENV), "PWD");
 		free(pwd);
 		return (0);
 	}

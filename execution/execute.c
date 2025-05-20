@@ -6,12 +6,13 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 10:36:58 by abel-had          #+#    #+#             */
-/*   Updated: 2025/05/19 11:55:24 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/20 09:27:26 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "execution.h"
-int g_signal_pid;
+
+int	g_signal_pid;
 
 char	*get_executable_path(char *str, t_malloc **alloc, t_env *env)
 {
@@ -68,6 +69,7 @@ void	get_a_child(t_tools *tools)
 			execve_error(tools->cmd->name);
 	}
 }
+
 int	file_error_handler(char *path, int *status)
 {
 	struct stat	info;
@@ -99,7 +101,7 @@ void	ft_execute_simple_cmd(t_tools *tools)
 		return ;
 	i = is_builtins(tools->cmd->name);
 	if (i)
-		execute_builtin(i,tools);
+		execute_builtin(i, tools);
 	else if (ft_strchr(tools->cmd->name, '/'))
 	{
 		if (file_error_handler(tools->cmd->name, (tools->r_stat)))
@@ -123,7 +125,7 @@ void	ft_execute_simple_cmd(t_tools *tools)
 	}
 }
 
-void execute_piped_cmd(t_tools *tools)
+void	execute_piped_cmd(t_tools *tools)
 {
 	int		i;
 	char	*path;

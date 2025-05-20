@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 15:11:23 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/19 10:07:07 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/20 09:54:51 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,6 @@ int	**get_pipe_buff(t_cmd *cmd, t_malloc **alloc)
 	}
 	return (arr);
 }
-
 
 void	close_fds(int pipe_count, int **arr)
 {
@@ -99,7 +98,6 @@ int	manage_pipes_rediretion(t_tools *tools, int cmd_count, int **arr, pid_t pid)
 void	execute_pipeline(t_tools *tools)
 {
 	int		status;
-	int		**arr;
 	int		num;
 	int		right_most;
 
@@ -117,7 +115,7 @@ void	execute_pipeline(t_tools *tools)
 		if (WIFEXITED(status))
 			*(tools->r_stat) = WEXITSTATUS(status);
 		else if (WIFSIGNALED(status))
-			*(tools->r_stat) = 128 + WTERMSIG(status);		
+			*(tools->r_stat) = 128 + WTERMSIG(status);
 	}
 	while (waitpid(-1, &status, 0) > 0)
 		;

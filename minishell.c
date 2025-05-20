@@ -68,15 +68,15 @@ void	init_env_variables(t_tools *tools, t_sp_var *v)
 		perror("shell-init: error retrieving current directory: getcwd");
 	else if (path)
 	{
-		push_to_env(tools, "p.a.t.h", path);
-		push_to_env(tools, "PWD", path);
+		update_var(tools, ft_strdup(path, tools->aloc, 0), "p.a.t.h");
+		update_var(tools, ft_strdup(path, tools->aloc, 0), "PWD");
 	}
 	path = get_key_value("OLDPWD", *(tools->env));
 	update_var(tools, NULL, "OLDPWD");
 	free_ptr((tools->aloc), path);
 	shlvl = get_key_value("SHLVL", *(tools->env));
 	if (shlvl)
-		update_var(tools, ft_strdup(ft_itoa(ft_atoi(shlvl) + 1, v), tools->aloc, P_ENVIRONMENT), "SHLVL");
+		update_var(tools, ft_strdup(ft_itoa(ft_atoi(shlvl) + 1, v), tools->aloc, P_ENV), "SHLVL");
 	else
 		push_to_env(tools, "SHLVL", "1");
 	path = get_key_value("PATH", *tools->env);
