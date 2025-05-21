@@ -69,15 +69,20 @@ int	heredoc_readline(char **out, t_sp_var *va)
 	buf = mmallocc(cap, &va->allocs, P_GARBAGE);
 	if (!buf)
 		return (-1);
-	
-	if (heredoc_read_loop(&buf, &len, &cap, va) <= 0)
+	int a = heredoc_read_loop(&buf, &len, &cap, va);
+	if (a <= 0)
 	{
 		*out = NULL;
-		return (0);
+		if (a == -2)
+			return (-2);
+		else
+			return (0);
 	}
 	
 	buf[len] = '\0';
 	*out = buf;
+	if (!(*out))
+		return -3;
 	return (len);
 }
 

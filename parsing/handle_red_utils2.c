@@ -9,7 +9,10 @@ int process_heredoc(t_sp_var *va)
 	result = init_heredoc_buffer(va);
 	if (result != 0)
 		return result;
-	g_signal_pid = 2;  // Set heredoc mode
+	if (g_signal_pid != -2)
+		g_signal_pid = 2;
+	else
+		return -2;
     signals(1);
 
 	while (1)
@@ -18,7 +21,7 @@ int process_heredoc(t_sp_var *va)
 		if (result == -2)
 		{
             signals(0); 
-            g_signal_pid = 0;
+            // g_signal_pid = 0;
             return -2;
         }
 		if (result != 0)
@@ -33,7 +36,7 @@ int process_heredoc(t_sp_var *va)
 		va->hrv->bib[va->hrv->in++] = va->hrv->line;
 	}
 	signals(0);
-    g_signal_pid = 0;
+    // g_signal_pid = 0;
 	
 	if (result < 0)
 		return result;
@@ -51,7 +54,7 @@ int handle_red_if1(t_cmd *cmd, t_sp_var *va)
 	(void) cmd;
 	if (va->hrv->redir_type == REDIR_HEREDOC)
 	{
-		if (g_signal_pid != 5)
+		if (g_signal_pid != -2)
 			result = process_heredoc(va);
 		else
 			return 10;

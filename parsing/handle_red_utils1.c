@@ -20,8 +20,13 @@ int read_heredoc_line(t_sp_var *va)
 
 		va->hrv->n = heredoc_readline(&va->hrv->line, va);
 
-	if (!va->hrv->line || va->hrv->n == -2 || va->hrv->n == 0)
+	if (va->hrv->n == -2)
 		return -2;
+	if (!va->hrv->line || va->hrv->n == 0){
+
+		// printf("qqqqqq");
+		return -3;
+	}
 		
 	if (va->hrv->n > 0 && va->hrv->line[va->hrv->n - 1] == '\n')
 		va->hrv->line[va->hrv->n-1] = '\0';

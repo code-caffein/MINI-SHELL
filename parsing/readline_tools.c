@@ -61,7 +61,7 @@ int	flush_input_buffer(void)
  */
 int	handle_interrupted_read(char **out)
 {
-	if (g_signal_pid == -1)
+	if (g_signal_pid == -2)
 		flush_input_buffer();
 	
 	write(1, "\n", 1);

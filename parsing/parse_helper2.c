@@ -1,8 +1,9 @@
 #include "parsing.h"
 
+int g_signal_pid;
 int while_part_if_1(t_sp_var *va)
 {
-	if (va->vpt->err != 0 && va->vpt->tmp_err != -2)
+	if (va->vpt->err != 0 && va->vpt->tmp_err != -2 && g_signal_pid != -2 && va->vpt->err != -3)
 	{
 		ft_putstr_fd("minishell: ", 2);
 		ft_putstr_fd(va->vpt->err_file, 2);
@@ -50,15 +51,17 @@ int while_part_if_2(t_sp_var *va)
 		if (va->vpt->tmp_err == -2)  // Heredoc was interrupted
         {
             // Skip remaining heredocs in this command
-            while (va->vpt->current && va->vpt->current->type == red && 
-                   va->vpt->current->next && va->vpt->current->next->type == file)
-            {
-                if (red_type(va->vpt->current->value) == REDIR_HEREDOC)
-                    va->vpt->current = va->vpt->current->next;  // Skip the delimiter
-                va->vpt->current = va->vpt->current->next;
-            }
+            // while (va->vpt->current && va->vpt->current->type == red && 
+            //        va->vpt->current->next && va->vpt->current->next->type == file)
+            // {
+            //     if (red_type(va->vpt->current->value) == REDIR_HEREDOC)
+            //         va->vpt->current = va->vpt->current->next;  // Skip the delimiter
+            //     va->vpt->current = va->vpt->current->next;
+            // }
             return 10;  // Special code for interrupted heredoc
         }
+		// if (va->vpt->tmp_err == -3)
+		// 	return (-3);
 		if (va->vpt->err == 0)
 		{
 			va->vpt->err = va->vpt->tmp_err;
@@ -73,7 +76,7 @@ int while_part_if_2(t_sp_var *va)
 
 void	while_part_print_err(t_sp_var *va)
 {
-	if (va->vpt->err != 0 && va->vpt->tmp_err != -2)
+	if (va->vpt->err != 0 && va->vpt->tmp_err != -2 && g_signal_pid != -2 && va->vpt->err != -3)
 	{
 		ft_putstr_fd("minishell: ", 2);
 		ft_putstr_fd(va->vpt->err_file, 2);
@@ -105,6 +108,7 @@ int	while_part(t_sp_var *va)
                 while_part_print_err(va);
                 return 10;
             }
+			
 		}
 		else if (va->vpt->current->type == text)
 			add_argument(va->vpt->current_cmd, va->vpt->current->value, va);

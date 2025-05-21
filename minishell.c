@@ -106,7 +106,7 @@ int	main(int argc, char **argv, char **envp)
 	while (1)
 	{
 		signals(0);
-		if (g_signal_pid == -1 || g_signal_pid == 4 || g_signal_pid == 5)
+		if (g_signal_pid == -1 || g_signal_pid == -2)
 		{
 			v->status = 1;
 			g_signal_pid = 0;
