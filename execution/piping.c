@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 15:11:23 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/21 16:10:44 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/21 16:42:26 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,20 @@ void	close_fds(int pipe_count, int **arr, t_tools *tools)
 	}
 }
 
+void	piped_child(t_tools *tools, int cmd_count, int **arr, int num)
+{
+	if (tools->cmd->next)
+		if (dup2(arr[num][1], STDOUT_FILENO) == -1)
+			return (critical_error("dup2", tools->aloc, 1, NULL));
+	if (num)
+		if (dup2(arr[num - 1][0], STDIN_FILENO) == -1)
+			return (critical_error("dup2", tools->aloc, 1, NULL));
+	close_fds(cmd_count - 1, arr, tools);
+	redirect_command(tools);
+	execute_piped_cmd(tools);
+	exit(*(tools->r_stat));
+}
+
 int	manage_pipes_rediretion(t_tools *tools, int cmd_count, int **arr, pid_t pid)
 {
 	int	num;
@@ -73,18 +87,7 @@ int	manage_pipes_rediretion(t_tools *tools, int cmd_count, int **arr, pid_t pid)
 			critical_error("fork", tools->aloc, 0, tools->r_stat);
 		}
 		else if (pid == 0)
-		{
-			if (tools->cmd->next)
-				if (dup2(arr[num][1], STDOUT_FILENO) == -1)
-					return (critical_error("dup2", tools->aloc, 1, NULL), 0);
-			if (num)
-				if (dup2(arr[num - 1][0], STDIN_FILENO) == -1)
-					return (critical_error("dup2", tools->aloc, 1, NULL), 0);
-			close_fds(cmd_count - 1, arr, tools);
-			redirect_command(tools);
-			execute_piped_cmd(tools);
-			exit(*(tools->r_stat));
-		}
+			piped_child(tools, cmd_count, arr, num);
 		tools->cmd = tools->cmd->next;
 		num++;
 	}

@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 10:36:58 by abel-had          #+#    #+#             */
-/*   Updated: 2025/05/21 16:09:36 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/21 16:35:49 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,13 +34,30 @@ char	*get_executable_path(char *str, t_malloc **alloc, t_env *env)
 	}
 	return (NULL);
 }
-		// printf("path checked = %s\n", check);
+
+void	wait_for_child(t_tools *tools, int pid)
+{
+	int		status;
+	int		sig;
+
+	if (waitpid(pid, &status, 0) == -1)
+	{
+		critical_error("waitpid", tools->aloc, 0, tools->r_stat);
+	}
+	else if (WIFEXITED(status))
+		*(tools->r_stat) = WEXITSTATUS(status);
+	else if (WIFSIGNALED(status))
+	{
+		sig = WTERMSIG(status);
+		if (sig == SIGQUIT)
+			write(2, "Quit: 3\n", 8);
+		*(tools->r_stat) = 128 + sig;
+	}
+}
 
 void	get_a_child(t_tools *tools)
 {
 	pid_t	pid;
-	int		status;
-	int		sig;
 
 	pid = fork();
 	if (pid == -1)
@@ -50,21 +67,7 @@ void	get_a_child(t_tools *tools)
 		return ;
 	}
 	if (pid > 0)
-	{
-		if (waitpid(pid, &status, 0) == -1)
-		{
-			critical_error("waitpid", tools->aloc, 0, tools->r_stat);
-		}
-		else if (WIFEXITED(status))
-			*(tools->r_stat) = WEXITSTATUS(status);
-		else if (WIFSIGNALED(status))
-		{
-			sig = WTERMSIG(status);
-			if (sig == SIGQUIT)
-				write(2, "Quit: 3\n", 8);
-			*(tools->r_stat) = 128 + sig;
-		}
-	}
+		wait_for_child(tools, pid);
 	else
 	{
 		signal(SIGQUIT, SIG_DFL);
@@ -108,10 +111,32 @@ void	ft_execute_simple_cmd(t_tools *tools)
 	}
 }
 
+
+void exec_no_path_cmd_pipe(t_tools *tools)
+{
+	char	*path;
+
+	path = get_executable_path(tools->cmd->name, tools->aloc, *(tools->env));
+	if (path)
+	{
+		tools->envp = vars_to_envp(tools);
+		tools->cmd->name = path;
+		if (execve(tools->cmd->name, tools->cmd->args, tools->envp) == -1)
+			return (execve_error(tools), clean_up(tools->aloc), \
+					exit(*(tools->r_stat)));
+	}
+	else
+	{
+		ft_putstr_fd("minishell: ", 2);
+		ft_putstr_fd(tools->cmd->name, 2);
+		ft_putstr_fd(": command not found\n", 2);
+		*(tools->r_stat) = 127;
+	}
+}
+
 void	execute_piped_cmd(t_tools *tools)
 {
 	int		i;
-	char	*path;
 
 	if (!tools->cmd->name)
 		exit(*(tools->r_stat));
@@ -123,26 +148,11 @@ void	execute_piped_cmd(t_tools *tools)
 		tools->envp = vars_to_envp(tools);
 		if (file_error_handler(tools->cmd->name, tools->r_stat))
 			if (execve(tools->cmd->name, tools->cmd->args, tools->envp) == -1)
-				return (execve_error(tools), clean_up(tools->aloc), exit(*(tools->r_stat)));
+				return (execve_error(tools), clean_up(tools->aloc), \
+						exit(*(tools->r_stat)));
 	}
 	else
-	{
-		path = get_executable_path(tools->cmd->name, tools->aloc, *(tools->env));
-		if (path)
-		{
-			tools->envp = vars_to_envp(tools);
-			tools->cmd->name = path;
-			if (execve(tools->cmd->name, tools->cmd->args, tools->envp) == -1)
-				return (execve_error(tools), clean_up(tools->aloc), exit(*(tools->r_stat)));
-		}
-		else
-		{
-			ft_putstr_fd("minishell: ", 2);
-			ft_putstr_fd(tools->cmd->name, 2);
-			ft_putstr_fd(": command not found\n", 2);
-			*(tools->r_stat) = 127;
-		}
-	}
+		exec_no_path_cmd_pipe(tools);
 }
 
 void	fds_backup(int in_backup, int out_backup, t_malloc **aloc, int *r_stat)

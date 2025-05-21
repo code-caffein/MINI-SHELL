@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 11:46:22 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/21 14:20:43 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/21 16:42:10 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -157,19 +157,11 @@ void	ft_exit(t_malloc **aloc, t_cmd *cmd, int *status)
 					ft_putstr_fd("minishell: exit: ", 2);
 					ft_putstr_fd(s, 2);
 					ft_putstr_fd(": numeric argument required\n", 2);
-					if (aloc)
-					{
-						clean_up(aloc);
-						clean_up(aloc);
-					}
+					clean_up(aloc);
 					errno = 0;
 					exit(255);
 				}
-				if (aloc)
-				{
-					clean_up(aloc);
-					clean_up(aloc);
-				}
+				clean_up(aloc);
 				exit(i % 256);
 			}
 			else
@@ -178,22 +170,14 @@ void	ft_exit(t_malloc **aloc, t_cmd *cmd, int *status)
 				ft_putstr_fd("minishell: exit: ", 2);
 				ft_putstr_fd(cmd->args[1], 2);
 				ft_putstr_fd(": numeric argument required\n", 2);
-				if (aloc)
-				{
-					clean_up(aloc);
-					clean_up(aloc);
-				}
+				clean_up(aloc);
 				exit(255);
 			}
 		}
 	}
 	else
 	{
-		if (aloc)
-		{
-			clean_up(aloc);
-			clean_up(aloc);
-		}
+		clean_up(aloc);
 		printf("exit\n");
 		exit(*status);
 	}
