@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 15:11:23 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/20 10:56:04 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/21 14:14:45 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,10 @@ int	manage_pipes_rediretion(t_tools *tools, int cmd_count, int **arr, pid_t pid)
 	{
 		pid = fork();
 		if (pid == -1)
+		{
+			*(tools->r_stat) = 1;
 			perror("fork:");
+		}
 		else if (pid == 0)
 		{
 			if (tools->cmd->next)

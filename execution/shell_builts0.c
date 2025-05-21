@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 11:46:22 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/20 11:52:10 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/21 14:20:43 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ int	ft_export(t_tools *tools)
 		if (check == 1)
 			push_to_env(tools, key, value);
 		if (check == 2)
-			update_var(tools, value, key);
+			update_var(tools, ft_strdup(value, tools->aloc, P_ENV), key);
 		if (check == 4)
 			append_value(tools, key, value);
 		if (check == 3)

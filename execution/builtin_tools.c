@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/05 10:22:11 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/17 09:13:36 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/20 12:26:16 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ void	execute_builtin(int i, t_tools *tools)
 	else if (i == 2)
 		*(tools->r_stat) = ft_cd(tools);
 	else if (i == 3)
-		*(tools->r_stat) = ft_pwd(tools->env, NULL, NULL, tools);
+		*(tools->r_stat) = ft_pwd(tools->env, NULL, NULL, NULL);
 	else if (i == 4)
 		*(tools->r_stat) = ft_export(tools);
 	else if (i == 5)

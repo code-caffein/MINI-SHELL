@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/27 16:23:42 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/20 10:29:51 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/20 12:27:11 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,13 +67,13 @@ int	ft_pwd(t_env **env, t_malloc **a, char *to_path, t_tools *tools)
 	char	*pwd;
 	char	*oldpwd;
 
-	if (env && a && to_path)
+	if (env && a)
 	{
 		pwd = getcwd(NULL, 0);
 		if (!pwd)
 		{
 			ft_putstr_fd("cd: error retrieving current directory: ", 2);
-			perror("getwcd");
+			perror("getcwd: cannot access parent directories");
 			oldpwd = get_key_value("PWD", *env);
 			if(oldpwd && ft_strlen(oldpwd))
 			{
