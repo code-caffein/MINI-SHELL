@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/13 12:34:10 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/20 11:40:31 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/21 16:09:21 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ typedef struct s_tools
 t_env	*get_bef_node(t_env *lst, t_env *node);
 void	cd_error(char *path);
 void	cmd_file_error(char *path, char *msg);
-void	execve_error(char *cmd);
+void	execve_error(t_tools *tools);
 void	export_display(t_env **env, t_malloc **a);
 int		ft_echo(t_cmd *cmd);
 int		ft_pwd(t_env **env, t_malloc **a, char *to_path, t_tools *tools);
@@ -64,8 +64,9 @@ char	*get_executable_path(char *str, t_malloc **alloc, t_env *env);
 void	ft_execute_simple_cmd(t_tools *tools);
 void	execute_pipeline(t_tools *tools);
 void	execute_piped_cmd(t_tools *tools);
-void	redirect_command(t_cmd *cmd);
+void	redirect_command(t_tools *tools);
 void	ft_execute(t_tools *tools);
 char	**vars_to_envp(t_tools *tools);
+int		file_error_handler(char *path, int *status);
 
 #endif

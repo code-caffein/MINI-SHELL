@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 09:39:29 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/20 09:51:19 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/21 15:41:17 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,6 @@ void	*push_to_env(t_tools *tools, char *key, char *value)
 
 	pointer = NULL;
 	new = mmallocc(sizeof(t_env), tools->aloc, P_ENV);
-	if (!new)
-		return (perror("malloc"), exit(1), NULL);
 	new->next = NULL;
 	new->key = ft_strdup(key, tools->aloc, P_ENV);
 	new->value = ft_strdup(value, tools->aloc, P_ENV);

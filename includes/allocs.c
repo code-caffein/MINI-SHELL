@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 15:33:05 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/20 12:13:29 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/21 15:39:57 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,11 +20,11 @@ void	*mmallocc(size_t size, t_malloc **head, int p_type)
 	pointer = NULL;
 	pointer = malloc(size);
 	if (!pointer)
-		return (critical_error("malloc", head), NULL);
+		return (critical_error("malloc", head, 1, NULL), NULL);
 	new = malloc(sizeof(t_malloc));
 	if (!new)
 	{
-		return (free(pointer), critical_error("malloc", head), NULL);
+		return (free(pointer), critical_error("malloc", head, 1, NULL), NULL);
 	}
 	new->next = (*head);
 	new->ptr = pointer;

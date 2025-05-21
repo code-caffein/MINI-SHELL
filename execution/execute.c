@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 10:36:58 by abel-had          #+#    #+#             */
-/*   Updated: 2025/05/21 10:41:41 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/21 16:09:36 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,24 +40,26 @@ void	get_a_child(t_tools *tools)
 {
 	pid_t	pid;
 	int		status;
+	int		sig;
 
 	pid = fork();
 	if (pid == -1)
 	{
-		*(tools->r_stat) =  1;
-		perror("fork");
+		*(tools->r_stat) = 1;
+		critical_error("fork", tools->aloc, 0, tools->r_stat);
+		return ;
 	}
 	if (pid > 0)
 	{
 		if (waitpid(pid, &status, 0) == -1)
 		{
-			perror("waitpid");
+			critical_error("waitpid", tools->aloc, 0, tools->r_stat);
 		}
 		else if (WIFEXITED(status))
 			*(tools->r_stat) = WEXITSTATUS(status);
 		else if (WIFSIGNALED(status))
 		{
-			int sig = WTERMSIG(status);
+			sig = WTERMSIG(status);
 			if (sig == SIGQUIT)
 				write(2, "Quit: 3\n", 8);
 			*(tools->r_stat) = 128 + sig;
@@ -69,30 +71,8 @@ void	get_a_child(t_tools *tools)
 		signal(SIGINT, SIG_DFL);
 		tools->envp = vars_to_envp(tools);
 		if (execve(tools->cmd->name, tools->cmd->args, tools->envp) == -1)
-			execve_error(tools->cmd->name);
+			return (execve_error(tools), clean_up(tools->aloc));
 	}
-}
-
-int	file_error_handler(char *path, int *status)
-{
-	struct stat	info;
-
-	if (stat(path, &info) == 0)
-	{
-		if (S_ISDIR(info.st_mode) == true)
-			cmd_file_error(path, "is a Directorie");
-		else if (access(path, X_OK) == 0)
-			return (1);
-		else
-			cmd_file_error(path, "permission denied");
-		*status = 126;
-	}
-	else
-	{
-		cmd_file_error(path, "No such file or directory");
-		*status = 127;
-	}
-	return (0);
 }
 
 void	ft_execute_simple_cmd(t_tools *tools)
@@ -143,7 +123,7 @@ void	execute_piped_cmd(t_tools *tools)
 		tools->envp = vars_to_envp(tools);
 		if (file_error_handler(tools->cmd->name, tools->r_stat))
 			if (execve(tools->cmd->name, tools->cmd->args, tools->envp) == -1)
-				execve_error(tools->cmd->name);
+				return (execve_error(tools), clean_up(tools->aloc), exit(*(tools->r_stat)));
 	}
 	else
 	{
@@ -153,7 +133,7 @@ void	execute_piped_cmd(t_tools *tools)
 			tools->envp = vars_to_envp(tools);
 			tools->cmd->name = path;
 			if (execve(tools->cmd->name, tools->cmd->args, tools->envp) == -1)
-				execve_error(tools->cmd->name);
+				return (execve_error(tools), clean_up(tools->aloc), exit(*(tools->r_stat)));
 		}
 		else
 		{
@@ -165,12 +145,12 @@ void	execute_piped_cmd(t_tools *tools)
 	}
 }
 
-void	fds_backup(int in_backup, int out_backup, t_malloc **aloc)
+void	fds_backup(int in_backup, int out_backup, t_malloc **aloc, int *r_stat)
 {
 	if (dup2(in_backup, 0) == -1 || dup2(out_backup, 1) == -1)
-		critical_error("dup2" ,aloc);
+		critical_error("dup2", aloc, 0, r_stat);
 	if (close(in_backup) == -1 || close(out_backup) == -1)
-		perror("close");
+		critical_error("close", aloc, 0, r_stat);
 }
 
 void	ft_execute(t_tools *tools)
@@ -190,10 +170,10 @@ void	ft_execute(t_tools *tools)
 			in_backup = dup(STDIN_FILENO);
 			out_backup = dup(STDOUT_FILENO);
 			if (in_backup == -1 || out_backup == -1)
-				critical_error("dup", tools->aloc);
-			redirect_command(tools->cmd);
+				critical_error("dup", tools->aloc, 0, tools->r_stat);
+			redirect_command(tools);
 			ft_execute_simple_cmd(tools);
-			fds_backup(in_backup, out_backup, tools->aloc);
+			fds_backup(in_backup, out_backup, tools->aloc, tools->r_stat);
 		}
 		else
 			ft_execute_simple_cmd(tools);

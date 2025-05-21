@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 15:11:23 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/21 14:14:45 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/21 16:10:44 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,35 +25,34 @@ int	count_cmd_list(t_cmd *cmd)
 	return (i);
 }
 
-int	**get_pipe_buff(t_malloc **alloc, int count)
+int	**get_pipe_buff(t_tools *tools, int count)
 {
 	int	n;
 	int	**arr;
 
 	n = count;
-	arr = mmallocc(sizeof(int *) * (n - 1), alloc, P_GARBAGE);
-	if (!arr)
-		return (perror("malloc"), NULL);
+	arr = mmallocc(sizeof(int *) * (n - 1), tools->aloc, P_GARBAGE);
 	while (--n > 0)
 	{
-		arr[n - 1] = mmallocc(2 * sizeof(int), alloc, P_GARBAGE);
-		if (!arr[n - 1])
-			return (perror("malloc"), NULL);
+		arr[n - 1] = mmallocc(2 * sizeof(int), tools->aloc, P_GARBAGE);
 		if (pipe(arr[n - 1]) == -1)
-			return (perror("pipe"), NULL);
+			return (critical_error("pipe", tools->aloc, 0, \
+					tools->r_stat), NULL);
 	}
 	return (arr);
 }
 
-void	close_fds(int pipe_count, int **arr)
+void	close_fds(int pipe_count, int **arr, t_tools *tools)
 {
 	int	i;
 
+	if (!arr)
+		return ;
 	i = 0;
 	while (i < pipe_count)
 	{
 		if (close(arr[i][0]) == -1 || close(arr[i][1]) == -1)
-			perror("close");
+			critical_error("close", tools->aloc, 0, tools->r_stat);
 		i++;
 	}
 }
@@ -64,32 +63,32 @@ int	manage_pipes_rediretion(t_tools *tools, int cmd_count, int **arr, pid_t pid)
 
 	num = 0;
 	cmd_count = count_cmd_list(tools->cmd);
-	arr = get_pipe_buff(tools->aloc, cmd_count);
-	while (tools->cmd)
+	arr = get_pipe_buff(tools, cmd_count);
+	while (arr && tools->cmd)
 	{
 		pid = fork();
 		if (pid == -1)
 		{
 			*(tools->r_stat) = 1;
-			perror("fork:");
+			critical_error("fork", tools->aloc, 0, tools->r_stat);
 		}
 		else if (pid == 0)
 		{
 			if (tools->cmd->next)
 				if (dup2(arr[num][1], STDOUT_FILENO) == -1)
-					return (perror("dup2"), exit(EXIT_FAILURE), 0);
+					return (critical_error("dup2", tools->aloc, 1, NULL), 0);
 			if (num)
 				if (dup2(arr[num - 1][0], STDIN_FILENO) == -1)
-					return (perror("dup2"), exit(EXIT_FAILURE), 0);
-			close_fds(cmd_count - 1, arr);
-			redirect_command(tools->cmd);
+					return (critical_error("dup2", tools->aloc, 1, NULL), 0);
+			close_fds(cmd_count - 1, arr, tools);
+			redirect_command(tools);
 			execute_piped_cmd(tools);
 			exit(*(tools->r_stat));
 		}
 		tools->cmd = tools->cmd->next;
 		num++;
 	}
-	close_fds(cmd_count - 1, arr);
+	close_fds(cmd_count - 1, arr, tools);
 	return (pid);
 }
 
@@ -106,7 +105,7 @@ void	execute_pipeline(t_tools *tools)
 		if (errno == EINTR)
 			*(tools->r_stat) = 130;
 		else
-			perror("waitpid pipe");
+			critical_error("waitpid", tools->aloc, 0, tools->r_stat);
 	}
 	else if (num == right_most)
 	{
