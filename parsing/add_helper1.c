@@ -45,6 +45,7 @@ void init_variable(t_v *v, t_token *tokens)
     v->i = 0;
     v->s = 0;
     v->t = 0;
+	v->ambiguous = false;
 }
 
 t_token *create_new_token(t_token **new_token, char *new_buff, t_sp_var *va)

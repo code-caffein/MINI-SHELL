@@ -60,6 +60,8 @@ void add_expanded_token(t_v *v, t_token **tokens, char *expanded, t_sp_var *va)
         new_token->type = text; // Set the token type to text
 		if (!v->quote)
 			new_token->need_expand = true;
+		if (v->ambiguous)
+			v->new_token->ambiguous = true;
     }
 	v->new_token = new_token;
 	v->new_token->syn_err = false; 
@@ -78,6 +80,8 @@ void add_token(t_v *v, t_token **tokens)
 {
 		v->new_token->value = v->buff;
 		v->new_token->syn_err=false;
+		if (v->ambiguous)
+			v->new_token->ambiguous = true;
 		if (*tokens == NULL)
         	*tokens = v->new_token;
     	else

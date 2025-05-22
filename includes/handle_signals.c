@@ -9,20 +9,20 @@ static void handle_sigint(int n)
     (void)n;
     int status;
 
-   static int in_heredoc = 0;
+//    static int in_heredoc = 0;
 
     if (g_signal_pid == 2) {
-        in_heredoc = 1;
+        // in_heredoc = 1;
         g_signal_pid = -2;
         return;
     }
-	if (in_heredoc)
+	if (g_signal_pid == -2)
 	{
 		write(1, "\n", 1);
-    rl_replace_line("", 0);
-    rl_on_new_line();
-	rl_redisplay();
-        in_heredoc = 0;
+    	rl_replace_line("", 0);
+    	rl_on_new_line();
+		rl_redisplay();
+        // in_heredoc = 0;
         return;
     }
 

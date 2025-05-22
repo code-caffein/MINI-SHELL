@@ -3,11 +3,11 @@
 int g_signal_pid;
 int while_part_if_1(t_sp_var *va)
 {
-	if (va->vpt->err != 0 && va->vpt->tmp_err != -2 && g_signal_pid != -2 && va->vpt->err != -3)
+	if (va->vpt->err != 0 && va->vpt->tmp_err != -2 && g_signal_pid != -2 && va->vpt->err != -3 && !va->vpt->current_cmd->am)
 	{
 		ft_putstr_fd("minishell: ", 2);
 		ft_putstr_fd(va->vpt->err_file, 2);
-		write(2,":",1);
+		write(2,": ",1);
 		ft_putstr_fd(strerror(va->vpt->err), 2);
 		write(2,"\n",1);
 	}
@@ -48,20 +48,11 @@ int while_part_if_2(t_sp_var *va)
 	else if (va->vpt->current->next && va->vpt->current->next->type == file)
 	{
 		va->vpt->tmp_err = handle_redirection(va->vpt->current_cmd, va->vpt->current, va, va->vpt->s);
-		if (va->vpt->tmp_err == -2)  // Heredoc was interrupted
-        {
-            // Skip remaining heredocs in this command
-            // while (va->vpt->current && va->vpt->current->type == red && 
-            //        va->vpt->current->next && va->vpt->current->next->type == file)
-            // {
-            //     if (red_type(va->vpt->current->value) == REDIR_HEREDOC)
-            //         va->vpt->current = va->vpt->current->next;  // Skip the delimiter
-            //     va->vpt->current = va->vpt->current->next;
-            // }
-            return 10;  // Special code for interrupted heredoc
-        }
-		// if (va->vpt->tmp_err == -3)
-		// 	return (-3);
+		if (va->vpt->tmp_err == -2)
+			return 10;
+		if (va->vpt->tmp_err == -3){
+			va->status = -3;
+		}
 		if (va->vpt->err == 0)
 		{
 			va->vpt->err = va->vpt->tmp_err;
@@ -76,11 +67,11 @@ int while_part_if_2(t_sp_var *va)
 
 void	while_part_print_err(t_sp_var *va)
 {
-	if (va->vpt->err != 0 && va->vpt->tmp_err != -2 && g_signal_pid != -2 && va->vpt->err != -3)
+	if (va->vpt->err != 0 && va->vpt->tmp_err != -2 && g_signal_pid != -2 && va->vpt->err != -3 && !va->vpt->current_cmd->am)
 	{
 		ft_putstr_fd("minishell: ", 2);
 		ft_putstr_fd(va->vpt->err_file, 2);
-		write(2,":",1);
+		write(2,": ",1);
 		ft_putstr_fd(strerror(va->vpt->err), 2);
 		write(2,"\n",1);
 	}
@@ -97,6 +88,13 @@ int	while_part(t_sp_var *va)
 		}
 		else if (va->vpt->current->type == red)
 		{
+			if (va->vpt->current->next && va->vpt->current->next->ambiguous)
+			{
+				if (va->vpt->current_cmd)
+					va->vpt->current_cmd->name = NULL;
+				va->vpt->current_cmd->am = true;
+				ft_putstr_fd("minishell: ambiguous redirect\n", 2);
+			}
 			va->vpt->result = while_part_if_2(va);
 			if (va->vpt->result == 0)
 				return 0;
@@ -112,6 +110,15 @@ int	while_part(t_sp_var *va)
 		}
 		else if (va->vpt->current->type == text)
 			add_argument(va->vpt->current_cmd, va->vpt->current->value, va);
+		
+		// if (va->vpt->current->ambiguous)
+		// {
+		// 	if (va->vpt->current_cmd)
+		// 		va->vpt->current_cmd->name = NULL;
+		// 	va->vpt->current = va->vpt->current->next;
+		// 	va->vpt->current_cmd->am = true;
+		// 	ft_putstr_fd("minishell: ambiguous redirect\n", 2);
+		// }
 		if (va->vpt->current)
 			va->vpt->current = va->vpt->current->next;
 	}

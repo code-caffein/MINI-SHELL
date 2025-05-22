@@ -49,6 +49,7 @@ typedef struct s_token {
 	bool  newline;
     bool wait_more_args; // Wait for more arguments
     struct s_token *next;   // Next token in the list
+	bool ambiguous;
 } t_token;
 
 typedef struct s_var
@@ -83,6 +84,8 @@ typedef struct s_v
 	int i;
 	int s;
 	int t;
+	bool ambiguous;
+
 
 } t_v;
 /**
@@ -115,6 +118,7 @@ typedef struct s_cmd {
     char **args;
     int arg_count;
     int arg_capacity;
+	bool am;//ambiguous
     // bool syn_err;
     t_redirection *in;
     t_redirection *out;
@@ -165,6 +169,7 @@ typedef struct s_sp_var{
 	t_pt *vpt;
 	t_h_red_v *hrv;
 	t_v *v;
+	bool ambig;
 } t_sp_var;
 
 

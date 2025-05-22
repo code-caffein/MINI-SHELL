@@ -59,14 +59,16 @@ int handle_red_if1(t_cmd *cmd, t_sp_var *va)
 		else
 			return 10;
 	}
-	else if (va->hrv->redir_type == REDIR_IN && va->hrv->ss != 0)
+	else if (va->hrv->redir_type == REDIR_IN && va->hrv->ss != 0 )
 		va->hrv->redir->fd = open(va->hrv->redir->file, O_RDONLY);
+	if (va->hrv->redir->fd != -11 && va->hrv->redir->fd != -1 && va->vpt->current_cmd->am)
+		va->hrv->redir->fd = -11;
 	return result;
 }
 
 int handle_red_if2(t_cmd *cmd, t_sp_var *va)
 {
-	if (va->hrv->redir->fd < 0 && va->hrv->ss != 0)
+	if (va->hrv->redir->fd == -1 && va->hrv->ss != 0)
 		return errno;
 	if (!cmd->in)
 		cmd->in = va->hrv->redir;
@@ -82,12 +84,15 @@ int handle_red_if2(t_cmd *cmd, t_sp_var *va)
 
 int open_outfile(t_sp_var *va)
 {
-	if (va->hrv->redir_type == REDIR_APPEND)
+	if (va->hrv->redir_type == REDIR_APPEND && !va->vpt->current_cmd->am)
 		va->hrv->redir->fd = open(va->hrv->redir->file, O_WRONLY | O_CREAT | O_APPEND, 0644);
-	else
+	else if (!va->vpt->current_cmd->am)
 		va->hrv->redir->fd = open(va->hrv->redir->file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-	if (va->hrv->redir->fd < 0)
+	if (va->hrv->redir->fd != -11 && va->hrv->redir->fd != -1 && va->vpt->current_cmd->am)
+		va->hrv->redir->fd = -11;
+	if (va->hrv->redir->fd == -1)
 		return errno;
+	// printf("[  %d  ]\n",va->hrv->redir->fd);
 	return (0);
 }
 

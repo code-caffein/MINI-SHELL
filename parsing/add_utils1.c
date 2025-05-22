@@ -75,7 +75,7 @@ void p_ex_with_buffer(t_v *v, t_sp_var *va, char **static_buffer)
 
 void	p_with_buffer(t_v *v, t_sp_var *va, char **static_buffer, bool *QUOTE)
 {
-	if (should_expand_token(v, va))
+	if (should_expand_token(v, va) )
 		p_ex_with_buffer(v, va, static_buffer);
 	else
 	{

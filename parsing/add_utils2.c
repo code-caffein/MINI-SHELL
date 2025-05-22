@@ -25,6 +25,7 @@ int prepare_token(t_sp_var *va, t_v *v)
     if (!v->new_token)
         return 0; // malloc failed
     
+	v->new_token->ambiguous = false;
     v->new_token->need_expand = false;
     red_pip_txt(v, &va->var->state);
     

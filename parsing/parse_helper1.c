@@ -20,7 +20,7 @@ t_cmd *create_new_command(t_sp_var *va)
     while (++i <= cmd->arg_capacity)
         cmd->args[i] = NULL;
     
-	// cmd->syn_err = false;
+	cmd->am = false;
     cmd->in = NULL;
     cmd->out = NULL;
     cmd->next = NULL;
@@ -66,7 +66,7 @@ t_redirection	*create_redirection(char *file, int type, t_sp_var *va)
 		return NULL;
 	redir->file = ft_strdup(file, &va->allocs, P_GARBAGE);
 	redir->type = type;
-	redir->fd = -1;
+	redir->fd = -11;
 	redir->next = NULL;
 	// redir->err_type = 0;
 	return (redir);

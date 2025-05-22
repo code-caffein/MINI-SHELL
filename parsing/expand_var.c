@@ -26,11 +26,21 @@ char *expand_env_vars(char *str, t_sp_var *va)
 	char *tmp;
     char result[9999] = {0};
 	int m;
-    // printf("[%d]\n",status);
+
+	
     while (str[i])
     {
-        if (str[i] == '$' && str[i+1] && va->var->state != SINGLE_QUOTED)
+        if ( str[i] == '$' && str[i+1] && va->var->state != SINGLE_QUOTED)
         {
+			if ((str[i + 1] < '0' || (str[i + 1] > '9' && str[i + 1] < 'A') ||
+							 (str[i + 1] > 'Z' && str[i + 1] < '_') ||
+							  (str[i + 1] > '_' && str[i + 1] < 'a') ||
+							   str[i + 1] > 'z') && str[i + 1] != '$' && str[i + 1] != '?')
+			{
+				i++;
+				result[j++] = '$';
+				continue;
+			}
             i++;
             if (str[i] == '?')
             {
@@ -43,10 +53,26 @@ char *expand_env_vars(char *str, t_sp_var *va)
             	i++;
             	continue;
             }
+			if (str[i] == '$')
+			{
+				m = 0;
+				tmp = ft_itoa(getpid(), va);
+				if (!tmp)
+					return NULL;
+            	while (tmp[m] != '\0')
+                	result[j++] = tmp[m++];
+            	i++;
+            	continue;
+			}
             
             char var_name[256] = {0};
             int k = 0;
-            
+            if (str[i] && (str[i] >= '0' && str[i] <= '9'))
+			{
+				i++;
+				continue;
+			}
+				
             while (str[i] && ((str[i] >= 'a' && str[i] <= 'z') ||
                              (str[i] >= 'A' && str[i] <= 'Z') ||
                              (str[i] >= '0' && str[i] <= '9') ||

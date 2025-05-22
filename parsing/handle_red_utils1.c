@@ -24,7 +24,7 @@ int read_heredoc_line(t_sp_var *va)
 		return -2;
 	if (!va->hrv->line || va->hrv->n == 0){
 
-		// printf("qqqqqq");
+		// va->status = -3;
 		return -3;
 	}
 		
@@ -32,7 +32,10 @@ int read_heredoc_line(t_sp_var *va)
 		va->hrv->line[va->hrv->n-1] = '\0';
 		
 	if (ft_strcmp(va->hrv->line, va->hrv->file_token->value) == 0)
+	{
+		va->status = 0;
 		return 1;
+	}
 	
 	return 0;
 }

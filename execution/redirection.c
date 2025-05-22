@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redirection.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
+/*   By: abel-had <abel-had@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 12:31:09 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/22 12:51:01 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/22 12:55:40 by abel-had         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,8 +29,9 @@ void	output_redirection(t_tools *tools)
 	{
 		cur = cur->next;
 	}
-	if (dup2(cur->fd, STDOUT_FILENO) == -1)
-		critical_error("dup2", tools->aloc, 0, tools->r_stat);
+	if (cur->fd != -11)
+		if (dup2(cur->fd, STDOUT_FILENO) == -1)
+			critical_error("dup2", tools->aloc, 0, tools->r_stat);
 }
 
 void	input_redirection(t_tools *tools)
@@ -42,8 +43,9 @@ void	input_redirection(t_tools *tools)
 	{
 		cur = cur->next;
 	}
-	if (dup2(cur->fd, STDIN_FILENO) == -1)
-		critical_error("dup2", tools->aloc, 0, tools->r_stat);
+	if (cur->fd != -11)
+		if (dup2(cur->fd, STDIN_FILENO) == -1)
+			critical_error("dup2", tools->aloc, 0, tools->r_stat);
 }
 
 void	redirect_command(t_tools *tools)

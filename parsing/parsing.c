@@ -12,6 +12,7 @@ t_cmd *parse(t_sp_var *v)
 	if (!tokens)
 		return (NULL);
 	commands = parse_tokens(tokens, v);
+	// printf("[[[          {%d}  1    ]]]\n", v->status);
 	if(!commands)
 		return (NULL);
 	// if (commands)
