@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 10:36:58 by abel-had          #+#    #+#             */
-/*   Updated: 2025/05/21 16:35:49 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/22 12:28:39 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,8 @@ char	*get_executable_path(char *str, t_malloc **alloc, t_env *env)
 	if (!str || !str[0])
 		return (NULL);
 	s = get_key_value("PATH", env);
+	if (!s)
+		return (NULL);
 	paths = ft_split(s, ':', alloc);
 	i = -1;
 	while (paths[++i])

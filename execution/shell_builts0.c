@@ -6,13 +6,33 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 11:46:22 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/22 11:18:49 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/22 11:59:52 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "execution.h"
 
-int handle_home(t_tools *tools)
+int	handle_old_path(t_tools *tools)
+{
+	char		*oldpwd;
+
+	oldpwd = get_key_value("OLDPWD", *(tools->env));
+	if (!oldpwd)
+		return (ft_putstr_fd("minishell: cd: OLDPWD not set\n", 2), 1);
+	if (chdir(oldpwd) == -1)
+	{
+		cd_error(tools->cmd->args[1]);
+		return (1);
+	}
+	else
+	{
+		ft_pwd(tools->env, tools->aloc, tools->cmd->args[1], tools);
+		ft_pwd(tools->env, NULL, NULL, tools);
+	}
+	return (0);
+}
+
+int	handle_home(t_tools *tools)
 {
 	char		*home;
 
@@ -37,6 +57,8 @@ int	ft_cd(t_tools *tools)
 
 	if (tools->cmd->args[1] == NULL || !ft_strcmp("~", tools->cmd->args[1]))
 		return (handle_home(tools));
+	else if (!ft_strcmp(tools->cmd->args[1], "-"))
+		return (handle_old_path(tools));
 	else if (stat(tools->cmd->args[1], &st) != 0)
 	{
 		cd_error(tools->cmd->args[1]);
