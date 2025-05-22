@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 15:11:23 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/21 16:42:26 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/22 12:47:23 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,38 +23,6 @@ int	count_cmd_list(t_cmd *cmd)
 		cmd = cmd->next;
 	}
 	return (i);
-}
-
-int	**get_pipe_buff(t_tools *tools, int count)
-{
-	int	n;
-	int	**arr;
-
-	n = count;
-	arr = mmallocc(sizeof(int *) * (n - 1), tools->aloc, P_GARBAGE);
-	while (--n > 0)
-	{
-		arr[n - 1] = mmallocc(2 * sizeof(int), tools->aloc, P_GARBAGE);
-		if (pipe(arr[n - 1]) == -1)
-			return (critical_error("pipe", tools->aloc, 0, \
-					tools->r_stat), NULL);
-	}
-	return (arr);
-}
-
-void	close_fds(int pipe_count, int **arr, t_tools *tools)
-{
-	int	i;
-
-	if (!arr)
-		return ;
-	i = 0;
-	while (i < pipe_count)
-	{
-		if (close(arr[i][0]) == -1 || close(arr[i][1]) == -1)
-			critical_error("close", tools->aloc, 0, tools->r_stat);
-		i++;
-	}
 }
 
 void	piped_child(t_tools *tools, int cmd_count, int **arr, int num)

@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/13 12:34:10 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/21 16:09:21 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/22 12:53:00 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,5 +68,11 @@ void	redirect_command(t_tools *tools);
 void	ft_execute(t_tools *tools);
 char	**vars_to_envp(t_tools *tools);
 int		file_error_handler(char *path, int *status);
+void	close_fds(int pipe_count, int **arr, t_tools *tools);
+int		**get_pipe_buff(t_tools *tools, int count);
+void	exec_no_path_cmd_pipe(t_tools *tools);
+void	fds_backup(int in_backup, int out_backup, t_malloc **aloc, int *r_stat);
+char	*get_executable_path(char *str, t_malloc **alloc, t_env *env);
+void	no_cmd_error(t_tools *tools);
 
 #endif

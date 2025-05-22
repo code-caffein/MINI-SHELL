@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/27 12:21:50 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/21 14:51:28 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/22 12:53:02 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,4 +73,12 @@ int	file_error_handler(char *path, int *status)
 		*status = 127;
 	}
 	return (0);
+}
+
+void	no_cmd_error(t_tools *tools)
+{
+	ft_putstr_fd("minishell: ", 2);
+	ft_putstr_fd(tools->cmd->name, 2);
+	ft_putstr_fd(": command not found\n", 2);
+	*(tools->r_stat) = 127;
 }
