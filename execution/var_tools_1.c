@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 10:55:49 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/20 10:26:06 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/22 10:37:59 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,8 +82,8 @@ char	**vars_to_envp(t_tools *tools)
 	i = 0;
 	while (cursor)
 	{
-		envp[i] = ft_strdup((ft_strjoin(ft_strjoin(cursor->key,"=", tools->aloc), cursor->value, tools->aloc)), tools->aloc, P_GARBAGE);
-		// printf("env var pushed to execve = %s\n", envp[i]);
+		envp[i] = ft_strdup((ft_strjoin(ft_strjoin(cursor->key, "=", \
+		tools->aloc), cursor->value, tools->aloc)), tools->aloc, P_GARBAGE);
 		cursor = cursor->next;
 		i++;
 	}

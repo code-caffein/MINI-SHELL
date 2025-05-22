@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/27 16:23:42 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/20 12:27:11 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/22 10:34:47 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,41 +61,56 @@ int ft_echo(t_cmd *cmd)
 	return (0);
 }
 
+int	handle_cd_failed_cwd(t_env **env, t_tools *tools, \
+		t_malloc **a, char *to_path)
+{
+	char	*oldpwd;
+
+	ft_putstr_fd("cd: error retrieving current directory: ", 2);
+	perror("getcwd: cannot access parent directories");
+	oldpwd = get_key_value("PWD", *env);
+	if (oldpwd && ft_strlen(oldpwd))
+	{
+		update_var(tools, ft_strdup(oldpwd, a, P_ENV), "OLDPWD");
+		update_var(tools, ft_strdup(ft_strjoin(ft_strjoin(oldpwd, "/", a) \
+		, to_path, a), a, P_ENV), "p.a.t.h");
+		update_var(tools, ft_strdup(ft_strjoin(ft_strjoin(oldpwd, "/", a) \
+		, to_path, a), a, P_ENV), "PWD");
+	}
+	else if (oldpwd)
+	{
+		update_var(tools, ft_strdup(oldpwd, a, P_ENV), "OLDPWD");
+		update_var(tools, ft_strdup(ft_strjoin(oldpwd, to_path, a) \
+		, a, P_ENV), "p.a.t.h");
+		update_var(tools, ft_strdup(ft_strjoin(oldpwd, to_path, a) \
+		, a, P_ENV), "PWD");
+	}
+	return (0);
+}
+
+void	update_pwds(t_tools *tools, t_env **env, char *pwd, t_malloc **a)
+{
+	char	*oldpwd;
+
+	oldpwd = get_key_value("PWD", *env);
+	if (oldpwd)
+	{
+		update_var(tools, ft_strdup(oldpwd, a, P_ENV), "OLDPWD");
+		update_var(tools, ft_strdup(pwd, a, P_ENV), "p.a.t.h");
+		update_var(tools, ft_strdup(pwd, a, P_ENV), "PWD");
+	}
+}
 
 int	ft_pwd(t_env **env, t_malloc **a, char *to_path, t_tools *tools)
 {
 	char	*pwd;
-	char	*oldpwd;
 
 	if (env && a)
 	{
 		pwd = getcwd(NULL, 0);
 		if (!pwd)
-		{
-			ft_putstr_fd("cd: error retrieving current directory: ", 2);
-			perror("getcwd: cannot access parent directories");
-			oldpwd = get_key_value("PWD", *env);
-			if(oldpwd && ft_strlen(oldpwd))
-			{
-				update_var(tools, ft_strdup(oldpwd, a, P_ENV), "OLDPWD");
-				update_var(tools, ft_strdup(ft_strjoin(ft_strjoin(oldpwd, "/", a), to_path, a), a, P_ENV), "p.a.t.h");
-				update_var(tools, ft_strdup(ft_strjoin(ft_strjoin(oldpwd, "/", a), to_path, a), a,P_ENV), "PWD");
-			}
-			else if(oldpwd)
-			{
-				update_var(tools, ft_strdup(oldpwd, a, P_ENV), "OLDPWD");
-				update_var(tools, ft_strdup(ft_strjoin(oldpwd, to_path, a), a, P_ENV), "p.a.t.h");
-				update_var(tools, ft_strdup(ft_strjoin(oldpwd, to_path, a), a, P_ENV), "PWD");
-			}
-			return 0;
-		}
-		oldpwd = get_key_value("PWD", *env);
-		if (oldpwd)
-		{
-			update_var(tools, ft_strdup(oldpwd, a, P_ENV), "OLDPWD");
-			update_var(tools, ft_strdup(pwd, a, P_ENV), "p.a.t.h");
-			update_var(tools, ft_strdup(pwd, a, P_ENV), "PWD");
-		}
+			return (handle_cd_failed_cwd(env, tools, a, to_path));
+		update_pwds(tools, env, pwd, a);
 		free(pwd);
 		return (0);
 	}

@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 15:34:46 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/21 15:19:28 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/22 10:51:07 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,16 @@ typedef struct s_env
 	char			*value;
 	struct s_env	*next;
 }	t_env;
+
+typedef struct s_spit
+{
+	char			**arr;
+	const char		*s;
+	char			c;
+	size_t			cols;
+	t_malloc		**a;
+}	t_split;
+
 
 char			*ft_isnum(char *s, t_malloc **a);
 size_t			ft_strlcpy(char *dst, const char *src, size_t dstsize);

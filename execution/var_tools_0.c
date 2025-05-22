@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/21 14:28:51 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/19 11:00:54 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/22 10:37:07 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,35 +77,34 @@ void	update_var(t_tools *tools, char *new_value ,char *key)
 	}
 }
 
+void	remove_node(t_env *prev, t_env *target, t_env **vars,
+			t_malloc **alloc)
+{
+	if (target == *vars)
+		*vars = target->next;
+	else if (prev)
+		prev->next = target->next;
+	free_ptr(alloc, target->key);
+	free_ptr(alloc, target->value);
+	free_ptr(alloc, target);
+}
+
 void	remove_variable(char *key, t_env **vars, t_malloc **alloc)
 {
-	t_env	*p;
-	t_env	*helper;
+	t_env	*curr;
+	t_env	*prev;
 
-	p = (*vars);
-	while (p)
+	curr = *vars;
+	prev = NULL;
+	while (curr)
 	{
-		if (!ft_strcmp(key, p->key))
+		if (!ft_strcmp(key, curr->key))
 		{
-			if (p == (*vars))
-			{
-				*vars = p->next;
-				free_ptr(alloc, p->key);
-				free_ptr(alloc, p->value);
-				free_ptr(alloc, p);
-				break ;
-			}
-			else
-			{
-				helper = get_bef_node(*vars, p);
-				helper->next = p->next;
-				free_ptr(alloc, p->key);
-				free_ptr(alloc, p->value);
-				free_ptr(alloc, p);
-				break ;
-			}
+			remove_node(prev, curr, vars, alloc);
+			break ;
 		}
-		p = p->next;
+		prev = curr;
+		curr = curr->next;
 	}
 }
 

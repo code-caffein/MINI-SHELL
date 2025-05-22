@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 15:33:05 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/21 15:39:57 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/22 10:38:36 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ void	*mmallocc(size_t size, t_malloc **head, int p_type)
 	return (pointer);
 }
 
-void clean_garbage(t_malloc **aloc)
+void	clean_garbage(t_malloc **aloc)
 {
 	t_malloc	*cursor;
 	t_malloc	*next;
