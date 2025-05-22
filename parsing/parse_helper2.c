@@ -10,6 +10,7 @@ int while_part_if_1(t_sp_var *va)
 		write(2,": ",1);
 		ft_putstr_fd(strerror(va->vpt->err), 2);
 		write(2,"\n",1);
+		va->status = 1;
 	}
 	va->vpt->current_cmd->next = create_new_command(va);
 	if (!va->vpt->current_cmd->next)
@@ -74,6 +75,7 @@ void	while_part_print_err(t_sp_var *va)
 		write(2,": ",1);
 		ft_putstr_fd(strerror(va->vpt->err), 2);
 		write(2,"\n",1);
+		va->status = 1;
 	}
 }
 
