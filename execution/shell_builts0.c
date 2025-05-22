@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 11:46:22 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/22 10:21:59 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/22 11:18:49 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,21 +65,23 @@ int	ft_export_var_error(char *key)
 	return (1);
 }
 
-int treat_variable(t_tools *tools, char *key, char *value)
+int treat_variable(t_tools *tools, char *key, char *value, int i)
 {
 	int		check;
 	int		status;
 
 	status = 0;
 	check = var_action(key, value, *(tools->env));
+	if (tools->cmd->args[i][0] == '=')
+		check = 3;
 	if (check == 1)
 		push_to_env(tools, key, value);
-	if (check == 2)
+	else if (check == 2)
 		update_var(tools, ft_strdup(value, tools->aloc, P_ENV), key);
-	if (check == 4)
+	else if (check == 4)
 		append_value(tools, key, value);
-	if (check == 3)
-		status = ft_export_var_error(key);
+	else if (check == 3)
+		status = ft_export_var_error(tools->cmd->args[i]);
 	return (status);
 }
 
@@ -97,7 +99,7 @@ int	ft_export(t_tools *tools)
 		value = ft_strchr(tools->cmd->args[i], '=');
 		if (value)
 			value++;
-		status = treat_variable(tools, key, value);
+		status = treat_variable(tools, key, value, i);
 	}
 	if (i == 1)
 		export_display(tools->env, tools->aloc);
