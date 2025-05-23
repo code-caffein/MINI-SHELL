@@ -1,5 +1,6 @@
 #include "./includes/minishell.h"
 #include "./execution/execution.h"
+#include <termios.h>
 int g_signal_pid = 0;
 
 void print_redirections(t_redirection *redir, const char *type) {
@@ -94,6 +95,7 @@ int	main(int argc, char **argv, char **envp)
 	t_sp_var	*v;
 	t_sp_var	s;
 	t_tools		tools;
+	struct termios terminal;
 
 	(void)argc;
 	(void)argv;
@@ -107,6 +109,7 @@ int	main(int argc, char **argv, char **envp)
 	push_envp(&tools);
 	init_env_variables(&tools, v);
 	int tmp = -1;
+	tcgetattr(0, &terminal);
 	while (1)
 	{
 		signals(0);
@@ -161,6 +164,7 @@ int	main(int argc, char **argv, char **envp)
 			// printf("parse failed\n");
 		//----------
 		free(v->line);
+		tcsetattr(0, TCSANOW, &terminal);
 	}
 
     return 0;
