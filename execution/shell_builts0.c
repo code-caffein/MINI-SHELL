@@ -6,50 +6,11 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 11:46:22 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/22 11:59:52 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/23 10:20:40 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "execution.h"
-
-int	handle_old_path(t_tools *tools)
-{
-	char		*oldpwd;
-
-	oldpwd = get_key_value("OLDPWD", *(tools->env));
-	if (!oldpwd)
-		return (ft_putstr_fd("minishell: cd: OLDPWD not set\n", 2), 1);
-	if (chdir(oldpwd) == -1)
-	{
-		cd_error(tools->cmd->args[1]);
-		return (1);
-	}
-	else
-	{
-		ft_pwd(tools->env, tools->aloc, tools->cmd->args[1], tools);
-		ft_pwd(tools->env, NULL, NULL, tools);
-	}
-	return (0);
-}
-
-int	handle_home(t_tools *tools)
-{
-	char		*home;
-
-	home = get_key_value("HOME", *(tools->env));
-	if (!home)
-		return (ft_putstr_fd("minishell: cd: HOME not set\n", 2), 1);
-	if (chdir(home) == -1)
-	{
-		cd_error(tools->cmd->args[1]);
-		return (1);
-	}
-	else
-	{
-		ft_pwd(tools->env, tools->aloc, tools->cmd->args[1], tools);
-	}
-	return (0);
-}
 
 int	ft_cd(t_tools *tools)
 {
@@ -77,34 +38,6 @@ int	ft_cd(t_tools *tools)
 		}
 	}
 	return (0);
-}
-
-int	ft_export_var_error(char *key)
-{
-	ft_putstr_fd("minishell: export: `", 2);
-	ft_putstr_fd(key, 2);
-	ft_putstr_fd("': not a valid identifier\n", 2);
-	return (1);
-}
-
-int treat_variable(t_tools *tools, char *key, char *value, int i)
-{
-	int		check;
-	int		status;
-
-	status = 0;
-	check = var_action(key, value, *(tools->env));
-	if (tools->cmd->args[i][0] == '=')
-		check = 3;
-	if (check == 1)
-		push_to_env(tools, key, value);
-	else if (check == 2)
-		update_var(tools, ft_strdup(value, tools->aloc, P_ENV), key);
-	else if (check == 4)
-		append_value(tools, key, value);
-	else if (check == 3)
-		status = ft_export_var_error(tools->cmd->args[i]);
-	return (status);
 }
 
 int	ft_export(t_tools *tools)
@@ -172,20 +105,6 @@ int	ft_unset(t_cmd *cmd, t_malloc **aloc, t_env **env)
 	return (status);
 }
 
-void	exit_numeric_error(char *arg ,t_malloc **aloc)
-{
-	ft_putstr_fd("minishell: exit: ", 2);
-	ft_putstr_fd(arg, 2);
-	ft_putstr_fd(": numeric argument required\n", 2);
-	clean_up(aloc);
-	exit(255);
-}
-
-void failed_exit_args_num(int *status)
-{
-	ft_putstr_fd("minishell: exit: too many arguments\n", 2);
-	*status = 1;
-}
 
 void	ft_exit(t_malloc **aloc, t_cmd *cmd, int *status)
 {

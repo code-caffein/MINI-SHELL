@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/13 12:34:10 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/22 12:53:00 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/23 14:10:31 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,5 +74,17 @@ void	exec_no_path_cmd_pipe(t_tools *tools);
 void	fds_backup(int in_backup, int out_backup, t_malloc **aloc, int *r_stat);
 char	*get_executable_path(char *str, t_malloc **alloc, t_env *env);
 void	no_cmd_error(t_tools *tools);
+void	exit_numeric_error(char *arg, t_malloc **aloc);
+void	failed_exit_args_num(int *status);
+int		handle_cd_failed_cwd(t_env **env, t_tools *tools, \
+		t_malloc **a, char *to_path);
+int		handle_old_path(t_tools *tools);
+int		handle_home(t_tools *tools);
+int		treat_variable(t_tools *tools, char *key, char *value, int i);
+int		ft_export_var_error(char *key);
+void	remove_variable(char *key, t_env **vars, t_malloc **alloc);
+int		is_key_valid(char *key);
+void	remove_node(t_env *prev, t_env *target, t_env **vars, \
+			t_malloc **alloc);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/27 16:23:42 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/22 10:34:47 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/23 11:05:22 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ int	skip_nflags(t_cmd *cmd)
 	return (-1);
 }
 
-int ft_echo(t_cmd *cmd)
+int	ft_echo(t_cmd *cmd)
 {
 	int	nl;
 	int	i;
@@ -58,33 +58,6 @@ int ft_echo(t_cmd *cmd)
 	}
 	if (nl)
 		write(1, "\n", 1);
-	return (0);
-}
-
-int	handle_cd_failed_cwd(t_env **env, t_tools *tools, \
-		t_malloc **a, char *to_path)
-{
-	char	*oldpwd;
-
-	ft_putstr_fd("cd: error retrieving current directory: ", 2);
-	perror("getcwd: cannot access parent directories");
-	oldpwd = get_key_value("PWD", *env);
-	if (oldpwd && ft_strlen(oldpwd))
-	{
-		update_var(tools, ft_strdup(oldpwd, a, P_ENV), "OLDPWD");
-		update_var(tools, ft_strdup(ft_strjoin(ft_strjoin(oldpwd, "/", a) \
-		, to_path, a), a, P_ENV), "p.a.t.h");
-		update_var(tools, ft_strdup(ft_strjoin(ft_strjoin(oldpwd, "/", a) \
-		, to_path, a), a, P_ENV), "PWD");
-	}
-	else if (oldpwd)
-	{
-		update_var(tools, ft_strdup(oldpwd, a, P_ENV), "OLDPWD");
-		update_var(tools, ft_strdup(ft_strjoin(oldpwd, to_path, a) \
-		, a, P_ENV), "p.a.t.h");
-		update_var(tools, ft_strdup(ft_strjoin(oldpwd, to_path, a) \
-		, a, P_ENV), "PWD");
-	}
 	return (0);
 }
 
