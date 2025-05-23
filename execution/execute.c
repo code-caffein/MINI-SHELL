@@ -6,14 +6,13 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 10:36:58 by abel-had          #+#    #+#             */
-/*   Updated: 2025/05/22 12:52:31 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/23 10:12:55 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "execution.h"
 
 int	g_signal_pid;
-
 
 void	wait_for_child(t_tools *tools, int pid)
 {

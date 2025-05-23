@@ -1,5 +1,5 @@
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -g -fsanitize=address \
+CFLAGS = -Wall -Wextra -Werror \
    -I$(HOME)/.local/include
 #remove fsanitize
 LDFLAGS = -L$(HOME)/.local/lib -lreadline
@@ -13,7 +13,7 @@ exe = minishell
 
 
 
-SRC = execution/builtin_tools.c execution/execute.c       execution/mini_errors.c   execution/piping.c        execution/redirection.c   execution/shell_builts0.c execution/shell_builts1.c execution/var_tools_0.c   execution/var_tools_1.c execution/piping_1.c execution/execute_1.c \
+SRC = execution/builtin_tools.c execution/execute.c       execution/mini_errors.c   execution/piping.c        execution/redirection.c   execution/shell_builts0.c execution/shell_builts1.c execution/shell_builts2.c execution/shell_builts3.c execution/var_tools_0.c   execution/var_tools_1.c  execution/var_tools_2.c execution/piping_1.c execution/execute_1.c \
 		includes/allocs.c         includes/cleaning.c       includes/env_tools.c      includes/handle_signals.c includes/mini_atoi.c      includes/mini_lib0.c      includes/mini_lib1.c      includes/mini_lib2.c      includes/mini_itoa.c      includes/mini_split.c \
 		parsing/add_helper1.c       parsing/add_utils1.c        parsing/expand_var.c        parsing/handle_red_utils2.c parsing/if_conditions.c     parsing/parse_helper1.c     parsing/parsing.c           parsing/tokenizer.c         parsing/tokenizer_2utils.c  parsing/tokenizer_fill.c \
 		parsing/add_helper2.c       parsing/add_utils2.c        parsing/handle_red_utils1.c  parsing/parse.c             parsing/parse_helper2.c     parsing/readline.c          parsing/tokenizer_1utils.c  parsing/tokenizer_3utils.c  parsing/tokenizer_fill2.c parsing/readline_tools.c\

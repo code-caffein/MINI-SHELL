@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 09:39:29 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/21 15:41:17 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/23 11:10:50 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,4 +73,13 @@ char	*get_key_value(char *key, t_env *env)
 		env = env->next;
 	}
 	return (NULL);
+}
+
+void	swap_string(char **s1, char **s2)
+{
+	char	*s;
+
+	s = (*s2);
+	*s2 = *s1;
+	*s1 = s;
 }

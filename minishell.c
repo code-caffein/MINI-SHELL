@@ -65,7 +65,10 @@ void	init_env_variables(t_tools *tools, t_sp_var *v)
 
 	path = getcwd(NULL, 0);
 	if (!path)
+	{
 		perror("minshell-init: error retrieving current directory: getcwd");
+		update_var(tools, NULL, "p.a.t.h");
+	}
 	else if (path)
 	{
 		update_var(tools, ft_strdup(path, tools->aloc, 0), "p.a.t.h");
