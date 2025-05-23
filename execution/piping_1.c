@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 12:45:45 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/22 12:49:50 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/23 15:44:51 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,19 +70,37 @@ void	close_fds(int pipe_count, int **arr, t_tools *tools)
 	}
 }
 
+
+void	close_pipes(int **arr, int up_to)
+{
+	int	i;
+
+	i = 0;
+	while (i < up_to)
+	{
+		close(arr[i][0]);
+		close(arr[i][1]);
+		i++;
+	}
+}
+
 int	**get_pipe_buff(t_tools *tools, int count)
 {
-	int	n;
 	int	**arr;
+	int	i;
 
-	n = count;
-	arr = mmallocc(sizeof(int *) * (n - 1), tools->aloc, P_GARBAGE);
-	while (--n > 0)
+	arr = mmallocc(sizeof(int *) * (count - 1), tools->aloc, P_GARBAGE);
+	i = 0;
+	while (i < count - 1)
 	{
-		arr[n - 1] = mmallocc(2 * sizeof(int), tools->aloc, P_GARBAGE);
-		if (pipe(arr[n - 1]) == -1)
+		arr[i] = mmallocc(2 * sizeof(int), tools->aloc, P_GARBAGE);
+		if (pipe(arr[i]) == -1)
+		{
+			close_pipes(arr, i);
 			return (critical_error("pipe", tools->aloc, 0, \
-					tools->r_stat), NULL);
+				tools->r_stat), NULL);
+		}
+		i++;
 	}
 	return (arr);
 }
