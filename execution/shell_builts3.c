@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 10:18:40 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/23 10:20:48 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/23 14:46:34 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ int	handle_old_path(t_tools *tools)
 		return (ft_putstr_fd("minishell: cd: OLDPWD not set\n", 2), 1);
 	if (chdir(oldpwd) == -1)
 	{
-		cd_error(tools->cmd->args[1]);
+		cd_error(oldpwd);
 		return (1);
 	}
 	else

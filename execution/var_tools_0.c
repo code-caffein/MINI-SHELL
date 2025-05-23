@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/21 14:28:51 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/23 14:10:01 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/23 14:11:16 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,5 +88,3 @@ void	remove_node(t_env *prev, t_env *target, t_env **vars,
 	free_ptr(alloc, target->value);
 	free_ptr(alloc, target);
 }
-
-
