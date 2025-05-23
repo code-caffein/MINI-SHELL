@@ -46,8 +46,6 @@ static void handle_sigint(int n)
         rl_redisplay();
         g_signal_pid = -1;
     }
-    else
-        g_signal_pid = -1;
 }
 
 void signals(int heredoc_mode)

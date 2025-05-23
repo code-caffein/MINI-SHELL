@@ -1,6 +1,6 @@
 #include "parsing.h"
 //0 = true  , 1 = false $?
-
+int g_signal_pid;
 
 
 char *get_var_value(char *var_name, t_env *env, t_sp_var *va)
@@ -45,6 +45,15 @@ char *expand_env_vars(char *str, t_sp_var *va)
             if (str[i] == '?')
             {
 				m = 0;
+				if (g_signal_pid == 0)
+				{
+					va->status = va->status;
+				}
+				else if (g_signal_pid == -1 ||  g_signal_pid -2 ||  g_signal_pid == 2)
+				{
+					va->status = 1;
+					g_signal_pid = 0;
+				}
 				tmp = ft_itoa(va->status, va);
 				if (!tmp)
 					return NULL;

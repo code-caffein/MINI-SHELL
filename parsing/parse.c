@@ -73,16 +73,14 @@ t_cmd *parse_tokens(t_token *tokens, t_sp_var *va)
 	va->vpt = mmallocc(sizeof(t_pt), &va->allocs, P_GARBAGE);
 	if (!va->vpt)
 		return NULL;
-	va->ambig = NULL;
-	// t_token *curr = tokens;
-	// while (curr)
-	// {
-	// 	if (curr->ambiguous){
-	// 		va->ambig = true;
-
-	// 	}
-	// 	curr = curr->next;
-	// }
+	va->ambig = false;
+	t_token *curr = tokens;
+	while (curr)
+	{
+		if (curr->ambiguous)
+			va->ambig = true;
+		curr = curr->next;
+	}
 	init_vpt(tokens, va->vpt);
 	if (!ft_detect_syn_err(tokens, va))
 		return NULL;
@@ -94,7 +92,8 @@ t_cmd *parse_tokens(t_token *tokens, t_sp_var *va)
 		va->status = 999;
 		return (NULL);
 	}
-
+	if (va->ambig)
+		va->status = 1;
 	// printf("[[[          {%d}      ]]]\n", va->status);
 	// if (va->ambig){
 	// 	ft_putstr_fd("minishell: ambiguous redirect\n", 2);

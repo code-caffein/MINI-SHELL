@@ -96,6 +96,7 @@ int	while_part(t_sp_var *va)
 					va->vpt->current_cmd->name = NULL;
 				va->vpt->current_cmd->am = true;
 				ft_putstr_fd("minishell: ambiguous redirect\n", 2);
+				va->status = 1;
 			}
 			va->vpt->result = while_part_if_2(va);
 			if (va->vpt->result == 0)
@@ -112,15 +113,6 @@ int	while_part(t_sp_var *va)
 		}
 		else if (va->vpt->current->type == text)
 			add_argument(va->vpt->current_cmd, va->vpt->current->value, va);
-		
-		// if (va->vpt->current->ambiguous)
-		// {
-		// 	if (va->vpt->current_cmd)
-		// 		va->vpt->current_cmd->name = NULL;
-		// 	va->vpt->current = va->vpt->current->next;
-		// 	va->vpt->current_cmd->am = true;
-		// 	ft_putstr_fd("minishell: ambiguous redirect\n", 2);
-		// }
 		if (va->vpt->current)
 			va->vpt->current = va->vpt->current->next;
 	}

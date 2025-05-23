@@ -107,6 +107,7 @@ int	main(int argc, char **argv, char **envp)
 	while (1)
 	{
 		signals(0);
+		// printf("[   %d    ]\n",g_signal_pid);
 		if (g_signal_pid == -1 || g_signal_pid == -2 || g_signal_pid == 2)
 		{
 			v->status = 1;
@@ -128,6 +129,7 @@ int	main(int argc, char **argv, char **envp)
 				v->status = 0;
 			tmp = 0;
 			v->cmds = parse(v);
+			// printf("[  ------- %d -----   ]\n",g_signal_pid);
 		// print_commands(cmds);
 		// free_commands(cmds);
 		//check 
@@ -142,9 +144,7 @@ int	main(int argc, char **argv, char **envp)
 				tools.cmd = v->cmds;
 				ft_execute(&tools);
 			}
-			// printf("[[[ %d ]]]\n", v->status);
 			else if (v->status == -3){
-				v->status = -3;
 				g_signal_pid = 0;
 			}
 			else if (v->status != 999)
