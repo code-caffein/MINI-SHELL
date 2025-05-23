@@ -148,8 +148,8 @@ int	main(int argc, char **argv, char **envp)
 				// free_commands(cmds);
 				// printf("---------------------\n");
 				tools.cmd = v->cmds;
-				clean_files(&tools);
 				ft_execute(&tools);
+				clean_files(&tools);
 			}
 			else if (v->status == -3){
 				g_signal_pid = 0;
