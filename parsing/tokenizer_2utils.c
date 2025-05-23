@@ -203,7 +203,7 @@ int add_token_with_type(t_sp_var *va)
 				return (1);
 			}
 		}
-		else if (should_expand_token(v, va))
+		else if (should_expand_token(v, va) && va->var->state != DOUBLE_QUOTED)
 		{
 			init_first_last(v, va, &static_buffer);
 			if (v->ambiguous)
@@ -235,6 +235,19 @@ int add_token_with_type(t_sp_var *va)
 					add_expanded_token(v, &va->var->tokens, v->bib[v->i++], va);
 				static_buffer = NULL;
 			}		
+		}
+		else if (should_expand_token(v, va) && va->var->state == DOUBLE_QUOTED)
+		{
+			v->expanded_value = expand_env_vars(v->new_buff, va);
+			if (va->var->wait_more_args)
+				static_buffer = ft_strjoin(v->buff, v->expanded_value, &va->allocs);
+			else
+			{
+				static_buffer = ft_strjoin(v->buff, v->expanded_value, &va->allocs);
+				add_expanded_token(v, &va->var->tokens, static_buffer, va);
+				static_buffer = NULL;
+			}
+			return (1);
 		}
 		else
 		{
