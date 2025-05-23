@@ -67,16 +67,16 @@ void	p_without_buffer(t_v *v, t_sp_var *va, char **static_buffer, bool *QUOTE)
 
 bool ft_ambiguous_red(t_v *v)
 {
-    if (v->prev_token && v->prev_token->value)
-    {
-        if (strcmp(v->prev_token->value, ">") == 0 || 
-            strcmp(v->prev_token->value, "<") == 0 || 
-            strcmp(v->prev_token->value, ">>") == 0)
-        {
-            return true;
-        }
-    }
-    return false;
+	if (v->prev_token && v->prev_token->value)
+	{
+		if (ft_strcmp(v->prev_token->value, ">") == 0 || 
+			ft_strcmp(v->prev_token->value, "<") == 0 || 
+			ft_strcmp(v->prev_token->value, ">>") == 0)
+		{
+			return true;
+		}
+	}
+	return false;
 }
 
 
@@ -86,13 +86,13 @@ void add_anbiguous_token(t_v *v, t_token **tokens)
 		v->new_token->syn_err=false;
 		v->new_token->ambiguous = true;
 		if (*tokens == NULL)
-        	*tokens = v->new_token;
-    	else
+			*tokens = v->new_token;
+		else
    		{
-        	v->current = *tokens;
-        	while (v->current->next)
-        	    v->current = v->current->next;
-        	v->current->next = v->new_token;
+			v->current = *tokens;
+			while (v->current->next)
+				v->current = v->current->next;
+			v->current->next = v->new_token;
    		}
 }
 
@@ -103,7 +103,7 @@ int add_token_with_type(t_sp_var *va)
 	static bool ambiguous_red = false;
 	static bool ambiguous = false;
 	t_v *v;
-    
+	
 	v = init_token_vars(va, &QUOTE);
 
 	if (!ambiguous_red)
@@ -334,7 +334,7 @@ int add_token_with_type(t_sp_var *va)
 				return (1);
 			}
 		}
-		else if (should_expand_token(v, va))
+		else if (should_expand_token(v, va) && va->var->state != DOUBLE_QUOTED)
 		{
 			v->expanded_value = expand_env_vars(v->new_buff, va);
 			if (ft_strcmp(v->expanded_value, "") != 0)
@@ -349,6 +349,15 @@ int add_token_with_type(t_sp_var *va)
 					add_expanded_token(v, &va->var->tokens, v->bib[v->s], va);
 				static_buffer = NULL;
 			}
+		}
+		else if (should_expand_token(v, va) && va->var->state == DOUBLE_QUOTED)
+		{
+			v->expanded_value = expand_env_vars(v->new_buff, va);
+			if (va->var->wait_more_args)
+				static_buffer = ft_strdup(v->expanded_value, &va->allocs, P_GARBAGE);
+			else
+				add_expanded_token(v, &va->var->tokens, v->expanded_value, va);
+			return (1);
 		}
 		else
 		{

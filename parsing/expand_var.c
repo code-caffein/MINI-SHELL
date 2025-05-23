@@ -63,16 +63,7 @@ char *expand_env_vars(char *str, t_sp_var *va)
             	continue;
             }
 			if (str[i] == '$')
-			{
-				m = 0;
-				tmp = ft_itoa(getpid(), va);
-				if (!tmp)
-					return NULL;
-            	while (tmp[m] != '\0')
-                	result[j++] = tmp[m++];
-            	i++;
             	continue;
-			}
             
             char var_name[256] = {0};
             int k = 0;
