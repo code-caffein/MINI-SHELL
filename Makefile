@@ -1,5 +1,5 @@
 CC = cc
-CFLAGS = -Wall -Wextra -Werror \
+CFLAGS = -Wall -Wextra -Werror -g -fsanitize=address \
    -I$(HOME)/.local/include
 #remove fsanitize
 LDFLAGS = -L$(HOME)/.local/lib -lreadline

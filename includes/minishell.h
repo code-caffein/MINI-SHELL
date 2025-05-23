@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 15:34:46 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/23 11:11:23 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/23 16:02:44 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,4 +103,6 @@ void			signals(int heredoc_mode);
 void			clean_garbage(t_malloc **aloc);
 void			critical_error(char *syscall, t_malloc **alloc, \
 	int quit, int *r_stat);
+void			clean_files(t_tools *tools);
+
 #endif

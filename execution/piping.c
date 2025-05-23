@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 15:11:23 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/22 12:47:23 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/23 16:07:50 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,8 @@ void	piped_child(t_tools *tools, int cmd_count, int **arr, int num)
 	exit(*(tools->r_stat));
 }
 
-int	manage_pipes_rediretion(t_tools *tools, int cmd_count, int **arr, pid_t pid)
+int	manage_pipes_redirection(t_tools *tools, int cmd_count, \
+	int **arr, pid_t pid)
 {
 	int	num;
 
@@ -69,15 +70,12 @@ void	execute_pipeline(t_tools *tools)
 	int		num;
 	int		right_most;
 
-	right_most = manage_pipes_rediretion(tools, 0, NULL, -1);
+	right_most = manage_pipes_redirection(tools, 0, NULL, -1);
+	if (right_most == -1)
+		return ;
 	num = waitpid(right_most, &status, 0);
 	if (num == -1)
-	{
-		if (errno == EINTR)
-			*(tools->r_stat) = 130;
-		else
-			critical_error("waitpid", tools->aloc, 0, tools->r_stat);
-	}
+		critical_error("waitpid", tools->aloc, 0, tools->r_stat);
 	else if (num == right_most)
 	{
 		if (WIFEXITED(status))
