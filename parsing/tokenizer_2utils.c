@@ -29,7 +29,7 @@ static void	p_ex_without_buffer_fill(t_v *v, t_sp_var *va, char **static_buffer)
 void p_ex_without_buffer(t_v *v, t_sp_var *va, char **static_buffer)
 {
 	v->expanded_value = expand_env_vars(v->new_buff, va);
-	if (ft_strcmp(v->expanded_value, "") != 0)
+	if (ft_strcmp(v->expanded_value, "") != 0 && ft_strlen(v->expanded_value) >= 1)
 		v->last = v->expanded_value[ft_strlen(v->expanded_value) - 1];
 	v->bib = ft_split(v->expanded_value, ' ', &va->allocs);
 	if (va->var->wait_more_args)
@@ -120,13 +120,18 @@ int add_token_with_type(t_sp_var *va)
 	if (!prepare_token(va, v))
 		return (0);
 
+	if (v->buff && ft_strlen(v->buff) >= 1 && v->buff[ft_strlen(v->buff) - 1] == '$')
+	{
+		if (ft_strcmp(v->new_buff, "")== 0)
+			v->buff[ft_strlen(v->buff) - 1] = '\0';
+	}
 
 	if(v->buff)
 	{
 		if (should_expand_token(v, va) && ambiguous_red && va->var->state == UNQUOTED)
 		{
 			v->expanded_value = expand_env_vars(v->new_buff, va);
-			if (ft_strcmp(v->expanded_value, "") != 0)
+			if (ft_strcmp(v->expanded_value, "") != 0 && ft_strlen(v->expanded_value) >= 1)
 			{
 				v->first = v->expanded_value[0];
 				v->last = v->expanded_value[ft_strlen(v->expanded_value) - 1];
@@ -274,7 +279,7 @@ int add_token_with_type(t_sp_var *va)
 		if (should_expand_token(v, va) && ambiguous_red && va->var->state == UNQUOTED)
 		{
 			v->expanded_value = expand_env_vars(v->new_buff, va);
-			if (ft_strcmp(v->expanded_value, "") != 0)
+			if (ft_strcmp(v->expanded_value, "") != 0 && ft_strlen(v->expanded_value) >= 1)
 			{
 				v->last = v->expanded_value[ft_strlen(v->expanded_value) - 1];
 			}
@@ -337,7 +342,7 @@ int add_token_with_type(t_sp_var *va)
 		else if (should_expand_token(v, va) && va->var->state != DOUBLE_QUOTED)
 		{
 			v->expanded_value = expand_env_vars(v->new_buff, va);
-			if (ft_strcmp(v->expanded_value, "") != 0)
+			if (ft_strcmp(v->expanded_value, "") != 0 && ft_strlen(v->expanded_value) >= 1)
 				v->last = v->expanded_value[ft_strlen(v->expanded_value) - 1];
 			v->bib = ft_split(v->expanded_value, ' ', &va->allocs);
 			if (va->var->wait_more_args)
