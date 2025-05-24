@@ -18,8 +18,9 @@ t_cmd *create_new_command(t_sp_var *va)
 
 	int i = -1;
     while (++i <= cmd->arg_capacity)
+	{
         cmd->args[i] = NULL;
-    
+	}
 	cmd->am = false;
     cmd->in = NULL;
     cmd->out = NULL;
