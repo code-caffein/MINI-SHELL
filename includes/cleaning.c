@@ -26,13 +26,21 @@ void	critical_error(char *syscall, t_malloc **alloc, int quit, int *r_stat)
 		*r_stat = 1;
 }
 
-void	clean_files(t_tools *tools)
+void clean_files(t_tools *tools)
 {
-	t_redirection	*cursor;
+	t_redirection *cursor;
 
-	cursor = tools->cmd->in;
-	if (cursor)
+	if (tools && tools->cmd)
 	{
+		cursor = tools->cmd->in;
+		while (cursor)
+		{
+			if (cursor->fd > 0)
+				close(cursor->fd);
+			cursor = cursor->next;
+		}
+
+		cursor = tools->cmd->out;
 		while (cursor)
 		{
 			if (cursor->fd > 0)
@@ -40,14 +48,5 @@ void	clean_files(t_tools *tools)
 			cursor = cursor->next;
 		}
 	}
-	cursor = tools->cmd->out;
-	if (cursor)
-	{
-		while (cursor)
-		{
-			if (cursor->fd > 0)
-				close(cursor->fd);
-			cursor = cursor->next;
-		}
 	}
-}
+
