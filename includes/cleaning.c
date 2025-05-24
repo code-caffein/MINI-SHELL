@@ -6,7 +6,7 @@
 /*   By: aelbour <aelbour@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 15:24:27 by aelbour           #+#    #+#             */
-/*   Updated: 2025/05/24 11:27:18 by aelbour          ###   ########.fr       */
+/*   Updated: 2025/05/24 12:06:50 by aelbour          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,13 +26,13 @@ void	critical_error(char *syscall, t_malloc **alloc, int quit, int *r_stat)
 		*r_stat = 1;
 }
 
-void clean_files(t_tools *tools)
+void	clean_files(t_tools *tools)
 {
-	t_redirection *cursor;
-	t_cmd *cmd_cur;
+	t_redirection	*cursor;
+	t_cmd			*cmd_cur;
 
 	cmd_cur = tools->cmd;
-	while(cmd_cur)
+	while (cmd_cur)
 	{
 		cursor = cmd_cur->in;
 		while (cursor)
