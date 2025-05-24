@@ -149,6 +149,7 @@ int	main(int argc, char **argv, char **envp)
 				// printf("---------------------\n");
 				tools.cmd = v->cmds;
 				ft_execute(&tools);
+				tools.cmd = v->cmds;
 				clean_files(&tools);
 			}
 			else if (v->status == -3){
