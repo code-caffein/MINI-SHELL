@@ -8,7 +8,6 @@ t_v *init_token_vars(t_sp_var *va, bool *quote)
     init_variable(v, va->var->tokens);
     update_quote_state(va, quote);
     v->quote = *quote;
-    
     return v;
 }
 

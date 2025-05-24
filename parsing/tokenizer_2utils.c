@@ -371,7 +371,7 @@ int add_token_with_type(t_sp_var *va)
 				v->buff = NULL;
 				static_buffer = NULL;
 			}
-			QUOTE = false;
+			// QUOTE = false;
 		}
 
 	}
